@@ -1,0 +1,95 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { SITE, LEGAL } from '../config';
+
+const hasAddress = Boolean(LEGAL.street && LEGAL.postcode);
+const updated = new Date(LEGAL.updated).toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+<Legal title="Datenschutzerklärung" description="Wie diese Website mit personenbezogenen Daten umgeht.">
+  <p>
+    Kurz gesagt: Diese Website setzt keine Cookies, nutzt kein Tracking und keine Analyse-Tools und lädt
+    keine Inhalte von Drittanbietern. Verarbeitet werden nur die technischen Daten, die beim Aufruf jeder
+    Website anfallen.
+  </p>
+
+  <h2>1. Verantwortlicher</h2>
+  <address>
+    {LEGAL.name}<br />
+    {hasAddress ? `${LEGAL.street}, ${LEGAL.postcode} ${LEGAL.city}, ${LEGAL.country}` : `${LEGAL.city}, ${LEGAL.country}`}<br />
+    E-Mail: <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+    {LEGAL.phone && <><br />Telefon: <a href={`tel:${LEGAL.phone.replace(/\s/g, '')}`}>{LEGAL.phone}</a></>}
+  </address>
+
+  <h2>2. Hosting und Server-Logfiles</h2>
+  <p>
+    Diese Website wird bei Vercel Inc. (USA) gehostet. Beim
+    Aufruf einer Seite verarbeitet Vercel automatisch technische Daten, die Ihr Browser übermittelt:
+  </p>
+  <ul>
+    <li>IP-Adresse</li>
+    <li>Datum und Uhrzeit des Aufrufs</li>
+    <li>aufgerufene Seite und übertragene Datenmenge</li>
+    <li>Referrer-URL (die zuvor besuchte Seite)</li>
+    <li>Browsertyp, Betriebssystem und Gerätetyp</li>
+  </ul>
+  <p>
+    Diese Daten sind nötig, um die Website auszuliefern, sie stabil zu betreiben und vor Missbrauch zu
+    schützen. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einem sicheren und
+    funktionsfähigen Webangebot). Ich führe diese Daten nicht mit anderen Datenquellen zusammen.
+  </p>
+  <p>
+    Vercel kann Daten in den USA verarbeiten. Vercel ist unter dem EU-US Data Privacy Framework
+    zertifiziert; die Übermittlung stützt sich auf den Angemessenheitsbeschluss der EU-Kommission
+    (Art. 45 DSGVO). Mit Vercel besteht ein Vertrag zur Auftragsverarbeitung
+    (<a href="https://vercel.com/legal/dpa" rel="noopener">Vercel DPA</a>). Weitere Informationen:
+    <a href="https://vercel.com/legal/privacy-policy" rel="noopener">Datenschutzerklärung von Vercel</a>.
+  </p>
+
+  <h2>3. Schriftarten</h2>
+  <p>
+    Die Schriftarten (IBM Plex) werden direkt von dieser Website ausgeliefert. Es findet keine Verbindung
+    zu Google Fonts oder anderen Schriftanbietern statt.
+  </p>
+
+  <h2>4. Lokale Speicherung der Farbeinstellung</h2>
+  <p>
+    Wenn Sie zwischen hellem und dunklem Design wechseln, speichert Ihr Browser diese Wahl lokal
+    (localStorage, Schlüssel „theme“). Der Wert verlässt Ihr Gerät nicht und wird nicht an mich
+    übertragen. Die Speicherung erfolgt nur auf Ihre Aktion hin und ist für diese von Ihnen gewünschte
+    Funktion erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG). Sie können den Eintrag jederzeit in den
+    Browsereinstellungen löschen.
+  </p>
+
+  <h2>5. Kontakt per E-Mail</h2>
+  <p>
+    Wenn Sie mir eine E-Mail schreiben, verarbeite ich Ihre Angaben, um Ihre Anfrage zu beantworten
+    (Art. 6 Abs. 1 lit. b DSGVO bei Anfragen zu einer möglichen Zusammenarbeit oder Anstellung, sonst
+    Art. 6 Abs. 1 lit. f DSGVO). Ich lösche die Nachricht, sobald sie erledigt ist und keine
+    Aufbewahrungspflicht besteht. Für E-Mails nutze ich Gmail (Google Ireland Limited).
+  </p>
+
+  <h2>6. Links zu anderen Websites</h2>
+  <p>
+    Links zu GitHub, LinkedIn, Substack oder Projekt-Demos führen auf Websites anderer Anbieter. Dort gelten
+    deren Datenschutzbestimmungen. Beim bloßen Besuch dieser Website werden keine Daten an diese Anbieter
+    übertragen.
+  </p>
+
+  <h2>7. Ihre Rechte</h2>
+  <p>Sie haben das Recht auf</p>
+  <ul>
+    <li>Auskunft über Ihre gespeicherten Daten (Art. 15 DSGVO),</li>
+    <li>Berichtigung (Art. 16 DSGVO) und Löschung (Art. 17 DSGVO),</li>
+    <li>Einschränkung der Verarbeitung (Art. 18 DSGVO),</li>
+    <li>Datenübertragbarkeit (Art. 20 DSGVO),</li>
+    <li>Widerspruch gegen Verarbeitungen auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO (Art. 21 DSGVO).</li>
+  </ul>
+  <p>
+    Schreiben Sie dazu einfach an die oben genannte E-Mail-Adresse. Sie können sich außerdem bei einer
+    Datenschutz-Aufsichtsbehörde beschweren, zum Beispiel bei der Landesbeauftragten für Datenschutz und
+    Informationsfreiheit Nordrhein-Westfalen (LDI NRW).
+  </p>
+
+  <p class="note">Stand: {updated}</p>
+  <p class="note">English: this site sets no cookies and uses no tracking or analytics. The host (Vercel) processes standard server logs such as IP addresses to deliver the site. Fonts are self-hosted. Contact me by email to exercise your GDPR rights.</p>
+</Legal>

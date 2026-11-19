@@ -13,7 +13,10 @@ const links = [
     <ul class="links">
       {links.map((l) => <li><a class="textlink" href={l.href}>{l.label} ↗</a></li>)}
     </ul>
-    <p class="label">Last updated {updated}</p>
+    <p class="label meta">
+      <a href="/datenschutz/">Datenschutz</a>
+      <span>Last updated {updated}</span>
+    </p>
   </div>
   <div class="giant" aria-hidden="true">{SITE.wordmark}</div>
 </footer>
@@ -22,6 +25,9 @@ const links = [
   .footer { border-top: 1px solid var(--rule); padding-top: 40px; overflow: hidden; }
   .row { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
   .links { display: flex; gap: 28px; list-style: none; margin: 0; padding: 0; flex-wrap: wrap; }
+  .meta { display: flex; gap: 20px; flex-wrap: wrap; }
+  .meta a { text-decoration: none; }
+  .meta a:hover { color: var(--ink); }
   .giant {
     font-size: clamp(64px, 15.5vw, 230px); line-height: 0.8; letter-spacing: -0.04em;
     color: var(--wordmark); white-space: nowrap; margin-top: 56px;

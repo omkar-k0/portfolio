@@ -1,0 +1,50 @@
+---
+// Offline until LEGAL.street and LEGAL.postcode are set. To publish: rename this file to impressum.astro and add the footer link.
+import Legal from '../layouts/Legal.astro';
+import { SITE, LEGAL } from '../config';
+
+// Never publish an Impressum without a postal address: fail the build instead.
+if (!LEGAL.street || !LEGAL.postcode) {
+  throw new Error('Impressum: set LEGAL.street and LEGAL.postcode in src/config.ts');
+}
+---
+<Legal title="Impressum" description="Anbieterkennzeichnung gemäß § 5 DDG und § 18 Abs. 2 MStV.">
+  <h2>Angaben gemäß § 5 DDG</h2>
+  <address>
+    {LEGAL.name}<br />
+    {LEGAL.street}<br />
+    {LEGAL.postcode} {LEGAL.city}<br />
+    {LEGAL.country}
+  </address>
+
+  <h2>Kontakt</h2>
+  <p>
+    E-Mail: <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+    {LEGAL.phone && <><br />Telefon: {LEGAL.phone}</>}
+  </p>
+
+  <h2>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
+  <p>{LEGAL.name}, Anschrift wie oben.</p>
+
+  <h2>Haftung für Inhalte</h2>
+  <p>
+    Die Inhalte dieser Seite wurden mit Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und
+    Aktualität kann ich jedoch keine Gewähr übernehmen. Projektergebnisse beziehen sich auf den jeweils
+    angegebenen Stand und die genannte Datengrundlage.
+  </p>
+
+  <h2>Haftung für Links</h2>
+  <p>
+    Diese Seite enthält Links zu externen Websites (zum Beispiel GitHub, LinkedIn, Substack). Auf deren
+    Inhalte habe ich keinen Einfluss; verantwortlich ist der jeweilige Anbieter. Bei Bekanntwerden von
+    Rechtsverletzungen entferne ich entsprechende Links umgehend.
+  </p>
+
+  <h2>Urheberrecht</h2>
+  <p>
+    Texte, Grafiken und Gestaltung dieser Seite stehen unter meinem Urheberrecht, soweit nicht anders
+    angegeben. Der Quellcode der Projekte unterliegt der Lizenz im jeweiligen Repository.
+  </p>
+
+  <p class="note">English: this page names the person responsible for this website under German law. Contact details are above.</p>
+</Legal>
