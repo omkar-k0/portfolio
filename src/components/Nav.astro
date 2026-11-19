@@ -2,9 +2,10 @@
 import { SITE } from '../config';
 const path = Astro.url.pathname;
 const items = [
-  { href: '/work/', label: 'Work' },
-  { href: '/notes/', label: 'Notes' },
-  { href: '/about/', label: 'About' },
+  // Pages are added here as they go live (milestones 2 and 3).
+  { href: '/#work', label: 'Work' },
+  { href: '/#index', label: 'Index' },
+  { href: '/#now', label: 'Now' },
 ];
 ---
 <header class="nav">
@@ -13,7 +14,7 @@ const items = [
     <nav aria-label="Main">
       <ul id="menu" class="items">
         {items.map((i) => (
-          <li><a href={i.href} class="item" aria-current={path.startsWith(i.href) ? 'page' : undefined}>{i.label}</a></li>
+          <li><a href={i.href} class="item" aria-current={!i.href.includes('#') && path.startsWith(i.href) ? 'page' : undefined}>{i.label}</a></li>
         ))}
         <li><a href={`mailto:${SITE.email}`} class="btn">Email me</a></li>
       </ul>

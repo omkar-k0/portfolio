@@ -19,6 +19,7 @@ export interface Stage {
 
 export interface Flagship {
   slug: string;
+  ready: boolean; // true once /work/<slug>/ exists
   name: string;
   kind: 'Product' | 'Research' | 'Open source';
   status: string;
@@ -67,6 +68,7 @@ export const proof: (Metric & { project: string; slug: string })[] = [
 export const flagships: Flagship[] = [
   {
     slug: 'guidance-reconciliation-engine',
+    ready: false,
     name: 'Guidance Reconciliation Engine',
     kind: 'Product',
     status: 'Live · accuracy pending',
@@ -86,6 +88,7 @@ export const flagships: Flagship[] = [
   },
   {
     slug: 'faultline',
+    ready: false,
     name: 'faultline',
     kind: 'Open source',
     status: 'Benchmark v1 released · LLM baseline pending',
@@ -106,6 +109,7 @@ export const flagships: Flagship[] = [
   },
   {
     slug: 'werkbank',
+    ready: false,
     name: 'Werkbank',
     kind: 'Product',
     status: 'Live',
@@ -125,6 +129,7 @@ export const flagships: Flagship[] = [
   },
   {
     slug: 'finbert-fusion',
+    ready: false,
     name: 'FinBERT fusion',
     kind: 'Research',
     status: 'Research · code being published',

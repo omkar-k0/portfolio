@@ -33,10 +33,11 @@ npm run dev      # http://localhost:4321
 npm run build    # static output in dist/
 ```
 
-## Status
+## Milestones
 
-- [x] Home
-- [ ] Case study template (first: Guidance Reconciliation Engine)
-- [ ] Work index, Hiring, About, Notes
+1. **Live** — home page on omkarkhadilkar.dev via Vercel; no dead links; 404, sitemap, social preview image; legal pages.
+2. **Case studies** — Guidance Reconciliation Engine (template), then faultline, Werkbank, FinBERT fusion; `/work/` index.
+3. **Recruiter layer** — `/hiring/` (EN + DE, CV and Lebenslauf), `/about/`, German summaries on flagships.
+4. **Polish** — `/notes/` linked to Substack with RSS, accessibility and performance pass, cookie-free analytics, the site's own colophon case study.
 
 Design references and the reasoning behind them are documented separately.

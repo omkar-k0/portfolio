@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://omkarkhadilkar.dev/sitemap-index.xml

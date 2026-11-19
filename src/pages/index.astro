@@ -5,11 +5,15 @@ import Pipeline from '../components/Pipeline.astro';
 import { SITE, LINKS } from '../config';
 import { proof, flagships, ledger } from '../data/projects';
 
+// Until a case study page exists, links point to the project's row on this page.
+const ready = new Set(flagships.filter((f) => f.ready).map((f) => f.slug));
+const projectHref = (slug: string) => (ready.has(slug) ? `/work/${slug}/` : `#${slug}`);
+
 const doors = [
-  { title: "I'm hiring", line: 'Availability, CV, what I can start on', href: '/hiring/' },
-  { title: 'Show me the work', line: 'Case studies with measured results', href: '/work/' },
+  { title: "I'm hiring", line: 'Availability and how to reach me', href: '#now' },
+  { title: 'Show me the work', line: 'Four systems, one idea', href: '#work' },
   { title: 'I want the code', line: 'Repositories, tests, eval files', href: LINKS.github, external: true },
-  { title: 'Who is this?', line: 'Background and how I work', href: '/about/' },
+  { title: 'Who is this?', line: 'Background on LinkedIn', href: LINKS.linkedin, external: true },
 ];
 ---
 <Base>
@@ -25,7 +29,7 @@ const doors = [
           Every answer carries a confidence score, a citation, or the word <code>unverifiable</code>.
         </p>
         <div class="cta reveal">
-          <a class="btn" href="/work/">See the work</a>
+          <a class="btn" href="#work">See the work</a>
           <a class="textlink" href={`mailto:${SITE.email}`}>Email me →</a>
         </div>
       </div>
@@ -38,12 +42,12 @@ const doors = [
     <div class="wrap">
       <div class="section-head">
         <h2 class="label"><span class="num">01</span> Proof</h2>
-        <p class="label">Every number links to its case study</p>
+        <p class="label">Every number links to its project</p>
       </div>
       <ul class="proof">
         {proof.map((m) => (
           <li>
-            <a href={`/work/${m.slug}/`} class="metric">
+            <a href={projectHref(m.slug)} class="metric">
               <EvidenceTag level={m.evidence} source={m.source} />
               <span class="value">{m.value}</span>
               <span class="mlabel">{m.label}</span>
@@ -78,7 +82,7 @@ const doors = [
   </section>
 
   <!-- 03 Flagships -->
-  <section class="section">
+  <section class="section" id="work">
     <div class="wrap">
       <div class="section-head">
         <h2 class="label"><span class="num">03</span> Flagships</h2>
@@ -86,15 +90,15 @@ const doors = [
       </div>
       <div class="flagships">
         {flagships.map((f, i) => (
-          <article class="flag">
+          <article class="flag" id={f.slug}>
             <div class="flag-text">
               <p class="label">{String(i + 1).padStart(2, '0')} · {f.kind}</p>
-              <h3><a href={`/work/${f.slug}/`}>{f.name}</a></h3>
+              <h3>{f.ready ? <a href={`/work/${f.slug}/`}>{f.name}</a> : f.name}</h3>
               <p class="question">“{f.question}”</p>
               <ul class="chips">{f.tags.map((t) => <li>{t}</li>)}</ul>
               <p class="label fstatus">{f.status}</p>
               <p class="flinks">
-                <a class="textlink" href={`/work/${f.slug}/`}>Read the case study →</a>
+                {f.ready && <a class="textlink" href={`/work/${f.slug}/`}>Read the case study →</a>}
                 {f.links.map((l) => <a class="textlink" href={l.href} rel="noopener">{l.label} ↗</a>)}
               </p>
             </div>
@@ -106,11 +110,10 @@ const doors = [
   </section>
 
   <!-- 04 Index -->
-  <section class="section">
+  <section class="section" id="index">
     <div class="wrap">
       <div class="section-head">
         <h2 class="label"><span class="num">04</span> Index</h2>
-        <a class="label" href="/work/">All work →</a>
       </div>
       <table class="ledger">
         <thead><tr><th class="label">No.</th><th class="label">Project</th><th class="label">Type</th><th class="label note-col">Note</th><th></th></tr></thead>
@@ -130,7 +133,7 @@ const doors = [
   </section>
 
   <!-- 05 Currently -->
-  <section class="section">
+  <section class="section" id="now">
     <div class="wrap">
       <div class="section-head">
         <h2 class="label"><span class="num">05</span> Currently</h2>
@@ -145,6 +148,7 @@ const doors = [
 </Base>
 
 <style>
+  section[id] { scroll-margin-top: 60px; }
   /* Hero */
   .hero { position: relative; overflow: hidden; }
   .hero-in { position: relative; padding-top: 96px; padding-bottom: 36px; }
@@ -182,7 +186,7 @@ const doors = [
 
   /* Flagships */
   .flagships { display: flex; flex-direction: column; }
-  .flag { display: grid; grid-template-columns: 5fr 7fr; gap: 48px; padding: 40px 0; border-top: 1px solid var(--rule); align-items: center; }
+  .flag { scroll-margin-top: 80px; display: grid; grid-template-columns: 5fr 7fr; gap: 48px; padding: 40px 0; border-top: 1px solid var(--rule); align-items: center; }
   .flag:first-child { border-top: none; padding-top: 0; }
   .flag h3 { font-size: 32px; letter-spacing: -0.02em; margin: 10px 0 8px; }
   .flag h3 a { text-decoration: none; }
