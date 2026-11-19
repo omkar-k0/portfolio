@@ -10,6 +10,13 @@ export const SITE = {
   email: 'omkarkhadilkar8@gmail.com',
 };
 
+// Substack: set feed to the publication's RSS address (e.g. https://NAME.substack.com/feed).
+// Posts are fetched when the site builds; if the feed is empty or unreachable, the Notes page links to Substack instead.
+export const SUBSTACK = {
+  profile: 'https://krakmo.substack.com',
+  feed: 'https://krakmo.substack.com/feed',
+};
+
 export const LINKS = {
   github: 'https://github.com/omkar-k0',
   linkedin: 'https://www.linkedin.com/in/omkar-khadilkar-/',

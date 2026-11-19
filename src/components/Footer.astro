@@ -6,6 +6,7 @@ const links = [
   { label: 'LinkedIn', href: LINKS.linkedin },
   { label: 'Substack', href: LINKS.substack },
   { label: 'Email', href: `mailto:${SITE.email}` },
+  { label: 'RSS', href: '/rss.xml' },
 ];
 ---
 <footer class="footer">
@@ -18,7 +19,7 @@ const links = [
       <span>Last updated {updated}</span>
     </p>
   </div>
-  <div class="giant" aria-hidden="true">{SITE.wordmark}</div>
+  <div class="giant" aria-hidden="true" data-text={SITE.wordmark}></div>
 </footer>
 
 <style>
@@ -34,4 +35,5 @@ const links = [
     padding-left: var(--margin); transform: translateY(12%);
     user-select: none;
   }
+  .giant::before { content: attr(data-text); }
 </style>

@@ -229,4 +229,10 @@ export const work: WorkItem[] = [
     metric: { value: '156+', label: 'tests, CI green', evidence: 'measured', source: 'repo, v1.0.0' },
     status: 'GitHub Action · MIT', href: 'https://github.com/omkar-k0/profile-hud', external: true,
   },
+  {
+    name: 'This website', kind: 'Open source',
+    answers: 'Can a portfolio prove its claims instead of asking you to trust them?',
+    metric: { value: '100', label: 'Lighthouse accessibility, home page', evidence: 'measured', source: 'Lighthouse 12, 19 Nov 2026' },
+    status: 'Live · case study', href: caseStudy('portfolio'), external: false,
+  },
 ];

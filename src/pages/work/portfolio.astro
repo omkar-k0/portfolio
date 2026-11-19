@@ -1,0 +1,155 @@
+---
+import CaseStudy from '../../layouts/CaseStudy.astro';
+import ThoughtProcess from '../../components/ThoughtProcess.astro';
+import type { Metric } from '../../data/projects';
+
+const repo = 'https://github.com/omkar-k0/portfolio';
+
+const metrics: Metric[] = [
+  { value: '100', label: 'Lighthouse accessibility, performance and SEO on the home page', evidence: 'measured', source: 'Lighthouse 12, mobile profile, local build, 19 Nov 2026' },
+  { value: '~100 kB', label: 'total download for the home page, fonts included', evidence: 'measured', source: 'Lighthouse total-byte-weight: 99,867 bytes' },
+  { value: '0', label: 'cookies, trackers or third-party requests', evidence: 'measured', source: 'privacy page and build output' },
+  { value: '1', label: 'file holds every number on the site, each with its evidence level', evidence: 'measured', source: 'src/data/projects.ts' },
+];
+
+const facts = [
+  { label: 'Type', value: 'Open source' },
+  { label: 'When', value: 'November 2026' },
+  { label: 'Role', value: 'Design direction, content, build and deployment' },
+  { label: 'Built with', value: 'Astro, plain CSS, Vercel' },
+  { label: 'Status', value: 'Live · milestone 4 of 4' },
+];
+
+const toc = [
+  { id: 'plain', label: 'In plain language' },
+  { id: 'question', label: 'The question' },
+  { id: 'references', label: 'What I took from where' },
+  { id: 'system', label: 'Thought process' },
+  { id: 'decisions', label: 'Decisions' },
+  { id: 'broke', label: 'What broke' },
+  { id: 'open', label: 'Still open' },
+];
+---
+<CaseStudy
+  title="This website"
+  question="Can a portfolio prove its claims instead of asking you to trust them?"
+  description="How omkarkhadilkar.dev was designed and built: four reference sites, an evidence tag on every number, static pages with no cookies, and a build that refuses to publish an incomplete legal page."
+  crumb="Open source · 11"
+  links={[{ label: 'Source on GitHub', href: repo, primary: true }]}
+  metrics={metrics}
+  facts={facts}
+  toc={toc}
+  stack={['Astro 5', 'TypeScript', 'Plain CSS tokens', 'IBM Plex (self-hosted)', 'Vercel', 'Vercel Web Analytics', 'Lighthouse']}
+  prev={{ href: '/work/werkbank/', label: 'Werkbank' }}
+>
+  <section id="plain">
+    <h2><span class="num">01</span>In plain language</h2>
+    <p>
+      Most portfolios ask the reader to believe them. This one tries to make checking easy: every number links
+      to the case study it comes from, every case study links to the code, and every number carries a small tag
+      saying how it was measured.
+    </p>
+    <p>
+      The site follows the same idea as the projects on it. When something has not been measured yet, it says
+      pending instead of guessing.
+    </p>
+  </section>
+
+  <section id="question">
+    <h2><span class="num">02</span>The question</h2>
+    <p class="callout">
+      A recruiter gives a portfolio well under a minute. Can the first screen prove something, and can the
+      second click show where the proof comes from?
+    </p>
+  </section>
+
+  <section id="references">
+    <h2><span class="num">03</span>What I took from where</h2>
+    <table>
+      <thead><tr><th>Reference</th><th>Taken</th><th>Left out</th></tr></thead>
+      <tbody>
+        <tr><td>An AI engineer's portfolio from my own M.Sc. cohort</td><td>Visitor router, metric cards that link to proof, a fixed case-study structure, a page for recruiters</td><td>His wording and section names</td></tr>
+        <tr><td>A Swiss architecture studio</td><td>One font, one accent, visible grid lines, numbered sections, a giant wordmark</td><td>A 34,000-pixel scroll and heavy WebGL</td></tr>
+        <tr><td>A Tokyo creative studio</td><td>A plain, dated, one-line-per-project index</td><td>A homepage drawn entirely on a canvas, unreadable to screen readers</td></tr>
+        <tr><td>A UX designer's portfolio</td><td>One contact button, repeated; a calm, friendly tone</td><td>Case studies without numbers</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="system">
+    <h2><span class="num">04</span>Thought process</h2>
+    <ThoughtProcess
+      steps={[
+        { title: 'Study', points: ['Four reference sites', 'Structure, links, psychology', 'Fonts and colours measured'], takeaway: 'Learn the pattern, not the look.' },
+        { title: 'Design', points: ['Mock-ups in Google Stitch', 'Layout kept, text thrown away', 'Tokens: one font, one accent'], takeaway: 'Design tools invent facts. Words come from repos.' },
+        { title: 'Evidence', points: ['One data file for all numbers', 'measured / synthetic / pending', 'Source written next to each'], takeaway: 'No number without a file behind it.' },
+        { title: 'Build', points: ['Astro, static HTML', 'Plain CSS, light and dark', 'Works without JavaScript'], takeaway: 'Fast on a recruiter\'s work laptop.' },
+        { title: 'Ship', points: ['Push to main, live in a minute', 'Lighthouse after every milestone', 'Four milestones, in series'], takeaway: 'Live first, then better.' },
+      ]}
+    />
+  </section>
+
+  <section id="decisions">
+    <h2><span class="num">05</span>Decisions, and what they cost</h2>
+    <div class="decisions">
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>A static site</strong>
+          <p>Every page is plain HTML built once. About 100 kB for the home page, fonts included.</p></div>
+        <div><span class="label">Instead of</span><strong>A JavaScript app framework</strong>
+          <p>Nothing on this site needs a server or a client-side app.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Self-hosted fonts, no cookies</strong>
+          <p>No request goes to Google, so no cookie banner is needed. Visitor statistics use a daily hash, not cookies.</p></div>
+        <div><span class="label">Instead of</span><strong>Google Fonts and a standard tracker</strong>
+          <p>In Germany, embedding Google Fonts has been ruled a data-protection problem. A banner would be the first thing a recruiter sees.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Hide links until the page exists</strong>
+          <p>Each project has a ready flag. Until its case study is written, links point to the project's row instead.</p></div>
+        <div><span class="label">Instead of</span><strong>"Coming soon" pages</strong>
+          <p>A dead end is read as carelessness. There are no broken links on the site.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>A build that refuses</strong>
+          <p>The Impressum stays offline while the postal address is missing. If it were switched on without one, the build would fail instead of publishing a blank legal page.</p></div>
+        <div><span class="label">Instead of</span><strong>A placeholder address</strong>
+          <p>A legal page that looks complete but is not is worse than none.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="broke">
+    <h2><span class="num">06</span>What broke</h2>
+    <h3>The design tool made up my results</h3>
+    <p>
+      The first mock-ups looked right and were full of numbers I never measured: an accuracy of 96.8% for a
+      system that has never been scored, a model I never used, a "cost reduction" that does not exist. All the
+      layout was kept. None of the text was.
+    </p>
+    <h3>Writing a case study found bugs in the project</h3>
+    <p>
+      Checking the Guidance Reconciliation Engine's results by hand for its case study turned up three items the
+      engine should never have produced. They are now on that page, under "What broke".
+    </p>
+    <h3>The CV did not match the evidence</h3>
+    <p>
+      Putting the CV online meant checking every line against the code. Three claims had drifted, and the file
+      held a street address and a photo that should not be in a public download. The published CV is the fixed
+      version.
+    </p>
+    <h3>Small text failed contrast</h3>
+    <p>
+      The first teal was too light for 11-pixel labels. It is now darker, and accessibility scores 100.
+    </p>
+  </section>
+
+  <section id="open">
+    <h2><span class="num">07</span>Still open</h2>
+    <ul>
+      <li>An Events page: hackathons, career fairs and company visits.</li>
+      <li>The FinBERT fusion case study, once the labelling process is confirmed.</li>
+      <li>The Impressum, once a postal address is available.</li>
+    </ul>
+  </section>
+</CaseStudy>

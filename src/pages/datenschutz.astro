@@ -7,9 +7,9 @@ const updated = new Date(LEGAL.updated).toLocaleDateString('de-DE', { day: 'nume
 ---
 <Legal title="Datenschutzerklärung" description="Wie diese Website mit personenbezogenen Daten umgeht.">
   <p>
-    Kurz gesagt: Diese Website setzt keine Cookies, nutzt kein Tracking und keine Analyse-Tools und lädt
-    keine Inhalte von Drittanbietern. Verarbeitet werden nur die technischen Daten, die beim Aufruf jeder
-    Website anfallen.
+    Kurz gesagt: Diese Website setzt keine Cookies, nutzt kein seitenübergreifendes Tracking und lädt keine
+    Inhalte von Drittanbietern. Verarbeitet werden die technischen Daten, die beim Aufruf jeder Website
+    anfallen, und eine cookiefreie, zusammengefasste Besucherstatistik.
   </p>
 
   <h2>1. Verantwortlicher</h2>
@@ -45,13 +45,24 @@ const updated = new Date(LEGAL.updated).toLocaleDateString('de-DE', { day: 'nume
     <a href="https://vercel.com/legal/privacy-policy" rel="noopener">Datenschutzerklärung von Vercel</a>.
   </p>
 
-  <h2>3. Schriftarten</h2>
+  <h2>3. Besucherstatistik (Vercel Web Analytics)</h2>
+  <p>
+    Um zu sehen, welche Seiten gelesen werden, nutze ich Vercel Web Analytics. Es werden keine Cookies gesetzt
+    und nichts auf Ihrem Gerät gespeichert. Besucher werden über einen Hashwert aus der Anfrage gezählt, der nur
+    einen Tag gültig ist und danach verworfen wird. So ist kein Wiedererkennen über mehrere Tage oder andere
+    Websites möglich. Erfasst werden aufgerufene Seite, Referrer, Land, Browser, Betriebssystem und Gerätetyp,
+    nur in zusammengefasster Form. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse,
+    die Website zu verbessern). Weitere Informationen:
+    <a href="https://vercel.com/docs/analytics/privacy-policy" rel="noopener">Vercel Web Analytics: Privacy and Compliance</a>.
+  </p>
+
+  <h2>4. Schriftarten</h2>
   <p>
     Die Schriftarten (IBM Plex) werden direkt von dieser Website ausgeliefert. Es findet keine Verbindung
     zu Google Fonts oder anderen Schriftanbietern statt.
   </p>
 
-  <h2>4. Lokale Speicherung der Farbeinstellung</h2>
+  <h2>5. Lokale Speicherung der Farbeinstellung</h2>
   <p>
     Wenn Sie zwischen hellem und dunklem Design wechseln, speichert Ihr Browser diese Wahl lokal
     (localStorage, Schlüssel „theme“). Der Wert verlässt Ihr Gerät nicht und wird nicht an mich
@@ -60,7 +71,7 @@ const updated = new Date(LEGAL.updated).toLocaleDateString('de-DE', { day: 'nume
     Browsereinstellungen löschen.
   </p>
 
-  <h2>5. Kontakt per E-Mail</h2>
+  <h2>6. Kontakt per E-Mail</h2>
   <p>
     Wenn Sie mir eine E-Mail schreiben, verarbeite ich Ihre Angaben, um Ihre Anfrage zu beantworten
     (Art. 6 Abs. 1 lit. b DSGVO bei Anfragen zu einer möglichen Zusammenarbeit oder Anstellung, sonst
@@ -68,14 +79,14 @@ const updated = new Date(LEGAL.updated).toLocaleDateString('de-DE', { day: 'nume
     Aufbewahrungspflicht besteht. Für E-Mails nutze ich Gmail (Google Ireland Limited).
   </p>
 
-  <h2>6. Links zu anderen Websites</h2>
+  <h2>7. Links zu anderen Websites</h2>
   <p>
     Links zu GitHub, LinkedIn, Substack oder Projekt-Demos führen auf Websites anderer Anbieter. Dort gelten
     deren Datenschutzbestimmungen. Beim bloßen Besuch dieser Website werden keine Daten an diese Anbieter
     übertragen.
   </p>
 
-  <h2>7. Ihre Rechte</h2>
+  <h2>8. Ihre Rechte</h2>
   <p>Sie haben das Recht auf</p>
   <ul>
     <li>Auskunft über Ihre gespeicherten Daten (Art. 15 DSGVO),</li>
@@ -91,5 +102,5 @@ const updated = new Date(LEGAL.updated).toLocaleDateString('de-DE', { day: 'nume
   </p>
 
   <p class="note">Stand: {updated}</p>
-  <p class="note">English: this site sets no cookies and uses no tracking or analytics. The host (Vercel) processes standard server logs such as IP addresses to deliver the site. Fonts are self-hosted. Contact me by email to exercise your GDPR rights.</p>
+  <p class="note">English: this site sets no cookies and does no cross-site tracking. Cookie-free, aggregated page statistics come from Vercel Web Analytics. The host (Vercel) processes standard server logs such as IP addresses to deliver the site. Fonts are self-hosted. Contact me by email to exercise your GDPR rights.</p>
 </Legal>

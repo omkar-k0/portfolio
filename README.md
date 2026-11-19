@@ -22,7 +22,8 @@ src/
   styles/global.css    tokens (colour, type, grid), light and dark
   layouts/Base.astro   head, theme script, nav, footer
   components/          Nav, Footer, EvidenceTag, Pipeline
-  pages/index.astro    home
+  lib/substack.ts      fetches Substack posts at build time (never fails the build)
+  pages/               home, work index, case studies, hiring, about, notes, rss.xml, privacy
 ```
 
 ## Run locally
