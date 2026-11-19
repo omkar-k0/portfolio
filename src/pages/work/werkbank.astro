@@ -1,0 +1,255 @@
+---
+import CaseStudy from '../../layouts/CaseStudy.astro';
+import ThoughtProcess from '../../components/ThoughtProcess.astro';
+import type { Metric } from '../../data/projects';
+
+const repo = 'https://github.com/omkar-k0/werkbank';
+const report = `${repo}/blob/main/reports/eval.md`;
+
+const metrics: Metric[] = [
+  { value: '95.8%', label: 'accuracy on the 40% of hand-written requests it routed on its own', evidence: 'measured', source: 'reports/eval.md, hand-written set n = 60' },
+  { value: '23.3%', label: 'of hand-written requests sent to the review queue instead of guessed', evidence: 'measured', source: 'reports/eval.md' },
+  { value: '96.8%', label: 'top-1 accuracy after a new shop corrects 100 orders (from 75.5%)', evidence: 'synthetic', source: 'reports/eval.md, feedback loop on synthetic orders' },
+  { value: '—', label: 'accuracy on real shop orders: no shop has used it yet', evidence: 'pending', source: 'needs a live shop' },
+];
+
+const facts = [
+  { label: 'Type', value: 'Product' },
+  { label: 'When', value: 'October 2026' },
+  { label: 'Role', value: 'Sole developer: classifier, gate, app, auth, eval' },
+  { label: 'Origin', value: 'A real client brief from a furniture shop with three workshops' },
+  { label: 'Status', value: 'Live demo · EN and DE · 52 tests' },
+];
+
+const toc = [
+  { id: 'plain', label: 'In plain language' },
+  { id: 'question', label: 'The question' },
+  { id: 'obvious', label: 'Why the obvious fails' },
+  { id: 'gate', label: 'The gate' },
+  { id: 'system', label: 'Thought process' },
+  { id: 'decisions', label: 'Decisions' },
+  { id: 'results', label: 'What came out' },
+  { id: 'refuses', label: 'What it refuses to claim' },
+  { id: 'broke', label: 'What broke' },
+  { id: 'open', label: 'Still open' },
+];
+---
+<CaseStudy
+  title="Werkbank"
+  question="Which workshop should take this furniture order?"
+  description="Order routing for furniture shops with their own workshops: cheap layers first, a calibrated confidence gate, a review queue for unsure orders, and a model that learns from every correction."
+  crumb="Product · 03"
+  links={[
+    { label: 'Open the demo shop', href: 'https://werkbank-gamma.vercel.app', primary: true },
+    { label: 'Source on GitHub', href: repo },
+    { label: 'Evaluation report', href: report },
+  ]}
+  metrics={metrics}
+  facts={facts}
+  toc={toc}
+  stack={['Next.js', 'TypeScript', 'Postgres', 'Naive Bayes', 'Vitest', 'PWA', 'Google sign-in (OIDC)', 'Vercel']}
+  prev={{ href: '/work/faultline/', label: 'faultline' }}
+  next={{ href: '/#finbert-fusion', label: 'FinBERT fusion' }}
+>
+  <section id="plain">
+    <h2><span class="num">01</span>In plain language</h2>
+    <p>
+      A furniture shop with its own workshops gets requests like "sofa cushion torn, needs new foam" or "Tisch
+      wackelt, Bein lose". Someone has to decide which bench each job goes to: carpentry, upholstery, polish and
+      paint, or metalwork.
+    </p>
+    <p>
+      Werkbank reads the request the way the owner would write it on a job slip and sends it to the right
+      workshop. It also labels the job type, urgency and effort. When it is not sure, it does not guess: the
+      order waits in a review queue. Every correction the owner makes teaches that shop's model.
+    </p>
+    <p>
+      It started as a real brief from a furniture shop with three in-house workshops. I turned it into a
+      product any shop can sign up for, in English and German.
+    </p>
+  </section>
+
+  <section id="question">
+    <h2><span class="num">02</span>The question</h2>
+    <p class="callout">
+      How many orders can go straight to the right workshop without a person, and can the system tell which
+      ones those are?
+    </p>
+  </section>
+
+  <section id="obvious">
+    <h2><span class="num">03</span>Why the obvious approach fails</h2>
+    <p>
+      <strong>Keyword rules</strong> are easy to explain to a shop owner, but customers do not use the shop's
+      words. "Recliner mechanism stuck" is a metalwork job with no metal word in it.
+    </p>
+    <p>
+      <strong>A classifier that always answers</strong> sends every unclear order somewhere. A wrong routing is
+      worse than a slow one: the job sits at the wrong bench until someone notices.
+    </p>
+    <p>
+      <strong>An LLM on every order</strong> costs money per order, needs an API key in every shop, and still
+      answers confidently when the request is vague.
+    </p>
+  </section>
+
+  <section id="gate">
+    <h2><span class="num">04</span>The gate</h2>
+    <p>
+      Two cheap layers run in under a millisecond: a keyword lexicon in English and German, and a naive Bayes
+      model trained on seed data plus the shop's own corrections. Their blended score goes through a gate.
+    </p>
+    <table>
+      <thead><tr><th>Outcome</th><th>Condition (balanced setting)</th></tr></thead>
+      <tbody>
+        <tr><td>Auto-route</td><td class="n">confidence ≥ 0.85 and margin ≥ 0.5</td></tr>
+        <tr><td>Route, flagged "check"</td><td class="n">confidence ≥ 0.55</td></tr>
+        <tr><td>Review queue</td><td>Lower confidence, almost no known words, the two layers strongly disagree, or the shop has no workshop for the predicted job</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Naive Bayes is known to be over-confident, so its scores are tempered by a temperature fitted on held-out
+      phrasings (2.5). The interface never shows more than "99%+". Shops can move the gate between strict,
+      balanced and relaxed.
+    </p>
+    <p>
+      An optional language model only sees orders that are already in review. It must quote the request word
+      for word, or its answer is thrown away. An LLM decision is never marked as automatic.
+    </p>
+  </section>
+
+  <section id="system">
+    <h2><span class="num">05</span>Thought process</h2>
+    <p>Left to right, the path one order takes, from the owner's typing to the shop's next model.</p>
+    <ThoughtProcess
+      steps={[
+        { title: 'Read', points: ['Free text, English or German', 'Live preview while typing', 'Due date taken into account'], takeaway: 'The owner writes the way they talk.' },
+        { title: 'Score', points: ['Keyword lexicon, EN + DE', 'Naive Bayes: seed + corrections', 'Temperature 2.5 calibration'], takeaway: 'Two cheap opinions, in under a millisecond.' },
+        { title: 'Gate', points: ['Auto ≥ 0.85, margin ≥ 0.5', 'Check ≥ 0.55', 'Disagreement → review'], takeaway: 'Sure, fairly sure, or ask.' },
+        { title: 'Review', points: ['Best guess shown to the owner', 'Optional LLM, quote required', 'Never marked automatic'], takeaway: 'Unsure orders wait for a person.', model: true },
+        { title: 'Learn', points: ['Every reassignment adds counts', 'No training job needed', "Per-shop model"], takeaway: 'Corrections make tomorrow easier.' },
+      ]}
+      note="The model predicts four job types, not workshop names. Each shop maps its own workshops onto them, so one model serves every shop."
+    />
+  </section>
+
+  <section id="decisions">
+    <h2><span class="num">06</span>Decisions, and what they cost</h2>
+    <div class="decisions">
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Naive Bayes</strong>
+          <p>One correction just adds counts. The shop's model updates instantly, with no training job.</p></div>
+        <div><span class="label">Instead of</span><strong>A model that needs retraining</strong>
+          <p>Every correction would wait for a training run before the shop saw any benefit.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Fix the gate before testing</strong>
+          <p>Thresholds were set before looking at test results.</p></div>
+        <div><span class="label">Instead of</span><strong>Search for the best thresholds</strong>
+          <p>The search on validation data collapsed to the minimum threshold, so it was dropped and the thresholds were fixed by hand.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Rules for urgency and effort</strong>
+          <p>They depend on a few explicit words and the due date. "No rush" is checked before "rush".</p></div>
+        <div><span class="label">Instead of</span><strong>A third model</strong>
+          <p>A shop owner can read a rule and see why a job was marked urgent.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Test on words it never trained on</strong>
+          <p>The synthetic test set uses sentence templates and synonyms that never appear in training, plus 60 messy requests written by hand.</p></div>
+        <div><span class="label">Instead of</span><strong>A random split of the generated data</strong>
+          <p>That would test whether it remembers its own templates.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="results">
+    <h2><span class="num">07</span>What came out</h2>
+    <table>
+      <thead><tr><th>Test set</th><th>Auto-routed</th><th>Auto accuracy</th><th>To review</th><th>Accuracy of all routed</th></tr></thead>
+      <tbody>
+        <tr><td>Hand-written, messy (n = 60)</td><td class="n">40.0%</td><td class="n">95.8%</td><td class="n">23.3%</td><td class="n">93.5%</td></tr>
+        <tr><td>Synthetic, unseen phrasing (n = 800)</td><td class="n">18.9%</td><td class="n">95.4%</td><td class="n">36.1%</td><td class="n">84.0%</td></tr>
+      </tbody>
+    </table>
+    <p>
+      The gate holds: whatever skips review is right about 95% of the time on both sets. What changes is how
+      much it dares to skip. On phrasing it has never seen, it sends more to review instead of guessing.
+    </p>
+    <h3>Strict or relaxed: the trade-off a shop chooses</h3>
+    <table>
+      <thead><tr><th>Auto threshold</th><th>Auto-routed</th><th>Auto accuracy</th></tr></thead>
+      <tbody>
+        <tr><td class="n">0.50</td><td class="n">71.8%</td><td class="n">82.8%</td></tr>
+        <tr><td class="n">0.70</td><td class="n">43.6%</td><td class="n">86.5%</td></tr>
+        <tr><td class="n">0.85 (default)</td><td class="n">18.9%</td><td class="n">95.4%</td></tr>
+        <tr><td class="n">0.95</td><td class="n">4.4%</td><td class="n">100.0%</td></tr>
+      </tbody>
+    </table>
+    <h3>The feedback loop</h3>
+    <p>
+      A simulated shop that phrases things in ways the seed model never saw corrects its first orders. Then the
+      model is measured on 400 later orders:
+    </p>
+    <table>
+      <thead><tr><th>Corrections</th><th>Top-1 accuracy</th><th>Auto-routed</th><th>Review queue</th></tr></thead>
+      <tbody>
+        <tr><td class="n">0</td><td class="n">75.5%</td><td class="n">20.8%</td><td class="n">34.8%</td></tr>
+        <tr><td class="n">50</td><td class="n">92.0%</td><td class="n">63.7%</td><td class="n">12.5%</td></tr>
+        <tr><td class="n">100</td><td class="n">96.8%</td><td class="n">82.5%</td><td class="n">6.3%</td></tr>
+        <tr><td class="n">200</td><td class="n">98.5%</td><td class="n">87.5%</td><td class="n">4.0%</td></tr>
+      </tbody>
+    </table>
+    <p class="caption">All from <a href={report}>reports/eval.md</a>, generated 26 Oct 2026. Seed model trained on 2,400 synthetic requests.</p>
+  </section>
+
+  <section id="refuses">
+    <h2><span class="num">08</span>What it refuses to claim</h2>
+    <p>
+      <strong>Real-world accuracy.</strong> There is no public dataset of furniture-shop tickets, so training data
+      is synthetic, and synthetic test data is easier than real orders. The true number is unknown until a shop
+      uses it.
+    </p>
+    <p>
+      <strong>The 400-correction result.</strong> It reaches 100%, but by then the test orders are close to what
+      it trained on. The evaluation report says not to quote it, so it is not quoted here.
+    </p>
+  </section>
+
+  <section id="broke">
+    <h2><span class="num">09</span>What broke</h2>
+    <h3>Three hand-written orders went to the wrong bench</h3>
+    <table>
+      <thead><tr><th>Request</th><th>Right</th><th>Routed to</th></tr></thead>
+      <tbody>
+        <tr><td>"need a study table built into the corner, 120x60, white laminate top"</td><td>Carpentry</td><td>Finishing (auto, 0.93)</td></tr>
+        <tr><td>"old teak chest, grandma's, wants it restored. finish is black and sticky"</td><td>Finishing</td><td>Carpentry (check, 0.74)</td></tr>
+        <tr><td>"recliner mechanism stuck, footrest won't come out"</td><td>Metalwork</td><td>Upholstery (check, 0.66)</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Only the first one skipped review entirely. "White laminate top" pulled it towards finishing. The other two
+      were routed but flagged for the owner to check.
+    </p>
+    <h3>German is the weaker language</h3>
+    <p>
+      The keyword lexicon is mostly English. In a small manual check, 3 of 5 German example sentences went to the
+      review queue. They were not routed wrongly, but the shop gets less automation in German.
+    </p>
+    <h3>Job type is mediocre</h3>
+    <p>
+      Repair, custom, refurbish or assembly is right only 70% of the time on the synthetic set (75% hand-written).
+      It is shown as a label, not used for routing.
+    </p>
+  </section>
+
+  <section id="open">
+    <h2><span class="num">10</span>Still open</h2>
+    <ul>
+      <li>A real shop using it, and accuracy measured on real orders.</li>
+      <li>A bigger German lexicon.</li>
+      <li>Login rate limiting, and ending open sessions when a password is reset.</li>
+      <li>Payments: picking a plan records it, but billing is not connected.</li>
+    </ul>
+  </section>
+</CaseStudy>

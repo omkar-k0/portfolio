@@ -1,0 +1,248 @@
+---
+import CaseStudy from '../../layouts/CaseStudy.astro';
+import ThoughtProcess from '../../components/ThoughtProcess.astro';
+import MethodBars from '../../components/MethodBars.astro';
+import type { Metric } from '../../data/projects';
+
+const repo = 'https://github.com/omkar-k0/faultline';
+const res = (f: string) => `${repo}/blob/main/eval/results/${f}`;
+
+const metrics: Metric[] = [
+  { value: '89.6%', label: 'root cause found at top-1 on dev (43 of 48 incidents)', evidence: 'measured', source: 'eval/results/dev/triage.md' },
+  { value: '0 of 48', label: 'confidently wrong answers on dev; 0 of 30 false alarms on clean runs', evidence: 'measured', source: 'eval/results/dev/triage.md' },
+  { value: '192', label: 'injected incidents across 8 fault types, plus 70 clean runs', evidence: 'measured', source: 'benchmark/manifest.json, release benchmark-v1' },
+  { value: '—', label: 'held-out score: the frozen test split has not been run yet', evidence: 'pending', source: 'benchmark-heldout.tar.gz is sealed until the method is final' },
+];
+
+const facts = [
+  { label: 'Type', value: 'Open source' },
+  { label: 'When', value: 'November 2026 · in progress' },
+  { label: 'Role', value: 'Sole developer: injector, benchmark, eval harness, monitors, triage' },
+  { label: 'Scale', value: '4 dbt projects · 193 tests · 5 methods scored' },
+  { label: 'Status', value: 'Milestone 5 of 8 · benchmark v1 released' },
+];
+
+const toc = [
+  { id: 'plain', label: 'In plain language' },
+  { id: 'question', label: 'The question' },
+  { id: 'obvious', label: 'Why the obvious fails' },
+  { id: 'gate', label: 'The gate' },
+  { id: 'system', label: 'Thought process' },
+  { id: 'decisions', label: 'Decisions' },
+  { id: 'results', label: 'What came out' },
+  { id: 'refuses', label: 'What it refuses to claim' },
+  { id: 'broke', label: 'What broke' },
+  { id: 'open', label: 'Still open' },
+];
+---
+<CaseStudy
+  title="faultline"
+  question="When a dbt pipeline breaks, what broke it, and where is the evidence?"
+  description="An open-source reliability assistant for dbt Core with its own fault-injection benchmark: 192 incidents, five methods scored, a sealed held-out split."
+  crumb="Open source · 02"
+  links={[
+    { label: 'Source on GitHub', href: repo, primary: true },
+    { label: 'Benchmark v1', href: `${repo}/releases/tag/benchmark-v1` },
+    { label: 'Results on dev', href: `${repo}/tree/main/eval/results/dev` },
+  ]}
+  metrics={metrics}
+  facts={facts}
+  toc={toc}
+  stack={['Python 3.12', 'dbt Core', 'DuckDB', 'sqlglot', 'networkx', 'hypothesis', 'Ollama (qwen2.5 7B)', 'GitHub Actions']}
+  prev={{ href: '/work/guidance-reconciliation-engine/', label: 'Guidance Reconciliation Engine' }}
+  next={{ href: '/work/werkbank/', label: 'Werkbank' }}
+>
+  <section id="plain">
+    <h2><span class="num">01</span>In plain language</h2>
+    <p>
+      Data teams build their reporting tables with dbt. When a number on a dashboard is suddenly wrong, someone
+      has to find out why: bad data arriving, a column renamed upstream, a join that started duplicating rows,
+      or a code change last Tuesday.
+    </p>
+    <p>
+      faultline does that search. It watches the tables, groups the symptoms into one incident, proposes
+      possible causes, and tests each one against the recorded data. It only names a cause that passed its
+      test. If none did, it says "not confirmed".
+    </p>
+    <p>
+      To know whether that works, I first built the exam: a tool that breaks real dbt projects on purpose, in
+      eight different ways, and records the right answer for every break.
+    </p>
+  </section>
+
+  <section id="question">
+    <h2><span class="num">02</span>The question</h2>
+    <p class="callout">
+      dbt's own tests catch some failures. How many root causes can a system name exactly, down to the table,
+      column and commit, without ever pointing confidently at the wrong one?
+    </p>
+  </section>
+
+  <section id="obvious">
+    <h2><span class="num">03</span>Why the obvious approach fails</h2>
+    <p>
+      <strong>dbt tests</strong> are the standard safety net. On the dev split they raised an alert for 22.9% of
+      incidents and named the cause for none. A test tells you that a table is wrong, not why.
+    </p>
+    <p>
+      <strong>Pasting the logs into a language model</strong> is the popular shortcut. With a local 7B model, it
+      named the right cause once in 48 incidents and a wrong cause seven times.
+    </p>
+    <p>
+      Both share the same gap: neither checks a guess against the data before saying it.
+    </p>
+  </section>
+
+  <section id="gate">
+    <h2><span class="num">04</span>The gate</h2>
+    <p>
+      Every decision goes through the same order: deterministic lineage and checks first, then statistics, and
+      a language model last. The model's only planned job is to rank causes that have already passed a test
+      and to write the report. No raw rows ever reach a model.
+    </p>
+    <table>
+      <thead><tr><th>Layer</th><th>Job</th><th>State</th></tr></thead>
+      <tbody>
+        <tr><td>Lineage</td><td>Table and column lineage from compiled SQL; what feeds what</td><td>Built</td></tr>
+        <tr><td>Monitors</td><td>Seven checks: schema, volume, freshness, null rate, distribution, duplicates, time shift</td><td>Built</td></tr>
+        <tr><td>Triage</td><td>Group symptoms, propose causes, test each one, keep only survivors</td><td>Built (deterministic)</td></tr>
+        <tr><td>Local LLM</td><td>Re-rank survivors and write the report</td><td>Next milestone</td></tr>
+      </tbody>
+    </table>
+    <p>
+      The headline number on this page comes from the deterministic layers alone. The model has not been
+      added yet, so it cannot have helped.
+    </p>
+  </section>
+
+  <section id="system">
+    <h2><span class="num">05</span>Thought process</h2>
+    <p>Left to right, the path one incident takes. Each card hands the next one less uncertainty.</p>
+    <ThoughtProcess
+      steps={[
+        { title: 'Gather', points: ['dbt artefacts and run logs', 'Monitor anomalies, failed tests', 'Lineage of this run, cached'], takeaway: 'Symptoms, not guesses.' },
+        { title: 'Group', points: ['Symptoms joined by table lineage', 'One incident, not ten alerts', 'Stored in DuckDB'], takeaway: 'One problem, one report.' },
+        { title: 'Propose', points: ['Data causes at seeds and sources', 'Code causes at changed models', 'With the commit that changed them'], takeaway: 'Every place it could have started.' },
+        { title: 'Test', points: ['One check per cause', 'On aggregates, lineage, SQL, history', 'Failing causes are dropped'], takeaway: 'Guesses must survive the data.' },
+        { title: 'Rank and report', points: ['Survivors only', '"Not confirmed" if none survive', 'LLM re-ranker: next milestone'], takeaway: 'Never a confident wrong answer.', model: true },
+      ]}
+      note="The highlighted card is where the local model will sit. It will only ever see causes that already passed a test, never the data itself."
+    />
+  </section>
+
+  <section id="decisions">
+    <h2><span class="num">06</span>Decisions, and what they cost</h2>
+    <div class="decisions">
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Build the exam before the student</strong>
+          <p>A fault injector and 192 scored incidents came before any diagnosis code.</p></div>
+        <div><span class="label">Instead of</span><strong>Demo on hand-picked examples</strong>
+          <p>Hand-picked examples always work. A benchmark tells you how often.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>A sealed held-out project</strong>
+          <p>The jira split (58 runs) was generated by me on my own machine and never opened in the coding session. A CI guard blocks any code that names it.</p></div>
+        <div><span class="label">Instead of</span><strong>Tune and test on the same incidents</strong>
+          <p>Whoever writes the rules must never see the final exam.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Score at location level</strong>
+          <p>A cause counts only if the table, the column (when there is one) and, for code faults, the commit are right.</p></div>
+        <div><span class="label">Instead of</span><strong>Score "right table"</strong>
+          <p>The table-only score is reported, but only as a diagnostic, never as the headline.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Code faults must change something</strong>
+          <p>A code mutation is kept only if the build fails or a table profile changes.</p></div>
+        <div><span class="label">Instead of</span><strong>Keep every mutation</strong>
+          <p>A change with no symptom has no correct answer and would only add noise.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Lineage follows the SQL</strong>
+          <p>When compiled SQL reads a table dbt did not declare, the edge is kept and reported.</p></div>
+        <div><span class="label">Instead of</span><strong>Trust dbt's declared dependencies</strong>
+          <p>The SQL is what runs. The Stripe project has two such hidden reads.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="results">
+    <h2><span class="num">07</span>What came out</h2>
+    <p>
+      Five methods on the same 48 dev incidents. Teal is the share of root causes named exactly. Grey is the
+      share named confidently and wrongly.
+    </p>
+    <MethodBars
+      rightLabel="right cause at top-1"
+      wrongLabel="wrong cause at top-1"
+      rows={[
+        { name: 'dbt tests', note: 'alert only', right: [0, 48], wrong: [0, 48] },
+        { name: 'dbt tests + guess', note: 'alert plus naive cause', right: [0, 48], wrong: [11, 48] },
+        { name: 'Raw logs → LLM', note: 'local qwen2.5 7B', right: [1, 48], wrong: [7, 48] },
+        { name: 'faultline monitors', note: 'anomalies, ranked upstream-first', right: [27, 48], wrong: [16, 48] },
+        { name: 'faultline triage', note: 'monitors + tested causes', right: [43, 48], wrong: [0, 48], ours: true },
+      ]}
+      caption="Dev split, 48 faulted incidents. Each method also had 0 of 30 false alarms on clean runs. Files: eval/results/dev/*.md."
+    />
+    <p>
+      The monitors alone already detect 89.6% of incidents, but they point at the wrong place a third of the
+      time. Testing every proposed cause removes all of those wrong answers. The 5 incidents triage misses are
+      ones the monitors never flagged: two distribution shifts, two timezone errors and one logic bug.
+    </p>
+    <p>
+      A one-time check on the train split gave a similar picture: 85 of 96 right at top-1 (88.5%), 3 wrong.
+      Both results reproduce byte for byte, and a test checks that they still do.
+    </p>
+    <p class="caption">Sources: <a href={res('dev/triage.md')}>triage</a>, <a href={res('dev/monitors.md')}>monitors</a>, <a href={res('dev/raw_log_llm.md')}>raw_log_llm</a>, <a href={res('dev/dbt_tests.md')}>dbt_tests</a>, <a href={res('dev/dbt_tests_guess.md')}>dbt_tests_guess</a>, <a href={res('train/triage.md')}>train/triage</a>.</p>
+  </section>
+
+  <section id="refuses">
+    <h2><span class="num">08</span>What it refuses to claim</h2>
+    <p>
+      <strong>A held-out score.</strong> Dev is where the method was developed, so 89.6% is an optimistic
+      number. The held-out jira split will be run once, when the method is final. That number goes here, good
+      or bad.
+    </p>
+    <p>
+      <strong>That abstaining works.</strong> "Not confirmed" never fired on dev or train. The behaviour exists
+      in code but the benchmark has not tested it yet.
+    </p>
+    <p>
+      <strong>That the model helps.</strong> The LLM re-ranker is not built. Every number above is from
+      deterministic code.
+    </p>
+  </section>
+
+  <section id="broke">
+    <h2><span class="num">09</span>What broke</h2>
+    <h3>A green build with empty tables</h3>
+    <p>
+      The first Stripe build passed 105 of 105 tests while every staging table was empty. dbt had read the
+      sources before the seed data loaded. Now seeds load first, and a test fails if any model is empty.
+    </p>
+    <h3>The answers were in the logs</h3>
+    <p>
+      The saved git history still carried the injector's own commit messages, which described each fault. Any
+      method could have read the answer. They are now removed at load time, and a leak test runs on every dev
+      evaluation.
+    </p>
+    <h3>Realistic noise broke clean runs</h3>
+    <p>
+      Dropping a few percent of rows to simulate real data left orders without payments and failed tests on
+      runs that were meant to be clean. Clean runs now vary only by 2% noise on numbers. The cost: volume
+      false alarms became an easy test. That is listed as a known weakness.
+    </p>
+  </section>
+
+  <section id="open">
+    <h2><span class="num">10</span>Still open</h2>
+    <ul>
+      <li>Ablations: no tests, no lineage, no model. What each layer is actually worth.</li>
+      <li>The local LLM re-ranker, run on my own MacBook.</li>
+      <li>One run on the sealed held-out split.</li>
+      <li>Incidents where "not confirmed" is the right answer, so abstaining gets tested.</li>
+      <li>court_cases is a synthetic project I wrote. Real public court data comes after a licence check.</li>
+      <li>Drafting fixes as pull requests (milestone 7) and a read-only MCP server (milestone 8).</li>
+    </ul>
+  </section>
+</CaseStudy>

@@ -1,0 +1,53 @@
+---
+// "Thought process" panel: the path a record takes through the system, one card per stage.
+export interface Step {
+  title: string;
+  points: string[];
+  takeaway: string;
+  model?: boolean; // the stage where a language model is involved
+}
+interface Props { steps: Step[]; note?: string }
+const { steps, note } = Astro.props;
+---
+<figure class="tp">
+  <div class="scroll">
+    <ol class="cards" style={`--n:${steps.length}`}>
+      {steps.map((s, i) => (
+        <li class={s.model ? 'card model' : 'card'}>
+          <span class="idx">{String(i + 1).padStart(2, '0')}</span>
+          <h4>{s.title}</h4>
+          <ul>{s.points.map((p) => <li>{p}</li>)}</ul>
+          <p class="take">{s.takeaway}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+  {note && <figcaption>{note}</figcaption>}
+</figure>
+
+<style>
+  .tp { margin: 8px 0 28px; }
+  @media (min-width: 1001px) { .tp { width: 128%; } }
+  .tp .scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+  .tp .cards {
+    list-style: none; margin: 0; padding: 0; max-width: none;
+    display: grid; grid-template-columns: repeat(var(--n), minmax(150px, 1fr)); gap: 22px;
+    min-width: calc(var(--n) * 172px);
+  }
+  .tp .card {
+    position: relative; display: flex; flex-direction: column;
+    border: 1px solid var(--rule-strong); background: var(--surface); padding: 16px 16px 18px; min-height: 300px;
+  }
+  .tp .card:not(:last-child)::after {
+    content: '→'; position: absolute; right: -11px; top: 50%; transform: translate(50%, -50%);
+    font-family: var(--mono); font-size: 13px; color: var(--muted); line-height: 1;
+  }
+  .tp .idx { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .tp h4 { font-size: 17px; font-weight: 500; margin: 8px 0 12px; letter-spacing: -0.01em; }
+  .tp ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .tp ul li { font-family: var(--mono); font-size: 12px; line-height: 1.45; padding-left: 12px; position: relative; }
+  .tp ul li::before { content: ''; position: absolute; left: 0; top: 0.55em; width: 4px; height: 4px; background: var(--accent); }
+  .tp .take { margin-top: auto; padding-top: 18px; font-size: 14px; line-height: 1.4; color: var(--muted); }
+  .tp .model { border-color: var(--accent); box-shadow: inset 0 3px 0 var(--accent); }
+  .tp figcaption { margin-top: 18px; max-width: 68ch; color: var(--muted); font-size: 15px; }
+</style>

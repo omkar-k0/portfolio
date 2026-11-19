@@ -2,6 +2,7 @@
 import CaseStudy from '../../layouts/CaseStudy.astro';
 import GateDiagram from '../../components/GateDiagram.astro';
 import Histogram from '../../components/Histogram.astro';
+import ThoughtProcess from '../../components/ThoughtProcess.astro';
 import type { Metric } from '../../data/projects';
 
 const repo = 'https://github.com/omkar-k0/guidance-reconciliation-engine';
@@ -27,7 +28,7 @@ const toc = [
   { id: 'question', label: 'The question' },
   { id: 'obvious', label: 'Why the obvious fails' },
   { id: 'gate', label: 'The gate' },
-  { id: 'system', label: 'How it is put together' },
+  { id: 'system', label: 'Thought process' },
   { id: 'decisions', label: 'Decisions' },
   { id: 'results', label: 'What came out' },
   { id: 'refuses', label: 'What it refuses to claim' },
@@ -48,7 +49,7 @@ const toc = [
   facts={facts}
   toc={toc}
   stack={['Python', 'SEC EDGAR', 'XBRL', 'Claude Haiku (tool use)', 'pytest', 'Vercel']}
-  next={{ href: '/#faultline', label: 'faultline' }}
+  next={{ href: '/work/faultline/', label: 'faultline' }}
 >
   <section id="plain">
     <h2><span class="num">01</span>In plain language</h2>
@@ -122,7 +123,19 @@ const toc = [
   </section>
 
   <section id="system">
-    <h2><span class="num">05</span>How it is put together</h2>
+    <h2><span class="num">05</span>Thought process</h2>
+    <p>Left to right, the path one guidance item takes. The model only appears in the last card, and only for items the rules could not settle.</p>
+    <ThoughtProcess
+      steps={[
+        { title: 'Fetch', points: ['8-K earnings releases, exhibit 99.1', 'XBRL company facts', 'SEC fair-access rules'], takeaway: 'Public filings, nothing scraped from news.' },
+        { title: 'Extract', points: ['Outlook blocks, line by line', 'Total revenue only, segments skipped', 'Range, midpoint ± or point estimate'], takeaway: 'Every lost point of confidence is written down.' },
+        { title: 'Match', points: ['First quarter ending after the filing', 'Five XBRL revenue tags merged', 'Q4 = full year − nine months'], takeaway: 'Dates, never fiscal labels.' },
+        { title: 'Decide', points: ['MET if reported ≥ low end', 'Restatements checked', 'Confidence = min(parse, match)'], takeaway: 'Rules settle 181 of 188.' },
+        { title: 'Adjudicate', points: ['Below 0.75 only', 'Typed tool call, four labels', 'Quote must be verbatim'], takeaway: 'No quote, no label.', model: true },
+      ]}
+      note="The rule layer and the model answer the same question with the same four labels. The difference is who is allowed to answer, and that is decided by confidence."
+    />
+    <h3>Step by step</h3>
     <ol>
       <li><strong>Fetch.</strong> Download 8-K earnings releases (Item 2.02, exhibit 99.1) and XBRL company facts from SEC EDGAR, following SEC fair-access rules.</li>
       <li><strong>Extract.</strong> Find outlook blocks line by line, skip segment rows and full-year guidance, and parse the total-revenue range.</li>

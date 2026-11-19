@@ -1,0 +1,47 @@
+---
+// Compare methods on two rates: right answers and confidently wrong answers.
+interface Row { name: string; note: string; right: [number, number]; wrong: [number, number]; ours?: boolean }
+interface Props { rows: Row[]; rightLabel: string; wrongLabel: string; caption: string }
+const { rows, rightLabel, wrongLabel, caption } = Astro.props;
+const pct = ([a, b]: [number, number]) => (b ? (100 * a) / b : 0);
+---
+<figure class="mb">
+  <div class="legend">
+    <span><i class="sw right"></i>{rightLabel}</span>
+    <span><i class="sw wrong"></i>{wrongLabel}</span>
+  </div>
+  <ul>
+    {rows.map((r) => (
+      <li class={r.ours ? 'ours' : ''}>
+        <div class="who"><strong>{r.name}</strong><span>{r.note}</span></div>
+        <div class="bars">
+          <div class="bar"><span class="fill right" style={`width:${pct(r.right)}%`}></span><b>{pct(r.right).toFixed(1)}% <em>({r.right[0]}/{r.right[1]})</em></b></div>
+          <div class="bar"><span class="fill wrong" style={`width:${pct(r.wrong)}%`}></span><b>{pct(r.wrong).toFixed(1)}% <em>({r.wrong[0]}/{r.wrong[1]})</em></b></div>
+        </div>
+      </li>
+    ))}
+  </ul>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .mb { margin: 8px 0 28px; }
+  .mb .legend { display: flex; gap: 20px; font-family: var(--mono); font-size: 11px; color: var(--muted); margin-bottom: 14px; }
+  .mb .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .mb .sw { width: 10px; height: 10px; display: inline-block; }
+  .mb .sw.right, .mb .fill.right { background: var(--accent); }
+  .mb .sw.wrong, .mb .fill.wrong { background: var(--ink); opacity: 0.55; }
+  .mb ul { list-style: none; margin: 0; padding: 0; max-width: none; border-top: 1px solid var(--rule); }
+  .mb li { display: grid; grid-template-columns: 200px 1fr; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--rule); margin: 0; }
+  .mb li.ours .who strong { color: var(--accent); }
+  .mb .who { display: flex; flex-direction: column; gap: 2px; }
+  .mb .who strong { font-weight: 500; font-size: 15px; }
+  .mb .who span { font-size: 13px; color: var(--muted); line-height: 1.35; }
+  .mb .bars { display: flex; flex-direction: column; gap: 6px; justify-content: center; }
+  .mb .bar { position: relative; display: flex; align-items: center; gap: 10px; height: 18px; }
+  .mb .fill { display: block; height: 10px; min-width: 2px; }
+  .mb .bar b { font-family: var(--mono); font-size: 11.5px; font-weight: 400; white-space: nowrap; }
+  .mb .bar em { font-style: normal; color: var(--muted); }
+  .mb figcaption { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 12px; max-width: 70ch; }
+  @media (max-width: 720px) { .mb li { grid-template-columns: 1fr; gap: 8px; } }
+</style>
