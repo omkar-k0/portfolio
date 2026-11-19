@@ -8,7 +8,9 @@ const href = (slug: string) => (ready.has(slug) ? `/work/${slug}/` : `/#${slug}`
 const missing = proof.filter((m) => !ready.has(m.slug)).length;
 
 // CV files go in public/cv/. A button appears only when its file is listed here.
-const cvFiles: { label: string; href: string }[] = [];
+const cvFiles: { label: string; href: string }[] = [
+  { label: 'CV (English, PDF)', href: '/cv/Omkar_Khadilkar_CV.pdf' },
+];
 
 const roles = [
   { title: 'AI engineering', line: 'LLM pipelines with structured output, confidence gating and evaluation' },
@@ -29,7 +31,7 @@ const roles = [
       <a class="btn" href={`mailto:${SITE.email}?subject=Werkstudent%20role`}>Email me</a>
       {cvFiles.length
         ? cvFiles.map((f) => <a class="textlink" href={f.href} download>{f.label} ↓</a>)
-        : <span class="label">CV and Lebenslauf on request</span>}
+        : <span class="label">CV on request</span>}
     </div>
   </section>
 
@@ -68,7 +70,7 @@ const roles = [
         <div><dt class="label">Grades</dt><dd>Average 1.8 so far · Information Security 1.0 · Big Data Analytics 1.3 · Business Analytics 1.3</dd></div>
         <div><dt class="label">Before</dt><dd>B.Tech. Electronics &amp; Telecommunication Engineering, Somaiya Vidyavihar University, India (2020–2024)</dd></div>
         <div><dt class="label">Experience</dt><dd>Operations working student, Picnic GmbH, NRW (April–September 2026)</dd></div>
-        <div><dt class="label">Languages</dt><dd>English: fluent (IELTS 7.5) · German: learning · Marathi: native</dd></div>
+        <div><dt class="label">Languages</dt><dd>English: fluent (C1, IELTS 7.5) · German: beginner (A1), learning · Marathi: native</dd></div>
       </dl>
     </div>
   </section>
