@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import EvidenceTag from '../components/EvidenceTag.astro';
 import { SITE } from '../config';
+import Elsewhere from '../components/Elsewhere.astro';
 import { proof, flagships } from '../data/projects';
 const ready = new Set(flagships.filter((f) => f.ready).map((f) => f.slug));
 const href = (slug: string) => (ready.has(slug) ? `/work/${slug}/` : `/#${slug}`);
@@ -87,27 +88,24 @@ const roles = [
     </div>
   </section>
 
-  <section class="section" lang="de">
-    <div class="wrap two">
-      <div class="section-head col">
-        <h2 class="label"><span class="num">04</span> Auf Deutsch</h2>
-      </div>
-      <div class="de">
-        <p>
-          Ich studiere im Master Big Data &amp; Business Analytics an der FOM in Essen und suche eine Stelle als
-          Werkstudent in AI Engineering, Data Engineering, Data Analytics oder Data Science, ab sofort mit 20 Stunden
-          pro Woche, vor Ort in Essen und NRW oder remote.
-        </p>
-        <p>
-          Meine Projekte folgen einem Prinzip: Einfache Regeln entscheiden die klaren Fälle, ein Sprachmodell nur den
-          unklaren Rest, und jede Entscheidung trägt einen Konfidenzwert und eine Quelle. Die Ergebnisse sind auf
-          dieser Seite verlinkt und nachprüfbar. Mein Deutsch ist noch im Aufbau; im Arbeitsalltag kommuniziere ich
-          fließend auf Englisch.
-        </p>
-        <p><a class="textlink" href={`mailto:${SITE.email}?subject=Werkstudentenstelle`}>E-Mail schreiben →</a></p>
-      </div>
+  <section class="section de-sec" lang="de">
+    <div class="wrap de">
+      <p>
+        Ich studiere im Master Big Data &amp; Business Analytics an der FOM in Essen und suche eine Stelle als
+        Werkstudent in AI Engineering, Data Engineering, Data Analytics oder Data Science, ab sofort mit 20 Stunden
+        pro Woche, vor Ort in Essen und NRW oder remote.
+      </p>
+      <p>
+        Meine Projekte folgen einem Prinzip: Einfache Regeln entscheiden die klaren Fälle, ein Sprachmodell nur den
+        unklaren Rest, und jede Entscheidung trägt einen Konfidenzwert und eine Quelle. Die Ergebnisse sind auf
+        dieser Seite verlinkt und nachprüfbar. Mein Deutsch ist noch im Aufbau; im Arbeitsalltag kommuniziere ich
+        fließend auf Englisch.
+      </p>
+      <p><a class="textlink" href={`mailto:${SITE.email}?subject=Werkstudentenstelle`}>E-Mail schreiben →</a></p>
     </div>
   </section>
+
+  <Elsewhere num="05" showHiring={false} />
 </Base>
 
 <style>
@@ -136,7 +134,8 @@ const roles = [
   .rt { font-size: 20px; letter-spacing: -0.01em; }
   .rl { color: var(--muted); font-size: 14px; }
 
-  .de p { max-width: 62ch; margin-bottom: 14px; }
+  .de { max-width: 62ch; margin: 0 auto; text-align: center; }
+  .de p { margin-bottom: 16px; font-size: 18px; }
 
   @media (max-width: 1000px) {
     .proof { grid-template-columns: repeat(2, 1fr); }

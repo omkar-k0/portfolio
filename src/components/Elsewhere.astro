@@ -1,0 +1,27 @@
+---
+import { SITE, LINKS } from '../config';
+interface Props { num: string; showHiring?: boolean }
+const { num, showHiring = true } = Astro.props;
+---
+<section class="section">
+  <div class="wrap two">
+    <div class="section-head col"><h2 class="label"><span class="num">{num}</span> Elsewhere</h2></div>
+    <ul class="links">
+      <li><a href={LINKS.github} rel="noopener"><span class="label">GitHub</span>Code, tests and eval files for every project ↗</a></li>
+      <li><a href={LINKS.substack} rel="noopener"><span class="label">Substack</span>A weekly build log, every Tuesday ↗</a></li>
+      <li><a href={LINKS.linkedin} rel="noopener"><span class="label">LinkedIn</span>Career and contact ↗</a></li>
+      <li><a href={`mailto:${SITE.email}`}><span class="label">Email</span>{SITE.email}</a></li>
+      {showHiring && <li><a href="/hiring/"><span class="label">Hiring?</span>Availability, roles and practicalities →</a></li>}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .two { display: grid; grid-template-columns: 3fr 9fr; gap: 24px; }
+  .col { flex-direction: column; margin: 0; }
+  .links { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
+  .links a { display: grid; grid-template-columns: 140px 1fr; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--rule); text-decoration: none; }
+  .links a:hover { color: var(--accent); }
+  @media (max-width: 1000px) { .two { grid-template-columns: 1fr; } }
+  @media (max-width: 720px) { .links a { grid-template-columns: 1fr; } }
+</style>
