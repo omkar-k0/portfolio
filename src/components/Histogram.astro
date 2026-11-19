@@ -1,0 +1,55 @@
+---
+import { greHistogram as h } from '../data/gre';
+
+const W = 760, H = 260, padL = 36, padR = 12, padT = 24, padB = 44;
+const bins = h.bins;
+const min = bins[0].from, max = bins[bins.length - 1].to;
+const maxN = Math.max(...bins.map((b) => b.n));
+const x = (v: number) => padL + ((v - min) / (max - min)) * (W - padL - padR);
+const y = (n: number) => padT + (1 - n / maxN) * (H - padT - padB);
+const yTicks = [0, 10, 20, 30, 40].filter((t) => t <= maxN);
+const xTicks = [-16, -8, 0, 8, 16, 24, 32];
+---
+<figure class="hist">
+  <div class="scroll">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby="h-title h-desc">
+    <title id="h-title">Reported revenue against the low end of guidance</title>
+    <desc id="h-desc">{`Of ${h.n} quarters, 2 came in below the low end of guidance. The median quarter came in ${h.median}% above it, and the tallest bar is 0 to 2% above.`}</desc>
+    {yTicks.map((t) => (
+      <g>
+        <line x1={padL} x2={W - padR} y1={y(t)} y2={y(t)} class="grid" />
+        <text x={padL - 8} y={y(t) + 4} class="tick" text-anchor="end">{t}</text>
+      </g>
+    ))}
+    {bins.map((b) => b.n > 0 && (
+      <rect x={x(b.from) + 1} y={y(b.n)} width={x(b.to) - x(b.from) - 2} height={y(0) - y(b.n)} class={b.from < 0 ? 'bar miss' : 'bar'}>
+        <title>{`${b.from}% to ${b.to}%: ${b.n} quarters`}</title>
+      </rect>
+    ))}
+    <line x1={x(0)} x2={x(0)} y1={padT - 10} y2={y(0)} class="zero" />
+    <text x={x(0) - 6} y={padT - 12} class="note" text-anchor="end">low end of guidance</text>
+    <line x1={x(h.median)} x2={x(h.median)} y1={padT + 30} y2={y(0)} class="med" />
+    <text x={x(h.median) + 6} y={padT + 40} class="note">{`median +${h.median}%`}</text>
+    {xTicks.map((t) => (
+      <text x={x(t)} y={H - padB + 18} class="tick" text-anchor="middle">{t > 0 ? `+${t}%` : `${t}%`}</text>
+    ))}
+    <text x={x(-12)} y={y(0) - 30} class="note">2 misses</text>
+    <text x={(W + padL) / 2} y={H - 6} class="axis" text-anchor="middle">reported revenue vs low end of guided range</text>
+  </svg>
+  </div>
+  <figcaption class="caption">{`${h.n} quarters with a reported figure. Excludes 3 spurious items and 11 quarters not yet reported. System output, not yet checked against hand labels.`}</figcaption>
+</figure>
+
+<style>
+  .hist { margin: 8px 0 24px; }
+  .scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  svg { width: 100%; min-width: 560px; height: auto; font-family: var(--mono); }
+  .grid { stroke: var(--rule); stroke-width: 1; }
+  .bar { fill: var(--ink); opacity: 0.82; }
+  .bar.miss { fill: var(--accent); opacity: 1; }
+  .zero { stroke: var(--accent); stroke-width: 1.5; }
+  .med { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 3; }
+  .tick { font-size: 11px; fill: var(--muted); }
+  .note { font-size: 11px; fill: var(--ink); }
+  .axis { font-size: 11px; fill: var(--muted); letter-spacing: 0.03em; }
+</style>

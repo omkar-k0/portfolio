@@ -1,0 +1,72 @@
+---
+// How 188 guidance items moved through the gate in the run of 24 Oct 2026.
+---
+<figure class="gate">
+  <div class="scroll">
+  <svg viewBox="0 0 760 330" role="img" aria-labelledby="gate-title gate-desc">
+    <title id="gate-title">Confidence gate routing</title>
+    <desc id="gate-desc">188 items enter the rule layer. 181 clear the 0.75 confidence threshold and are decided by rules: 167 met, 3 missed, 11 unverifiable. 7 fall below and go to the language model, which decides 6 as met, each with an exact quote, and declines 1 as unverifiable.</desc>
+    <defs>
+      <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" class="fill-muted" />
+      </marker>
+    </defs>
+
+    <!-- input -->
+    <rect x="10" y="125" width="130" height="80" class="box" />
+    <text x="24" y="152" class="t-label">INPUT</text>
+    <text x="24" y="182" class="t-big">188</text>
+    <text x="88" y="182" class="t-small">items</text>
+
+    <!-- rules -->
+    <line x1="140" y1="165" x2="196" y2="165" class="ln" marker-end="url(#arr)" />
+    <rect x="200" y="115" width="170" height="100" class="box" />
+    <text x="214" y="142" class="t-label">RULE LAYER</text>
+    <text x="214" y="168" class="t-body">parses range, matches</text>
+    <text x="214" y="186" class="t-body">quarter, scores itself</text>
+    <text x="214" y="204" class="t-mono">conf = min(parse, match)</text>
+
+    <!-- gate -->
+    <line x1="370" y1="165" x2="416" y2="165" class="ln" marker-end="url(#arr)" />
+    <polygon points="460,125 500,165 460,205 420,165" class="box" />
+    <text x="460" y="161" class="t-mono" text-anchor="middle">≥ 0.75</text>
+    <text x="460" y="177" class="t-mono" text-anchor="middle">?</text>
+
+    <!-- yes lane -->
+    <path d="M460,125 L460,60 L536,60" class="ln" marker-end="url(#arr)" />
+    <text x="470" y="96" class="t-mono">yes · 181</text>
+    <rect x="540" y="14" width="210" height="104" class="box" />
+    <text x="554" y="40" class="t-label">DECIDED BY RULES</text>
+    <text x="554" y="66" class="t-body">167 MET · 3 MISSED</text>
+    <text x="554" y="86" class="t-body">11 UNVERIFIABLE</text>
+    <text x="554" y="106" class="t-mono">no model call</text>
+
+    <!-- no lane -->
+    <path d="M460,205 L460,270 L536,270" class="ln" marker-end="url(#arr)" />
+    <text x="470" y="244" class="t-mono">no · 7</text>
+    <rect x="540" y="212" width="210" height="110" class="box esc" />
+    <text x="554" y="238" class="t-label inv">LLM + QUOTE CHECK</text>
+    <text x="554" y="264" class="t-body inv">6 MET, each with an</text>
+    <text x="554" y="282" class="t-body inv">exact quote</text>
+    <text x="554" y="308" class="t-body inv">1 declined → UNVERIFIABLE</text>
+  </svg>
+  </div>
+  <figcaption class="caption">Run of 24 Oct 2026. The threshold is the default (0.75) until it can be calibrated on hand labels.</figcaption>
+</figure>
+
+<style>
+  .gate { margin: 8px 0 24px; }
+  .scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  svg { width: 100%; min-width: 640px; height: auto; font-family: var(--sans); }
+  .box { fill: var(--bg); stroke: var(--rule-strong); stroke-width: 1; }
+  .esc { fill: var(--accent); stroke: var(--accent); }
+  .ln { stroke: var(--muted); stroke-width: 1; fill: none; }
+  .fill-muted { fill: var(--muted); }
+  .t-label { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.06em; fill: var(--muted); }
+  .t-big { font-size: 34px; letter-spacing: -0.03em; fill: var(--ink); }
+  .t-small { font-size: 13px; fill: var(--muted); }
+  .t-body { font-size: 13.5px; fill: var(--ink); }
+  .t-mono { font-family: var(--mono); font-size: 11.5px; fill: var(--muted); }
+  .inv { fill: var(--accent-ink); }
+  .t-label.inv { opacity: 0.85; }
+</style>

@@ -68,19 +68,19 @@ export const proof: (Metric & { project: string; slug: string })[] = [
 export const flagships: Flagship[] = [
   {
     slug: 'guidance-reconciliation-engine',
-    ready: false,
+    ready: true,
     name: 'Guidance Reconciliation Engine',
     kind: 'Product',
     status: 'Live · accuracy pending',
     question: 'Did the company hit the guidance it gave last quarter?',
     tags: ['Python', 'SEC EDGAR', 'Claude Haiku'],
     stages: [
-      { label: 'Fetch', detail: '8-K earnings releases' },
+      { label: 'Fetch', detail: '8-K releases and XBRL facts' },
       { label: 'Extract', detail: 'Guidance items' },
       { label: 'Rules', detail: 'Clean numeric matches' },
       { label: 'LLM', detail: 'Ambiguous rest, quote-checked', escalation: true },
     ],
-    facts: ['11 companies', '173 met · 3 missed · 12 unverifiable', '7 of 188 escalated'],
+    facts: ['185 releases, 11 companies', '7 of 188 sent to the LLM', 'Accuracy pending hand labels'],
     links: [
       { label: 'Live', href: 'https://guidance-reconciliation-engine.vercel.app' },
       { label: 'Repo', href: 'https://github.com/omkar-k0/guidance-reconciliation-engine' },

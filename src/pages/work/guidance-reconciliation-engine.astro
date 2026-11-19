@@ -1,0 +1,242 @@
+---
+import CaseStudy from '../../layouts/CaseStudy.astro';
+import GateDiagram from '../../components/GateDiagram.astro';
+import Histogram from '../../components/Histogram.astro';
+import type { Metric } from '../../data/projects';
+
+const repo = 'https://github.com/omkar-k0/guidance-reconciliation-engine';
+const src = (f: string) => `${repo}/blob/main/src/gre/${f}`;
+
+const metrics: Metric[] = [
+  { value: '185', label: 'earnings releases read, 11 companies, Jan 2022 to Oct 2026', evidence: 'measured', source: 'data/processed/results.json' },
+  { value: '7 of 188', label: 'items sent to the LLM (3.7%); the rest decided by rules', evidence: 'measured', source: 'data/processed/results.json, route field' },
+  { value: '23', label: 'unit tests on synthetic inputs', evidence: 'measured', source: 'tests/' },
+  { value: '—', label: 'accuracy against hand labels: labelling not done yet', evidence: 'pending', source: 'gre eval needs data/labels/worksheet.csv' },
+];
+
+const facts = [
+  { label: 'Type', value: 'Product' },
+  { label: 'When', value: 'October 2026' },
+  { label: 'Role', value: 'Sole developer: data, rules, gate, LLM layer, site' },
+  { label: 'Data', value: 'SEC 8-K earnings releases and XBRL company facts' },
+  { label: 'Status', value: 'Live · accuracy pending' },
+];
+
+const toc = [
+  { id: 'plain', label: 'In plain language' },
+  { id: 'question', label: 'The question' },
+  { id: 'obvious', label: 'Why the obvious fails' },
+  { id: 'gate', label: 'The gate' },
+  { id: 'system', label: 'How it is put together' },
+  { id: 'decisions', label: 'Decisions' },
+  { id: 'results', label: 'What came out' },
+  { id: 'refuses', label: 'What it refuses to claim' },
+  { id: 'broke', label: 'What broke' },
+  { id: 'open', label: 'Still open' },
+];
+---
+<CaseStudy
+  title="Guidance Reconciliation Engine"
+  question="Did the company hit the revenue guidance it gave last quarter?"
+  description="A confidence-gated engine that checks US tech companies' quarterly revenue guidance against what they later reported, with rules first, an LLM only for the unclear rest, and exact citations."
+  crumb="Product · 01"
+  links={[
+    { label: 'Open it live', href: 'https://guidance-reconciliation-engine.vercel.app', primary: true },
+    { label: 'Source on GitHub', href: repo },
+  ]}
+  metrics={metrics}
+  facts={facts}
+  toc={toc}
+  stack={['Python', 'SEC EDGAR', 'XBRL', 'Claude Haiku (tool use)', 'pytest', 'Vercel']}
+  next={{ href: '/#faultline', label: 'faultline' }}
+>
+  <section id="plain">
+    <h2><span class="num">01</span>In plain language</h2>
+    <p>
+      Every quarter, large companies say how much revenue they expect next quarter. Three months later they
+      report what actually happened. This engine reads both from public SEC filings and labels each forecast
+      <strong>MET</strong>, <strong>MISSED</strong>, <strong>RESTATED</strong> or <strong>UNVERIFIABLE</strong>.
+    </p>
+    <p>
+      Simple rules handle the clear cases. A language model only looks at the few cases the rules are unsure
+      about, and its answer counts only if it quotes the filing word for word. When the evidence is not there,
+      the engine says so instead of guessing.
+    </p>
+  </section>
+
+  <section id="question">
+    <h2><span class="num">02</span>The question</h2>
+    <p class="callout">
+      Can a system decide most of these cases with cheap, transparent rules, hand only the unclear rest to a
+      model, and still back every single label with a quote someone can check?
+    </p>
+  </section>
+
+  <section id="obvious">
+    <h2><span class="num">03</span>Why the obvious approach fails</h2>
+    <p>
+      There are two obvious ways to build this. Both fail in ways that are easy to miss.
+    </p>
+    <p>
+      <strong>A script with regular expressions</strong> is cheap and fast. It also gives the same flat
+      answer for a clean sentence and for a messy one, with no sign of which is which. It will happily
+      compare a full-year forecast against a single quarter and report a miss.
+    </p>
+    <p>
+      <strong>An LLM on every filing</strong> reads messy text well. But it always returns an answer,
+      written just as confidently when the guided period and the reported period do not match. And it costs
+      a model call for every one of the 188 items, including the ones a rule gets right for free.
+    </p>
+    <p>
+      The filings themselves are less tidy than they look. NVIDIA guides "$8.10 billion, plus or minus 2%".
+      Texas Instruments gives a range. Broadcom gives an approximate figure. Fiscal years end in different
+      months. Many companies never report a fourth quarter on its own, only the full year.
+    </p>
+  </section>
+
+  <section id="gate">
+    <h2><span class="num">04</span>The gate</h2>
+    <p>
+      The rule layer does not just give a label. It scores how sure it is and writes down every reason it lost
+      confidence. That score decides who answers.
+    </p>
+    <GateDiagram />
+    <h3>What lowers the rule layer's confidence</h3>
+    <table>
+      <thead><tr><th>Signal</th><th>Deduction</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>No forward-looking word near the figure</td><td class="n">−0.30</td><td>The number might be a past result, not a forecast</td></tr>
+        <tr><td>Adjusted basis (currency, exclusions)</td><td class="n">−0.25</td><td>May not compare to reported total revenue</td></tr>
+        <tr><td>Reported figure within 0.5% of the low end</td><td class="n">−0.20</td><td>MET versus MISSED depends on rounding</td></tr>
+        <tr><td>Period not named</td><td class="n">−0.15</td><td>"Next quarter" has to be assumed</td></tr>
+        <tr><td>Point estimate ("approximately $X")</td><td class="n">−0.15</td><td>No range given; met from 99% of X</td></tr>
+        <tr><td>Range written in reverse</td><td class="n">−0.10</td><td>Unusual format, worth a second look</td></tr>
+      </tbody>
+    </table>
+    <p class="caption">From <a href={src('extract.py')}>extract.py</a> and <a href={src('rules.py')}>rules.py</a>. Final confidence is the lower of parsing confidence and matching confidence.</p>
+    <p>
+      In this run, 6 of the 7 escalations were AMD releases. AMD writes its outlook in a way the rule layer
+      does not recognise as forward-looking, so each one lost 0.30 and went to the model. That is the gate
+      doing its job: the unusual format got a closer read instead of a silent guess.
+    </p>
+  </section>
+
+  <section id="system">
+    <h2><span class="num">05</span>How it is put together</h2>
+    <ol>
+      <li><strong>Fetch.</strong> Download 8-K earnings releases (Item 2.02, exhibit 99.1) and XBRL company facts from SEC EDGAR, following SEC fair-access rules.</li>
+      <li><strong>Extract.</strong> Find outlook blocks line by line, skip segment rows and full-year guidance, and parse the total-revenue range.</li>
+      <li><strong>Match.</strong> Find the reported revenue for the first roughly three-month period ending after the filing date. Merge the five XBRL revenue tags companies switch between. Derive Q4 as full year minus nine months.</li>
+      <li><strong>Decide.</strong> Rules label the item and score themselves.</li>
+      <li><strong>Gate.</strong> At or above 0.75 the rule decision stands. Below it, Claude gets the filing text and must answer through a typed tool call.</li>
+      <li><strong>Check the quote.</strong> Every citation the model gives must appear verbatim in the source. With no valid quote from the guidance, the label becomes UNVERIFIABLE. Answers are cached on disk, so re-runs cost nothing.</li>
+    </ol>
+  </section>
+
+  <section id="decisions">
+    <h2><span class="num">06</span>Decisions, and what they cost</h2>
+    <div class="decisions">
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Rules first, LLM for the rest</strong>
+          <p>181 of 188 items were decided without a model call. Only 7 needed one.</p></div>
+        <div><span class="label">Instead of</span><strong>An LLM on every item</strong>
+          <p>188 calls, and no record of which answers came from easy cases and which from hard ones.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>No quote, no label</strong>
+          <p>A model answer only counts if it quotes the filing exactly. Anything else becomes UNVERIFIABLE.</p></div>
+        <div><span class="label">Instead of</span><strong>Trusting the model's own confidence</strong>
+          <p>A confident paragraph is not evidence. A quote someone can find in the filing is.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Match on period end dates</strong>
+          <p>Reported period must end after the filing date, within 130 days.</p></div>
+        <div><span class="label">Instead of</span><strong>Match on fiscal labels</strong>
+          <p>NVIDIA's "first quarter of fiscal 2023" ended in May 2022. Labels across companies do not line up; dates do.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Count out-of-scope cases</strong>
+          <p>Full-year, growth-percentage and segment guidance are skipped and counted. Workday was dropped: its guidance is subscription revenue only.</p></div>
+        <div><span class="label">Instead of</span><strong>Stretch the rules to cover them</strong>
+          <p>Each stretch adds a way to be quietly wrong. v1 stays narrow: quarterly total revenue.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Calibrate the threshold on labels</strong>
+          <p>Temperature scaling plus the lowest threshold at which rule-decided items reach 95% precision. Built, waiting for labels.</p></div>
+        <div><span class="label">Instead of</span><strong>Pick a threshold that looks right</strong>
+          <p>0.75 is a placeholder until hand labels say otherwise.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="results">
+    <h2><span class="num">07</span>What came out</h2>
+    <p>
+      Of 174 quarters with a reported figure, the engine found 2 where revenue came in below the low end of
+      guidance. Both are well-known misses: NVIDIA's second quarter of fiscal 2023 (guided $8.10B ± 2%,
+      reported $6.70B) and Micron's fourth quarter of fiscal 2022 (guided $7.2B ± $0.4B, reported $6.64B).
+    </p>
+    <Histogram />
+    <p>
+      Everything else landed at or above the low end. 48 quarters landed within 2% above it. For these
+      companies, the low end of the guided range is rarely broken.
+    </p>
+    <p>
+      11 items are UNVERIFIABLE because their quarter had not been reported yet when the engine ran on
+      24 October 2026. One more is UNVERIFIABLE because the model declined it (see section 09).
+    </p>
+  </section>
+
+  <section id="refuses">
+    <h2><span class="num">08</span>What it refuses to claim</h2>
+    <p>
+      <strong>Accuracy.</strong> The engine has not been scored against hand labels yet, so no accuracy number
+      appears anywhere. The labelling sheet is blind: it hides the system's labels so they cannot bias the
+      person checking.
+    </p>
+    <p>
+      <strong>A "beat rate" for these companies.</strong> The chart shows the engine's output. Until the labels
+      exist, it is a description of what the engine decided, not a finding about the companies.
+    </p>
+  </section>
+
+  <section id="broke">
+    <h2><span class="num">09</span>What broke</h2>
+    <h3>Three items that should not exist</h3>
+    <p>
+      While writing this page I checked all 188 items by hand. Three come from releases that contain a second
+      dollar figure next to the quarterly guidance. The extractor turned each into an extra item:
+    </p>
+    <table>
+      <thead><tr><th>Release</th><th>What it read</th><th>Label given</th><th>Rule conf.</th></tr></thead>
+      <tbody>
+        <tr><td>Cisco, May 2024</td><td>Full-year revenue guidance of $53.6–53.8B, compared against one quarter</td><td>MISSED</td><td class="n">0.80</td></tr>
+        <tr><td>Broadcom, Sep 2024</td><td>Full-year AI revenue of $12B, compared against total quarterly revenue</td><td>MET</td><td class="n">0.80</td></tr>
+        <tr><td>Broadcom, Mar 2026</td><td>A $10B share buyback, read as revenue guidance</td><td>MET</td><td class="n">0.85</td></tr>
+      </tbody>
+    </table>
+    <p>
+      All three cleared the gate. The confidence deductions only catch the problems they were written for, and
+      "second figure in the same release" was not one of them. The fix is a structural rule, not another
+      deduction: one quarterly total-revenue item per release. These are exactly the errors hand labelling is
+      for, and why accuracy stays pending until it is done.
+    </p>
+    <h3>The model caught an extractor bug</h3>
+    <p>
+      For AMD's October 2024 release, the extractor attached the wrong period label to correct guidance. The
+      model noticed that the label and the reported period did not agree and returned UNVERIFIABLE instead of
+      MET. The rule layer had said MET. Refusing was the right call.
+    </p>
+  </section>
+
+  <section id="open">
+    <h2><span class="num">10</span>Still open</h2>
+    <ul>
+      <li>Hand-label the items, run <code>gre eval</code>, and replace the pending accuracy with a measured one.</li>
+      <li>Enforce one quarterly item per release, and fix AMD's period label.</li>
+      <li>Split UNVERIFIABLE into "cannot tell" and "not reported yet".</li>
+      <li>RESTATED never fired in this run. The detection exists but has not been seen working on real data.</li>
+      <li>Calibrate the 0.75 threshold once labels exist.</li>
+    </ul>
+  </section>
+</CaseStudy>

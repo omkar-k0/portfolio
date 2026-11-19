@@ -1,0 +1,156 @@
+---
+import Base from './Base.astro';
+import EvidenceTag from '../components/EvidenceTag.astro';
+import type { Metric } from '../data/projects';
+
+interface Props {
+  title: string;
+  question: string;
+  description: string;
+  crumb: string; // e.g. "Work · Product · 01"
+  links: { label: string; href: string; primary?: boolean }[];
+  metrics: Metric[];
+  facts: { label: string; value: string }[];
+  toc: { id: string; label: string }[];
+  stack: string[];
+  prev?: { href: string; label: string };
+  next?: { href: string; label: string };
+}
+const { title, question, description, crumb, links, metrics, facts, toc, stack, prev, next } = Astro.props;
+---
+<Base title={`${title} · Case study · Omkar Khadilkar`} description={description}>
+  <article class="cs">
+    <header class="cs-head wrap">
+      <p class="label crumb"><a href="/#work">Work</a> · {crumb}</p>
+      <h1>{title}</h1>
+      <p class="q">{question}</p>
+      <div class="cs-links">
+        {links.map((l) => (
+          <a class={l.primary ? 'btn' : 'textlink'} href={l.href} rel="noopener">{l.label}{l.primary ? '' : ' ↗'}</a>
+        ))}
+      </div>
+    </header>
+
+    <div class="wrap">
+      <ul class="tiles">
+        {metrics.map((m) => (
+          <li>
+            <EvidenceTag level={m.evidence} source={m.source} />
+            <span class={m.evidence === 'pending' ? 'tval pending' : 'tval'}>{m.value}</span>
+            <span class="tlabel">{m.label}</span>
+          </li>
+        ))}
+      </ul>
+      <dl class="facts">
+        {facts.map((f) => (<div><dt class="label">{f.label}</dt><dd>{f.value}</dd></div>))}
+      </dl>
+    </div>
+
+    <div class="wrap layout">
+      <nav class="toc" aria-label="On this page">
+        <details open>
+          <summary class="label">On this page</summary>
+          <ol>
+            {toc.map((t, i) => (<li><a href={`#${t.id}`}><span class="mono">{String(i + 1).padStart(2, '0')}</span> {t.label}</a></li>))}
+          </ol>
+        </details>
+      </nav>
+      <div class="prose"><slot /></div>
+    </div>
+
+    <footer class="wrap cs-foot">
+      <div class="stack">
+        <p class="label">Built with</p>
+        <ul>{stack.map((s) => <li>{s}</li>)}</ul>
+      </div>
+      <nav class="pn" aria-label="More case studies">
+        {prev ? <a href={prev.href}><span class="label">← Previous</span>{prev.label}</a> : <span />}
+        <a href="/#work" class="all"><span class="label">All work</span>Back to the flagships</a>
+        {next ? <a href={next.href} class="right"><span class="label">Next →</span>{next.label}</a> : <span />}
+      </nav>
+    </footer>
+  </article>
+</Base>
+
+<style>
+  .cs-head { padding-top: 80px; padding-bottom: 40px; }
+  .crumb a { text-decoration: none; }
+  .crumb a:hover { color: var(--accent); }
+  h1 { font-size: clamp(40px, 6vw, 80px); letter-spacing: -0.035em; line-height: 1.02; margin: 18px 0 16px; max-width: 14em; }
+  .q { font-size: clamp(19px, 2vw, 24px); color: var(--muted); font-style: italic; max-width: 32em; }
+  .cs-links { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; margin-top: 32px; }
+
+  .tiles { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  .tiles li { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 22px 20px; }
+  .tiles li + li { border-left: 1px solid var(--rule); }
+  .tval { font-size: clamp(34px, 3.6vw, 48px); line-height: 1; letter-spacing: -0.03em; margin-top: 10px; }
+  .tval.pending { color: var(--muted); }
+  .tlabel { font-size: 14px; color: var(--muted); line-height: 1.45; }
+
+  .facts { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin: 0; border-bottom: 1px solid var(--rule); }
+  .facts div { padding: 16px 20px 18px 0; }
+  .facts dd { margin: 6px 0 0; font-size: 14px; line-height: 1.45; }
+
+  .layout { display: grid; grid-template-columns: 3fr 7fr 2fr; gap: 24px; padding-top: 64px; padding-bottom: 40px; }
+  .toc { position: sticky; top: 84px; align-self: start; }
+  .toc summary { list-style: none; cursor: default; margin-bottom: 14px; }
+  .toc summary::-webkit-details-marker { display: none; }
+  .toc ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; border-left: 1px solid var(--rule); }
+  .toc a { display: block; padding-left: 14px; font-size: 14px; text-decoration: none; color: var(--muted); }
+  .toc a:hover { color: var(--ink); }
+  .toc .mono { font-size: 11px; color: var(--accent); margin-right: 4px; }
+
+  .prose { min-width: 0; }
+  .prose :global(section) { scroll-margin-top: 80px; padding-bottom: 48px; }
+  .prose :global(section + section) { border-top: 1px solid var(--rule); padding-top: 40px; }
+  .prose :global(h2) { font-size: 28px; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 18px; }
+  .prose :global(h2 .num) { font-family: var(--mono); font-size: 13px; color: var(--accent); vertical-align: middle; margin-right: 10px; letter-spacing: 0; }
+  .prose :global(h3) { font-size: 18px; font-weight: 500; margin: 28px 0 8px; }
+  .prose :global(p) { margin: 0 0 16px; max-width: 66ch; }
+  .prose :global(ul), .prose :global(ol) { margin: 0 0 16px; padding-left: 22px; max-width: 66ch; }
+  .prose :global(li) { margin-bottom: 6px; }
+  .prose :global(code) { font-family: var(--mono); font-size: 0.88em; background: var(--surface); border: 1px solid var(--rule); padding: 1px 5px; border-radius: 2px; }
+  .prose :global(.callout) { border-left: 2px solid var(--accent); background: var(--surface); padding: 20px 24px; font-size: 20px; line-height: 1.45; letter-spacing: -0.01em; max-width: 34em; margin: 0 0 16px; }
+  .prose :global(.caption) { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 12px; max-width: 70ch; }
+  .prose :global(table) { width: 100%; border-collapse: collapse; margin: 8px 0 20px; font-size: 15px; }
+  .prose :global(th) { text-align: left; font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); font-weight: 400; padding: 0 12px 10px 0; border-bottom: 1px solid var(--rule-strong); }
+  .prose :global(td) { padding: 10px 12px 10px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  .prose :global(td.n) { font-family: var(--mono); white-space: nowrap; }
+  .prose :global(.decisions) { display: grid; gap: 14px; margin-top: 8px; }
+  .prose :global(.decision) { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--rule); }
+  .prose :global(.decision > div) { padding: 16px 18px; }
+  .prose :global(.decision > div + div) { border-left: 1px solid var(--rule); background: var(--surface); }
+  .prose :global(.decision .label) { display: block; margin-bottom: 6px; }
+  .prose :global(.decision strong) { font-weight: 500; }
+  .prose :global(.decision p) { margin: 8px 0 0; font-size: 15px; color: var(--muted); }
+
+  .cs-foot { padding-bottom: 72px; }
+  .stack { border-top: 1px solid var(--rule); padding-top: 24px; }
+  .stack ul { list-style: none; padding: 0; margin: 12px 0 0; display: flex; flex-wrap: wrap; gap: 6px; }
+  .stack li { font-family: var(--mono); font-size: 12px; border: 1px solid var(--rule-strong); padding: 4px 9px; border-radius: 2px; }
+  .pn { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; margin-top: 40px; border: 1px solid var(--rule); }
+  .pn a { display: flex; flex-direction: column; gap: 6px; padding: 18px 20px; text-decoration: none; }
+  .pn a:hover { background: var(--surface); }
+  .pn > * + * { border-left: 1px solid var(--rule); }
+  .pn .right { text-align: right; align-items: flex-end; }
+
+  @media (max-width: 1000px) {
+    .tiles { grid-template-columns: repeat(2, 1fr); }
+    .tiles li:nth-child(3) { border-left: none; }
+    .tiles li:nth-child(n + 3) { border-top: 1px solid var(--rule); }
+    .facts { grid-template-columns: repeat(2, 1fr); }
+    .layout { grid-template-columns: 1fr; padding-top: 32px; }
+    .toc { position: static; border: 1px solid var(--rule); padding: 14px 16px; }
+    .toc summary { cursor: pointer; margin-bottom: 0; }
+    .toc details[open] summary { margin-bottom: 12px; }
+  }
+  @media (max-width: 720px) {
+    .cs-head { padding-top: 48px; }
+    .prose :global(.decision) { grid-template-columns: 1fr; }
+    .prose :global(.decision > div + div) { border-left: none; border-top: 1px solid var(--rule); }
+    .pn { grid-template-columns: 1fr; }
+    .pn > * + * { border-left: none; border-top: 1px solid var(--rule); }
+    .pn .right { text-align: left; align-items: flex-start; }
+    .prose :global(table) { font-size: 13px; }
+  }
+</style>
