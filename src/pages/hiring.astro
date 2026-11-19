@@ -1,0 +1,149 @@
+---
+import Base from '../layouts/Base.astro';
+import EvidenceTag from '../components/EvidenceTag.astro';
+import { SITE } from '../config';
+import { proof, flagships } from '../data/projects';
+const ready = new Set(flagships.filter((f) => f.ready).map((f) => f.slug));
+const href = (slug: string) => (ready.has(slug) ? `/work/${slug}/` : `/#${slug}`);
+const missing = proof.filter((m) => !ready.has(m.slug)).length;
+
+// CV files go in public/cv/. A button appears only when its file is listed here.
+const cvFiles: { label: string; href: string }[] = [];
+
+const roles = [
+  { title: 'AI engineering', line: 'LLM pipelines with structured output, confidence gating and evaluation' },
+  { title: 'Data engineering', line: 'dbt, SQL pipelines, data quality checks and lineage' },
+  { title: 'Data analytics', line: 'Python, statistics, dashboards and clear write-ups' },
+  { title: 'Data science', line: 'Modelling, calibration, regression and honest evaluation' },
+];
+---
+<Base title="Hiring · Omkar Khadilkar" description="Available now as a working student, 20 hours a week, in AI engineering, data engineering, data analytics or data science. Essen and NRW, on site or remote.">
+  <section class="head wrap">
+    <p class="label">For recruiters</p>
+    <h1>Available now. 20 hours a week.</h1>
+    <p class="sub">
+      Werkstudent roles in AI engineering, data engineering, data analytics and data science. Essen and NRW, on
+      site or remote. Every number on this page links to where it came from.
+    </p>
+    <div class="cta">
+      <a class="btn" href={`mailto:${SITE.email}?subject=Werkstudent%20role`}>Email me</a>
+      {cvFiles.length
+        ? cvFiles.map((f) => <a class="textlink" href={f.href} download>{f.label} ↓</a>)
+        : <span class="label">CV and Lebenslauf on request</span>}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 class="label"><span class="num">01</span> Evidence</h2>
+        <a class="label" href="/work/">All projects →</a>
+      </div>
+      <ul class="proof">
+        {proof.map((m) => (
+          <li>
+            <a href={href(m.slug)}>
+              <EvidenceTag level={m.evidence} source={m.source} />
+              <span class="value">{m.value}</span>
+              <span class="mlabel">{m.label}</span>
+              <span class="label proj">{m.project} →</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      {missing > 0 && <p class="note">{missing === 1 ? 'One card leads' : `${missing} cards lead`} to the home page, where its case study will appear once it is written.</p>}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap two">
+      <div class="section-head col">
+        <h2 class="label"><span class="num">02</span> Practicalities</h2>
+      </div>
+      <dl class="facts">
+        <div><dt class="label">Location</dt><dd>Essen, NRW · on site or remote</dd></div>
+        <div><dt class="label">Hours</dt><dd>20 per week during the semester</dd></div>
+        <div><dt class="label">Start</dt><dd>Now</dd></div>
+        <div><dt class="label">Study</dt><dd>M.Sc. Big Data &amp; Business Analytics, FOM University of Applied Sciences, Essen (since October 2025)</dd></div>
+        <div><dt class="label">Grades</dt><dd>Average 1.8 so far · Information Security 1.0 · Big Data Analytics 1.3 · Business Analytics 1.3</dd></div>
+        <div><dt class="label">Before</dt><dd>B.Tech. Electronics &amp; Telecommunication Engineering, Somaiya Vidyavihar University, India (2020–2024)</dd></div>
+        <div><dt class="label">Experience</dt><dd>Operations working student, Picnic GmbH, NRW (April–September 2026)</dd></div>
+        <div><dt class="label">Languages</dt><dd>English: fluent (IELTS 7.5) · German: learning · Marathi: native</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 class="label"><span class="num">03</span> Roles I fit</h2>
+      </div>
+      <ul class="roles">
+        {roles.map((r) => (<li><span class="rt">Working student, {r.title}</span><span class="rl">{r.line}</span></li>))}
+      </ul>
+      <p class="note">If your role is not listed but the projects look relevant, write anyway.</p>
+    </div>
+  </section>
+
+  <section class="section" lang="de">
+    <div class="wrap two">
+      <div class="section-head col">
+        <h2 class="label"><span class="num">04</span> Auf Deutsch</h2>
+      </div>
+      <div class="de">
+        <p>
+          Ich studiere im Master Big Data &amp; Business Analytics an der FOM in Essen und suche eine Stelle als
+          Werkstudent in AI Engineering, Data Engineering, Data Analytics oder Data Science, ab sofort mit 20 Stunden
+          pro Woche, vor Ort in Essen und NRW oder remote.
+        </p>
+        <p>
+          Meine Projekte folgen einem Prinzip: Einfache Regeln entscheiden die klaren Fälle, ein Sprachmodell nur den
+          unklaren Rest, und jede Entscheidung trägt einen Konfidenzwert und eine Quelle. Die Ergebnisse sind auf
+          dieser Seite verlinkt und nachprüfbar. Mein Deutsch ist noch im Aufbau; im Arbeitsalltag kommuniziere ich
+          fließend auf Englisch.
+        </p>
+        <p><a class="textlink" href={`mailto:${SITE.email}?subject=Werkstudentenstelle`}>E-Mail schreiben →</a></p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .head { padding-top: 88px; padding-bottom: 56px; }
+  h1 { font-size: clamp(40px, 6vw, 80px); letter-spacing: -0.035em; line-height: 1.02; margin: 16px 0 18px; max-width: 12em; }
+  .sub { color: var(--muted); font-size: 18px; max-width: 34em; }
+  .cta { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; margin-top: 32px; }
+
+  .proof { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  .proof li + li { border-left: 1px solid var(--rule); }
+  .proof a { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 22px 20px; text-decoration: none; height: 100%; }
+  .proof a:hover { background: var(--surface); }
+  .value { font-size: clamp(36px, 3.8vw, 50px); line-height: 1; letter-spacing: -0.03em; margin-top: 12px; }
+  .mlabel { font-size: 14px; line-height: 1.45; color: var(--muted); flex: 1; }
+  .proj { color: var(--ink); }
+  .note { color: var(--muted); font-size: 14px; margin-top: 16px; }
+
+  .two { display: grid; grid-template-columns: 3fr 9fr; gap: 24px; }
+  .col { flex-direction: column; margin: 0; }
+  .facts { margin: 0; border-top: 1px solid var(--rule); }
+  .facts div { display: grid; grid-template-columns: 140px 1fr; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--rule); }
+  .facts dd { margin: 0; }
+
+  .roles { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); border-top: 1px solid var(--rule); }
+  .roles li { display: flex; flex-direction: column; gap: 4px; padding: 18px 20px 18px 0; border-bottom: 1px solid var(--rule); }
+  .rt { font-size: 20px; letter-spacing: -0.01em; }
+  .rl { color: var(--muted); font-size: 14px; }
+
+  .de p { max-width: 62ch; margin-bottom: 14px; }
+
+  @media (max-width: 1000px) {
+    .proof { grid-template-columns: repeat(2, 1fr); }
+    .proof li:nth-child(3) { border-left: none; }
+    .proof li:nth-child(n + 3) { border-top: 1px solid var(--rule); }
+    .two { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 720px) {
+    .roles { grid-template-columns: 1fr; }
+    .facts div { grid-template-columns: 1fr; gap: 4px; }
+  }
+</style>

@@ -10,10 +10,10 @@ const ready = new Set(flagships.filter((f) => f.ready).map((f) => f.slug));
 const projectHref = (slug: string) => (ready.has(slug) ? `/work/${slug}/` : `#${slug}`);
 
 const doors = [
-  { title: "I'm hiring", line: 'Availability and how to reach me', href: '#now' },
+  { title: "I'm hiring", line: 'Availability, roles, practicalities', href: '/hiring/' },
   { title: 'Show me the work', line: 'Every project, with its numbers', href: '/work/' },
   { title: 'I want the code', line: 'Repositories, tests, eval files', href: LINKS.github, external: true },
-  { title: 'Who is this?', line: 'Background on LinkedIn', href: LINKS.linkedin, external: true },
+  { title: 'Who is this?', line: 'Background and how I work', href: '/about/' },
 ];
 ---
 <Base>
