@@ -1,0 +1,125 @@
+---
+import Base from '../../layouts/Base.astro';
+import EvidenceTag from '../../components/EvidenceTag.astro';
+import { work } from '../../data/projects';
+
+const kinds = ['Product', 'Open source', 'Research', 'Tool'] as const;
+const count = (k: string) => work.filter((w) => w.kind === k).length;
+const caseStudies = work.filter((w) => w.href.startsWith('/work/')).length;
+---
+<Base title="Work · Omkar Khadilkar" description="Every project, numbered straight through: products, open source, research and tools, each with its key number and how it was measured.">
+  <section class="head wrap">
+    <p class="label">Work</p>
+    <h1>{work.length} projects, numbered straight through.</h1>
+    <p class="sub">
+      Every number is tagged with how it was measured. Projects without a case study link to their code, or
+      say why there is none yet.
+    </p>
+    <ul class="counts">
+      <li><span class="cn">{caseStudies}</span><span class="label">case studies</span></li>
+      {kinds.map((k) => <li><span class="cn">{count(k)}</span><span class="label">{k}</span></li>)}
+    </ul>
+  </section>
+
+  <section class="wrap list">
+    <div class="filters" role="group" aria-label="Filter projects">
+      <button type="button" class="chip" data-filter="all" aria-pressed="true">All {work.length}</button>
+      {kinds.map((k) => <button type="button" class="chip" data-filter={k} aria-pressed="false">{k} {count(k)}</button>)}
+    </div>
+    <p class="label status" aria-live="polite">Showing all {work.length} projects</p>
+
+    <ol class="rows">
+      {work.map((w, i) => {
+        const inner = (
+          <>
+            <span class="no mono">{String(i + 1).padStart(2, '0')}</span>
+            <span class="main">
+              <span class="kind label">{w.kind}</span>
+              <span class="name">{w.name}</span>
+              <span class="ans">{w.answers}</span>
+            </span>
+            <span class="num">
+              <EvidenceTag level={w.metric.evidence} source={w.metric.source} />
+              <span class="val">{w.metric.value}</span>
+              <span class="mlabel">{w.metric.label}</span>
+            </span>
+            <span class="st label">{w.status}</span>
+            <span class="go mono" aria-hidden="true">{w.href ? (w.external ? '↗' : '→') : ''}</span>
+          </>
+        );
+        return (
+          <li data-kind={w.kind}>
+            {w.href
+              ? <a class="row" href={w.href} {...(w.external ? { rel: 'noopener' } : {})}>{inner}</a>
+              : <div class="row">{inner}</div>}
+          </li>
+        );
+      })}
+    </ol>
+  </section>
+</Base>
+
+<script>
+  const chips = document.querySelectorAll<HTMLButtonElement>('.chip');
+  const rows = document.querySelectorAll<HTMLLIElement>('.rows > li');
+  const status = document.querySelector('.status');
+  chips.forEach((c) =>
+    c.addEventListener('click', () => {
+      const f = c.dataset.filter;
+      chips.forEach((x) => x.setAttribute('aria-pressed', String(x === c)));
+      let shown = 0;
+      rows.forEach((r) => {
+        const on = f === 'all' || r.dataset.kind === f;
+        r.hidden = !on;
+        if (on) shown++;
+      });
+      if (status) status.textContent = f === 'all' ? `Showing all ${shown} projects` : `Showing ${shown} ${f.toLowerCase()} project${shown === 1 ? '' : 's'}`;
+    }),
+  );
+</script>
+
+<style>
+  .head { padding-top: 88px; padding-bottom: 40px; }
+  h1 { font-size: clamp(36px, 5vw, 64px); letter-spacing: -0.035em; line-height: 1.05; margin: 16px 0 16px; max-width: 16em; }
+  .sub { color: var(--muted); max-width: 36em; }
+  .counts { list-style: none; padding: 0; margin: 40px 0 0; display: flex; flex-wrap: wrap; border-top: 1px solid var(--rule); }
+  .counts li { display: flex; flex-direction: column; gap: 4px; padding: 16px 32px 0 0; }
+  .cn { font-size: 32px; letter-spacing: -0.02em; line-height: 1; }
+
+  .list { padding-bottom: 96px; }
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip {
+    font-family: var(--mono); font-size: 12px; background: none; color: var(--ink);
+    border: 1px solid var(--rule-strong); padding: 7px 12px; border-radius: 2px; cursor: pointer;
+  }
+  .chip:hover { border-color: var(--ink); }
+  .chip[aria-pressed='true'] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .status { margin: 16px 0 12px; }
+
+  .rows { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule-strong); }
+  .rows li[hidden] { display: none; }
+  .row {
+    display: grid; grid-template-columns: 56px 1fr 260px 180px 24px; gap: 20px; align-items: start;
+    padding: 22px 0; border-bottom: 1px solid var(--rule); text-decoration: none; position: relative;
+  }
+  a.row:hover { background: linear-gradient(90deg, var(--surface), transparent); }
+  a.row:hover::before { content: ''; position: absolute; left: -12px; top: 0; bottom: 0; width: 2px; background: var(--accent); }
+  a.row:hover .name { color: var(--accent); }
+  .no { color: var(--muted); font-size: 13px; padding-top: 3px; }
+  .main { display: flex; flex-direction: column; gap: 4px; }
+  .name { font-size: 22px; letter-spacing: -0.015em; line-height: 1.2; }
+  .ans { color: var(--muted); font-size: 15px; font-style: italic; }
+  .num { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+  .val { font-size: 26px; letter-spacing: -0.02em; line-height: 1; margin-top: 4px; }
+  .mlabel { font-size: 13px; color: var(--muted); line-height: 1.35; }
+  .st { padding-top: 4px; line-height: 1.5; }
+  .go { color: var(--muted); padding-top: 3px; text-align: right; }
+
+  @media (max-width: 1000px) {
+    .row { grid-template-columns: 44px 1fr 24px; }
+    .num { grid-column: 2; flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 8px; }
+    .val { font-size: 20px; margin: 0; }
+    .st { grid-column: 2; padding-top: 0; }
+    .go { grid-row: 1; grid-column: 3; }
+  }
+</style>

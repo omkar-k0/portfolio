@@ -11,7 +11,7 @@ const projectHref = (slug: string) => (ready.has(slug) ? `/work/${slug}/` : `#${
 
 const doors = [
   { title: "I'm hiring", line: 'Availability and how to reach me', href: '#now' },
-  { title: 'Show me the work', line: 'Four systems, one idea', href: '#work' },
+  { title: 'Show me the work', line: 'Every project, with its numbers', href: '/work/' },
   { title: 'I want the code', line: 'Repositories, tests, eval files', href: LINKS.github, external: true },
   { title: 'Who is this?', line: 'Background on LinkedIn', href: LINKS.linkedin, external: true },
 ];
@@ -114,6 +114,7 @@ const doors = [
     <div class="wrap">
       <div class="section-head">
         <h2 class="label"><span class="num">04</span> Index</h2>
+        <a class="label" href="/work/">All projects →</a>
       </div>
       <table class="ledger">
         <thead><tr><th class="label">No.</th><th class="label">Project</th><th class="label">Type</th><th class="label note-col">Note</th><th></th></tr></thead>

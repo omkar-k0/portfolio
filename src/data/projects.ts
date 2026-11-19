@@ -154,3 +154,79 @@ export const ledger = [
   { name: 'GradeLens', kind: 'Tool', note: 'Grade trajectory extension for FOM students · v0.4', href: 'https://github.com/omkar-k0/gradelens' },
   { name: 'profile-hud', kind: 'Tool', note: 'GitHub Action for profile cards · 156+ tests', href: 'https://github.com/omkar-k0/profile-hud' },
 ];
+
+// Full work index (/work/). Numbered straight through, flagships first.
+export interface WorkItem {
+  name: string;
+  kind: 'Product' | 'Research' | 'Open source' | 'Tool';
+  answers: string;
+  metric: Metric;
+  status: string;
+  href: string;      // case study if it exists, else repository, else empty
+  external: boolean;
+}
+
+const caseStudy = (slug: string) => `/work/${slug}/`;
+
+export const work: WorkItem[] = [
+  {
+    name: 'Guidance Reconciliation Engine', kind: 'Product',
+    answers: 'Did the company hit the revenue guidance it gave last quarter?',
+    metric: { value: '7 of 188', label: 'sent to the LLM', evidence: 'measured', source: 'results.json' },
+    status: 'Live · accuracy pending', href: caseStudy('guidance-reconciliation-engine'), external: false,
+  },
+  {
+    name: 'faultline', kind: 'Open source',
+    answers: 'Why did the dbt pipeline break, and where is the evidence?',
+    metric: { value: '89.6%', label: 'top-1, 0 wrong (dev)', evidence: 'measured', source: 'eval/results/dev/triage.md' },
+    status: 'In progress · held-out pending', href: caseStudy('faultline'), external: false,
+  },
+  {
+    name: 'Werkbank', kind: 'Product',
+    answers: 'Which workshop should take this furniture order?',
+    metric: { value: '95.8%', label: 'on auto-routed orders', evidence: 'measured', source: 'reports/eval.md, n = 60' },
+    status: 'Live demo', href: caseStudy('werkbank'), external: false,
+  },
+  {
+    name: 'FinBERT fusion', kind: 'Research',
+    answers: 'When should a small model hand a sentence to an LLM?',
+    metric: { value: '0.878', label: 'accuracy (FinBERT alone 0.844)', evidence: 'measured', source: 'test n = 147' },
+    status: 'Case study coming', href: '', external: false,
+  },
+  {
+    name: 'Sustainability commitment classifier', kind: 'Tool',
+    answers: 'Which climate commitments in a sustainability report come with a number?',
+    metric: { value: '12.3%', label: 'of 1,562 commitments quantified', evidence: 'measured', source: 'repo output, re-run 16 Oct 2026' },
+    status: 'Done · rule-based', href: 'https://github.com/omkar-k0/sustainability-commitment-classifier', external: true,
+  },
+  {
+    name: 'DAX 40 capital structure', kind: 'Research',
+    answers: 'What drives leverage in large German companies?',
+    metric: { value: '127', label: 'firm-years, 32 firms · graded 1.3', evidence: 'measured', source: 'FOM paper, verified 16 Oct 2026' },
+    status: 'Paper · code being published', href: '', external: false,
+  },
+  {
+    name: 'ESG and bond spreads', kind: 'Research',
+    answers: 'Do ESG rating changes move corporate bond spreads?',
+    metric: { value: 'No', label: 'significant effect (p 0.53–0.97)', evidence: 'measured', source: 'panel regression, 56 obs' },
+    status: 'Done · honest null result', href: '', external: false,
+  },
+  {
+    name: 'Dem Fragen', kind: 'Product',
+    answers: 'What does Indian law say about my problem, and when do I need a lawyer?',
+    metric: { value: '—', label: 'real eval not run yet', evidence: 'pending', source: 'mock baseline only' },
+    status: 'Live · in progress', href: 'https://github.com/omkar-k0/cuddly-octo-palm-tree', external: true,
+  },
+  {
+    name: 'GradeLens', kind: 'Tool',
+    answers: 'What does each remaining FOM exam need for my target grade?',
+    metric: { value: 'v0.4', label: 'unit and end-to-end tests', evidence: 'measured', source: 'repo README' },
+    status: 'Chrome extension', href: 'https://github.com/omkar-k0/gradelens', external: true,
+  },
+  {
+    name: 'profile-hud', kind: 'Tool',
+    answers: 'Can a GitHub profile show real project data instead of badges?',
+    metric: { value: '156+', label: 'tests, CI green', evidence: 'measured', source: 'repo, v1.0.0' },
+    status: 'GitHub Action · MIT', href: 'https://github.com/omkar-k0/profile-hud', external: true,
+  },
+];
