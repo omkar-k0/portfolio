@@ -1,0 +1,81 @@
+---
+import { SITE } from '../config';
+const path = Astro.url.pathname;
+const items = [
+  { href: '/work/', label: 'Work' },
+  { href: '/notes/', label: 'Notes' },
+  { href: '/about/', label: 'About' },
+];
+---
+<header class="nav">
+  <div class="wrap bar">
+    <a href="/" class="wordmark">{SITE.wordmark}</a>
+    <nav aria-label="Main">
+      <ul id="menu" class="items">
+        {items.map((i) => (
+          <li><a href={i.href} class="item" aria-current={path.startsWith(i.href) ? 'page' : undefined}>{i.label}</a></li>
+        ))}
+        <li><a href={`mailto:${SITE.email}`} class="btn">Email me</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="menu-btn mono" type="button" aria-controls="menu" aria-expanded="false">Menu</button>
+      <button class="theme" type="button" aria-label="Switch to dark theme">
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<script>
+  const root = document.documentElement;
+  const btn = document.querySelector<HTMLButtonElement>('.theme');
+  const sync = () => btn?.setAttribute('aria-label', root.dataset.theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+  sync();
+  btn?.addEventListener('click', () => {
+    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    try { localStorage.setItem('theme', next); } catch {}
+    sync();
+  });
+  const menuBtn = document.querySelector<HTMLButtonElement>('.menu-btn');
+  const menu = document.getElementById('menu');
+  menuBtn?.addEventListener('click', () => {
+    const open = menu?.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', String(!!open));
+  });
+</script>
+
+<style>
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--rule);
+  }
+  .bar { display: flex; align-items: center; justify-content: space-between; height: 60px; gap: 24px; }
+  .wordmark { font-size: 15px; font-weight: 500; text-decoration: none; letter-spacing: -0.01em; }
+  .items { display: flex; align-items: center; gap: 32px; list-style: none; margin: 0; padding: 0; }
+  .item { font-family: var(--mono); font-size: 13px; text-decoration: none; color: var(--muted); }
+  .item:hover, .item[aria-current='page'] { color: var(--ink); }
+  .item[aria-current='page'] { text-decoration: underline; text-underline-offset: 6px; }
+  .tools { display: flex; align-items: center; gap: 8px; }
+  .theme, .menu-btn {
+    background: none; border: 1px solid var(--rule); color: var(--ink);
+    height: 32px; min-width: 32px; display: grid; place-items: center; border-radius: 2px; cursor: pointer;
+  }
+  .theme:hover, .menu-btn:hover { border-color: var(--rule-strong); }
+  .menu-btn { display: none; font-size: 12px; padding: 0 10px; }
+  nav { margin-left: auto; }
+
+  @media (max-width: 720px) {
+    .menu-btn { display: grid; }
+    .items {
+      display: none; position: absolute; top: 60px; left: 0; right: 0;
+      flex-direction: column; align-items: flex-start; gap: 20px;
+      padding: 24px var(--margin) 28px; background: var(--bg); border-bottom: 1px solid var(--rule);
+    }
+    .items.open { display: flex; }
+    .item { font-size: 15px; color: var(--ink); }
+  }
+</style>

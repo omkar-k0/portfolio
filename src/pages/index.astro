@@ -1,0 +1,238 @@
+---
+import Base from '../layouts/Base.astro';
+import EvidenceTag from '../components/EvidenceTag.astro';
+import Pipeline from '../components/Pipeline.astro';
+import { SITE, LINKS } from '../config';
+import { proof, flagships, ledger } from '../data/projects';
+
+const doors = [
+  { title: "I'm hiring", line: 'Availability, CV, what I can start on', href: '/hiring/' },
+  { title: 'Show me the work', line: 'Case studies with measured results', href: '/work/' },
+  { title: 'I want the code', line: 'Repositories, tests, eval files', href: LINKS.github, external: true },
+  { title: 'Who is this?', line: 'Background and how I work', href: '/about/' },
+];
+---
+<Base>
+  <!-- 00 Hero -->
+  <section class="hero">
+    <div class="gridlines" aria-hidden="true">{Array.from({ length: 12 }, () => <span />)}</div>
+    <div class="wrap hero-in">
+      <p class="label eyebrow reveal">{SITE.role} · {SITE.location} · {SITE.study}</p>
+      <h1 class="reveal">{SITE.pitch}</h1>
+      <div class="hero-foot">
+        <p class="lede reveal">
+          Cheap rules handle the routine cases. A language model only judges the ambiguous rest.
+          Every answer carries a confidence score, a citation, or the word <code>unverifiable</code>.
+        </p>
+        <div class="cta reveal">
+          <a class="btn" href="/work/">See the work</a>
+          <a class="textlink" href={`mailto:${SITE.email}`}>Email me →</a>
+        </div>
+      </div>
+      <p class="label status"><span class="dot"></span>{SITE.availability}</p>
+    </div>
+  </section>
+
+  <!-- 01 Proof -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 class="label"><span class="num">01</span> Proof</h2>
+        <p class="label">Every number links to its case study</p>
+      </div>
+      <ul class="proof">
+        {proof.map((m) => (
+          <li>
+            <a href={`/work/${m.slug}/`} class="metric">
+              <EvidenceTag level={m.evidence} source={m.source} />
+              <span class="value">{m.value}</span>
+              <span class="mlabel">{m.label}</span>
+              <span class="mproject label">{m.project} →</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- 02 Start here -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 class="label"><span class="num">02</span> Start here</h2>
+        <p class="label">What are you looking for?</p>
+      </div>
+      <ul class="doors">
+        {doors.map((d, i) => (
+          <li>
+            <a href={d.href} class="door" {...(d.external ? { rel: 'noopener' } : {})}>
+              <span class="label">{String(i + 1).padStart(2, '0')}</span>
+              <span class="dtitle">{d.title}</span>
+              <span class="dline">{d.line}</span>
+              <span class="arrow" aria-hidden="true">{d.external ? '↗' : '→'}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- 03 Flagships -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 class="label"><span class="num">03</span> Flagships</h2>
+        <p class="label">One idea, four domains</p>
+      </div>
+      <div class="flagships">
+        {flagships.map((f, i) => (
+          <article class="flag">
+            <div class="flag-text">
+              <p class="label">{String(i + 1).padStart(2, '0')} · {f.kind}</p>
+              <h3><a href={`/work/${f.slug}/`}>{f.name}</a></h3>
+              <p class="question">“{f.question}”</p>
+              <ul class="chips">{f.tags.map((t) => <li>{t}</li>)}</ul>
+              <p class="label fstatus">{f.status}</p>
+              <p class="flinks">
+                <a class="textlink" href={`/work/${f.slug}/`}>Read the case study →</a>
+                {f.links.map((l) => <a class="textlink" href={l.href} rel="noopener">{l.label} ↗</a>)}
+              </p>
+            </div>
+            <Pipeline stages={f.stages} facts={f.facts} />
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 Index -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 class="label"><span class="num">04</span> Index</h2>
+        <a class="label" href="/work/">All work →</a>
+      </div>
+      <table class="ledger">
+        <thead><tr><th class="label">No.</th><th class="label">Project</th><th class="label">Type</th><th class="label note-col">Note</th><th></th></tr></thead>
+        <tbody>
+          {ledger.map((r, i) => (
+            <tr>
+              <td class="mono n">{String(i + 5).padStart(2, '0')}</td>
+              <td>{r.href ? <a href={r.href} rel="noopener">{r.name}</a> : r.name}</td>
+              <td class="label">{r.kind}</td>
+              <td class="note note-col">{r.note}</td>
+              <td class="mono go">{r.href ? '↗' : ''}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 05 Currently -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 class="label"><span class="num">05</span> Currently</h2>
+      </div>
+      <div class="now">
+        <div><p class="label">Studying</p><p class="nowmain">M.Sc. Big Data & Business Analytics</p><p class="nowsub">FOM University of Applied Sciences, Essen</p></div>
+        <div><p class="label">Building</p><p class="nowmain">faultline</p><p class="nowsub">An open-source reliability assistant for dbt pipelines, with its own fault-injection benchmark</p></div>
+        <div class="avail"><p class="label">Available</p><p class="nowmain">20 hours a week, from now</p><p class="nowsub">Werkstudent roles in applied AI and data · Essen, NRW or remote</p><a class="btn" href={`mailto:${SITE.email}`}>Email me</a></div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* Hero */
+  .hero { position: relative; overflow: hidden; }
+  .hero-in { position: relative; padding-top: 96px; padding-bottom: 36px; }
+  .eyebrow { margin-bottom: 28px; }
+  h1 {
+    font-size: clamp(40px, 6vw, 84px); line-height: 1.04; letter-spacing: -0.035em;
+    max-width: 14.5em; text-wrap: balance;
+  }
+  .hero-foot { display: flex; justify-content: space-between; align-items: flex-end; gap: 40px; margin-top: 48px; flex-wrap: wrap; }
+  .lede { max-width: 34em; color: var(--muted); font-size: 18px; }
+  .lede code { font-family: var(--mono); font-size: 0.9em; color: var(--ink); border-bottom: 1px solid var(--accent); }
+  .cta { display: flex; align-items: center; gap: 24px; }
+  .status { margin-top: 72px; padding-top: 16px; border-top: 1px solid var(--rule); display: flex; align-items: center; gap: 8px; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); display: inline-block; }
+
+  /* Proof */
+  .proof { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  .proof li + li { border-left: 1px solid var(--rule); }
+  .metric { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 24px 20px 22px; text-decoration: none; height: 100%; }
+  .metric:hover { background: var(--surface); }
+  .value { font-size: clamp(40px, 4.2vw, 56px); line-height: 1; letter-spacing: -0.03em; margin-top: 14px; }
+  .mlabel { font-size: 14px; line-height: 1.45; color: var(--muted); flex: 1; }
+  .mproject { color: var(--ink); }
+  .metric:hover .mproject { color: var(--accent); }
+
+  /* Doors */
+  .doors { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--rule); }
+  .doors li + li { border-left: 1px solid var(--rule); }
+  .door { position: relative; display: flex; flex-direction: column; gap: 6px; padding: 20px 20px 28px; min-height: 170px; text-decoration: none; }
+  .door:hover { background: var(--surface); }
+  .door:hover .arrow { color: var(--accent); transform: translateX(3px); }
+  .dtitle { font-size: 22px; letter-spacing: -0.01em; margin-top: auto; }
+  .dline { font-size: 14px; color: var(--muted); }
+  .arrow { position: absolute; top: 18px; right: 20px; font-family: var(--mono); transition: transform 0.15s; }
+
+  /* Flagships */
+  .flagships { display: flex; flex-direction: column; }
+  .flag { display: grid; grid-template-columns: 5fr 7fr; gap: 48px; padding: 40px 0; border-top: 1px solid var(--rule); align-items: center; }
+  .flag:first-child { border-top: none; padding-top: 0; }
+  .flag h3 { font-size: 32px; letter-spacing: -0.02em; margin: 10px 0 8px; }
+  .flag h3 a { text-decoration: none; }
+  .flag h3 a:hover { color: var(--accent); }
+  .question { font-style: italic; color: var(--muted); font-size: 18px; max-width: 26em; }
+  .chips { list-style: none; padding: 0; margin: 20px 0 0; display: flex; flex-wrap: wrap; gap: 6px; }
+  .chips li { font-family: var(--mono); font-size: 11px; border: 1px solid var(--rule-strong); padding: 4px 8px; border-radius: 2px; }
+  .fstatus { margin-top: 18px; }
+  .flinks { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 18px; }
+
+  /* Ledger */
+  .ledger { width: 100%; border-collapse: collapse; }
+  .ledger th { text-align: left; font-weight: 400; padding: 0 12px 12px 0; border-bottom: 1px solid var(--rule-strong); }
+  .ledger td { padding: 16px 12px 16px 0; border-bottom: 1px solid var(--rule); vertical-align: baseline; }
+  .ledger td a { text-decoration: none; }
+  .ledger tr:hover td a { color: var(--accent); }
+  .n { color: var(--muted); font-size: 13px; width: 56px; }
+  .note { color: var(--muted); font-size: 14px; }
+  .go { text-align: right; color: var(--muted); width: 24px; }
+
+  /* Now */
+  .now { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--rule); }
+  .now > div { padding: 24px; display: flex; flex-direction: column; gap: 6px; }
+  .now > div + div { border-left: 1px solid var(--rule); }
+  .nowmain { font-size: 20px; margin-top: 10px; }
+  .nowsub { color: var(--muted); font-size: 14px; }
+  .avail { background: var(--surface); }
+  .avail .btn { align-self: flex-start; margin-top: 16px; }
+
+  @media (max-width: 1000px) {
+    .proof, .doors { grid-template-columns: repeat(2, 1fr); }
+    .proof li:nth-child(3), .doors li:nth-child(3) { border-left: none; }
+    .proof li:nth-child(n + 3), .doors li:nth-child(n + 3) { border-top: 1px solid var(--rule); }
+    .flag { grid-template-columns: 1fr; gap: 28px; }
+  }
+  @media (max-width: 720px) {
+    .hero-in { padding-top: 56px; }
+    .hero-foot { margin-top: 32px; }
+    .status { margin-top: 48px; }
+    .doors { grid-template-columns: 1fr; }
+    .doors li + li { border-left: none; border-top: 1px solid var(--rule); }
+    .door { min-height: 0; padding: 18px 20px; }
+    .dtitle { margin-top: 4px; font-size: 19px; }
+    .now { grid-template-columns: 1fr; }
+    .now > div + div { border-left: none; border-top: 1px solid var(--rule); }
+    .note-col { display: none; }
+    .flag h3 { font-size: 26px; }
+  }
+  @media (max-width: 420px) {
+    .metric { padding: 18px 14px; }
+    .mlabel { font-size: 13px; }
+  }
+</style>

@@ -1,0 +1,18 @@
+---
+import type { Evidence } from '../data/projects';
+interface Props { level: Evidence; source?: string }
+const { level, source } = Astro.props;
+---
+<span class={`tag tag-${level}`} title={source ? `Source: ${source}` : undefined}>{level}</span>
+
+<style>
+  .tag {
+    display: inline-block; font-family: var(--mono); font-size: 10.5px; line-height: 1;
+    letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 7px; border-radius: 2px;
+    white-space: nowrap;
+  }
+  .tag-measured { background: var(--accent); color: var(--accent-ink); border: 1px solid var(--accent); }
+  .tag-backtested { color: var(--accent); border: 1px solid var(--accent); }
+  .tag-synthetic { color: var(--muted); border: 1px solid var(--rule-strong); }
+  .tag-pending { color: var(--muted); border: 1px dashed var(--rule-strong); }
+</style>
