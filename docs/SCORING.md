@@ -79,3 +79,13 @@ Self-scored against the checks above on a local production build (the blind revi
 3.5 now passes: the GRE headline is 97.9% on 188 blind hand labels (baseline 91.5%). faultline's held-out run is still pending.
 
 Measured on 20 Nov 2026: home height 4,516 px at 1440 wide; name, role, availability, four proof numbers and both buttons above the fold at 1440×900 and 390×844; no case-study paragraph over 90 words; Lighthouse home and Werkbank 100/100/96/100 (the 96 is the analytics script, which only exists on Vercel).
+
+## 8. Plain-language home page (added 20 Nov 2026)
+
+Reader: someone with no technical background (recruiter, investor). The case studies keep the technical detail.
+
+1. No banned jargon on the home page outside the tools list: top-1, baseline, split, dev, held-out, LLM, pipeline, eval, confidence band, ablation.
+2. Every number on the home page reads as a count ("184 of 188"), not a metric name.
+3. Home page prose scores 60 or higher on Flesch reading ease.
+4. The "How I build" flow is visible on the home page.
+5. Three non-technical people look at the home page for 30 seconds and can answer: What does Omkar build? Does it work? How do I contact him? Passes if all three answer all three.

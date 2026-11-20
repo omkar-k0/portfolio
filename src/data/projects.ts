@@ -29,6 +29,8 @@ export interface Flagship {
   stages: Stage[];
   facts: string[]; // short real facts under the pipeline card
   links: { label: string; href: string }[];
+  // Home page copy for a reader with no technical background. Technical detail lives in the case study.
+  plain?: { problem: string; count: string; countLabel: string; detail: string; stages: Stage[] };
 }
 
 export const proof: (Metric & { project: string; slug: string })[] = [
@@ -83,6 +85,18 @@ export const flagships: Flagship[] = [
       { label: 'LLM', detail: 'Ambiguous rest, quote-checked', escalation: true },
     ],
     facts: ['185 releases, 11 companies', '7 of 188 sent to the LLM', '97.9% vs 91.5% baseline'],
+    plain: {
+      problem: 'Every quarter, big companies tell investors how much money they expect to make. This tool reads the official filings and checks whether they kept that promise.',
+      count: '184 of 188',
+      countLabel: 'promises checked correctly, compared with my own check by hand',
+      detail: 'Simple rules settle almost all of them. AI looks only at the 7 unclear cases and has to quote the filing. When it cannot be sure, it says so.',
+      stages: [
+        { label: 'Read the filings', detail: 'Official company reports to the US regulator' },
+        { label: 'Find the promise', detail: 'The revenue range they gave investors' },
+        { label: 'Rules check', detail: 'Clear cases settled by simple matching' },
+        { label: 'AI for unclear ones', detail: "Must quote the filing, or says it can't tell", escalation: true },
+      ],
+    },
     links: [
       { label: 'Live', href: 'https://guidance-reconciliation-engine.vercel.app' },
       { label: 'Repo', href: 'https://github.com/omkar-k0/guidance-reconciliation-engine' },
@@ -105,6 +119,19 @@ export const flagships: Flagship[] = [
       { label: 'Rank', detail: "Survivors, or 'not confirmed'", escalation: true },
     ],
     facts: ['89.6% right at top-1 (dev)', '0 of 48 confidently wrong', 'Held-out score pending'],
+    plain: {
+      problem: 'Companies move their data through long chains of steps every night. When one step breaks, an engineer can spend hours finding out why. This tool finds the cause and shows the evidence.',
+      count: '43 of 48',
+      countLabel: 'test breakdowns traced to the exact cause',
+      detail: 'It missed 5 and never blamed the wrong thing. A final test on cases it has never seen is still to come.',
+      stages: [
+        { label: 'Spot the problem', detail: 'Checks that watch the data on every run' },
+        { label: 'Group the signs', detail: 'Related alerts traced back to one place' },
+        { label: 'List suspects', detail: 'Possible causes in the data or the code' },
+        { label: 'Test each one', detail: 'Against the actual data' },
+        { label: 'Name the cause', detail: "With evidence, or 'not confirmed'", escalation: true },
+      ],
+    },
     links: [
       { label: 'Repo', href: 'https://github.com/omkar-k0/faultline' },
       { label: 'Benchmark', href: 'https://github.com/omkar-k0/faultline/releases/tag/benchmark-v1' },
@@ -126,6 +153,18 @@ export const flagships: Flagship[] = [
       { label: 'Review', detail: 'Unsure orders go to a person', escalation: true },
     ],
     facts: ['Top-1 88.3% (n = 60)', '40% auto-routed', '23.3% to review'],
+    plain: {
+      problem: 'A furniture shop gets orders as messages and has to send each one to the right workshop: carpentry, upholstery, paint or metal. This tool reads the order and sends it on.',
+      count: '23 of 24',
+      countLabel: 'orders it handled alone went to the right workshop',
+      detail: 'Out of 60 test orders it decided 24 alone, flagged 22 for a quick check and sent 14 to a person instead of guessing.',
+      stages: [
+        { label: 'Order arrives', detail: 'A message, in English or German' },
+        { label: 'Read it', detail: 'Which workshop, what job, how urgent' },
+        { label: 'How sure?', detail: 'A confidence score for every order' },
+        { label: 'Unsure? A person decides', detail: 'Instead of a guess', escalation: true },
+      ],
+    },
     links: [
       { label: 'Live', href: 'https://werkbank-gamma.vercel.app' },
       { label: 'Repo', href: 'https://github.com/omkar-k0/werkbank' },
@@ -152,12 +191,12 @@ export const flagships: Flagship[] = [
 ];
 
 export const ledger = [
-  { name: 'Sustainability commitment classifier', kind: 'Tool', note: 'Only 12.3% of 1,562 climate commitments come with a number', href: 'https://github.com/omkar-k0/sustainability-commitment-classifier' },
-  { name: 'DAX 40 capital structure', kind: 'Research', note: 'More profitable DAX firms carry less debt · graded 1.3', href: '' },
-  { name: 'ESG and bond spreads', kind: 'Research', note: 'An honest null: ESG rating changes did not move bond spreads', href: '' },
-  { name: 'Dem Fragen', kind: 'Product', note: 'Plain-language answers under Indian law, with sources · real eval pending', href: 'https://github.com/omkar-k0/cuddly-octo-palm-tree' },
+  { name: 'Sustainability commitment classifier', kind: 'Tool', note: 'Only 12.3% of 1,562 climate promises come with a number', href: 'https://github.com/omkar-k0/sustainability-commitment-classifier' },
+  { name: 'DAX 40 capital structure', kind: 'Research', note: 'More profitable big German firms borrow less · grade 1.3', href: '' },
+  { name: 'ESG and bond spreads', kind: 'Research', note: 'Better green ratings did not make company borrowing cheaper', href: '' },
+  { name: 'Dem Fragen', kind: 'Product', note: 'Plain answers to legal questions in India, with sources · not yet tested on real cases', href: 'https://github.com/omkar-k0/cuddly-octo-palm-tree' },
   { name: 'GradeLens', kind: 'Tool', note: 'Shows FOM students what each exam needs for a target grade', href: 'https://github.com/omkar-k0/gradelens' },
-  { name: 'profile-hud', kind: 'Tool', note: 'GitHub profile cards built from real repo data · 156+ tests', href: 'https://github.com/omkar-k0/profile-hud' },
+  { name: 'profile-hud', kind: 'Tool', note: 'Profile cards built from real project data · 156+ tests', href: 'https://github.com/omkar-k0/profile-hud' },
 ];
 
 // Full work index (/work/). Numbered straight through, flagships first.

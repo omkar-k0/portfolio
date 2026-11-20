@@ -1,9 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
-import EvidenceTag from '../components/EvidenceTag.astro';
 import Pipeline from '../components/Pipeline.astro';
+import EvidenceTag from '../components/EvidenceTag.astro';
 import { SITE, LINKS, CV, SKILLS, LANGUAGES, mailto } from '../config';
-import { proof, flagships, ledger } from '../data/projects';
+import { flagships, ledger } from '../data/projects';
+const live = flagships.filter((f) => f.ready && f.plain);
 
 // Until a case study page exists, links point to the project's row on this page.
 const ready = new Set(flagships.filter((f) => f.ready).map((f) => f.slug));
@@ -14,7 +15,7 @@ const projectHref = (slug: string) => (ready.has(slug) ? `/work/${slug}/` : `#${
 const doors = [
   { title: "I'm hiring", line: 'Availability, roles, practicalities', href: '/hiring/' },
   { title: 'Show me the work', line: 'Every project, with its numbers', href: '/work/' },
-  { title: 'I want the code', line: 'Repositories, tests, eval files', href: LINKS.github, external: true },
+  { title: 'I want the code', line: 'Code, tests and how each number was measured', href: LINKS.github, external: true },
   { title: 'Who is this?', line: 'Background and how I work', href: '/about/' },
 ];
 ---
@@ -28,8 +29,8 @@ const doors = [
       <h1 class="reveal">{SITE.pitch}</h1>
       <div class="hero-foot">
         <p class="lede reveal">
-          Cheap rules handle the routine cases. A language model only judges the ambiguous rest.
-          Every answer carries a confidence score, a citation, or the word <code>unverifiable</code>.
+          Most questions have an easy answer, so simple rules handle those. AI only looks at the hard ones.
+          Every answer shows where it came from, or says plainly: “I can’t tell.”
         </p>
         <div class="cta reveal">
           <a class="btn" href="/work/">View case studies</a>
@@ -45,23 +46,77 @@ const doors = [
     <div class="wrap">
       <div class="proof-head">
         <h2 id="proof-h" class="label">Proof</h2>
-        <p class="label shipped">2 live demos · 1 public benchmark release · 273 automated tests in 3 repos</p>
+        <p class="label shipped">Each number is measured, not estimated</p>
       </div>
       <ul class="proof">
-        {proof.map((m) => (
+        {live.map((f) => (
           <li>
-            <a href={projectHref(m.slug)} class="metric">
-              <span class="mtop"><span class="value">{m.value}</span><EvidenceTag level={m.evidence} source={m.source} /></span>
-              <span class="mlabel">{m.label}</span>
-              <span class="mproject label">{m.project} →</span>
+            <a href={`/work/${f.slug}/`} class="metric">
+              <span class="mtop"><span class="value">{f.plain!.count}</span><EvidenceTag level="measured" /></span>
+              <span class="mlabel">{f.plain!.countLabel}</span>
+              <span class="mproject label">{f.name} →</span>
             </a>
           </li>
         ))}
       </ul>
       <div class="kit">
-        <p><span class="label">Stack</span></p>
+        <p><span class="label">Tools I use</span></p>
         <ul class="chips">{SKILLS.map((s) => <li>{s}</li>)}</ul>
         <p class="langs"><span class="label">Languages</span> {LANGUAGES}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How I build: the one design idea behind every project, readable without a technical background -->
+  <section class="section how" aria-labelledby="how-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="how-h" class="label"><span class="num">01</span> How I build</h2>
+        <p class="label">The same design in every project</p>
+      </div>
+      <ol class="flow" aria-label="How a question moves through one of my systems">
+        <li class="step"><span class="label">1</span><span class="st">A question comes in</span><span class="sd">An order, a filing, a broken data run</span></li>
+        <li class="step"><span class="label">2</span><span class="st">Simple rules try first</span><span class="sd">Fast, cheap, and easy to check</span></li>
+        <li class="step fork"><span class="label">3</span><span class="st">Sure of the answer?</span><span class="sd"><b>Yes:</b> answer now. <b>No:</b> pass it on</span></li>
+        <li class="step ai"><span class="label">4</span><span class="st">AI looks at the hard ones</span><span class="sd">Only the few cases rules can't settle</span></li>
+        <li class="step out"><span class="label">5</span><span class="st">Answer with its source</span><span class="sd">Or a plain “I can't tell”, never a guess</span></li>
+      </ol>
+      <ul class="why">
+        <li><b>Rules first,</b> because most cases are routine and rules are cheap and explainable.</li>
+        <li><b>AI only where needed,</b> because it costs more and can be wrong with confidence.</li>
+        <li><b>No answer without a source,</b> so a person can always check the result.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 03 Flagships -->
+  <section class="section" id="work">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 class="label"><span class="num">02</span> What I built</h2>
+        <p class="label">Three projects, one idea · the case studies have the technical detail</p>
+      </div>
+      <div class="flagships">
+        {live.map((f, i) => (
+          <article class="flag" id={f.slug}>
+            <div class="flag-text">
+              <p class="label">{String(i + 1).padStart(2, '0')} · {f.kind}</p>
+              <h3><a href={`/work/${f.slug}/`}>{f.name}</a></h3>
+              <p class="problem">{f.plain!.problem}</p>
+              <p class="flinks">
+                <a class="textlink" href={`/work/${f.slug}/`}>How it works →</a>
+                {f.links.map((l) => <a class="textlink" href={l.href} rel="noopener">{l.label === 'Repo' ? 'Code' : l.label === 'Live' ? 'Try it' : l.label} ↗</a>)}
+              </p>
+            </div>
+            <div class="result">
+              <p class="label">Result</p>
+              <p class="rcount">{f.plain!.count}</p>
+              <p class="rlabel">{f.plain!.countLabel}</p>
+              <p class="rdetail">{f.plain!.detail}</p>
+            </div>
+            <div class="fpipe"><Pipeline stages={f.plain!.stages} title="How it works" keyLabel="only the hard cases reach this step" /></div>
+          </article>
+        ))}
       </div>
     </div>
   </section>
@@ -70,7 +125,7 @@ const doors = [
   <section class="section">
     <div class="wrap">
       <div class="section-head">
-        <h2 class="label"><span class="num">01</span> Start here</h2>
+        <h2 class="label"><span class="num">03</span> Start here</h2>
         <p class="label">What are you looking for?</p>
       </div>
       <ul class="doors">
@@ -88,44 +143,15 @@ const doors = [
     </div>
   </section>
 
-  <!-- 03 Flagships -->
-  <section class="section" id="work">
-    <div class="wrap">
-      <div class="section-head">
-        <h2 class="label"><span class="num">02</span> Flagships</h2>
-        <p class="label">One idea, four domains · every number tagged with how it was measured</p>
-      </div>
-      <div class="flagships">
-        {flagships.map((f, i) => (
-          <article class="flag" id={f.slug}>
-            <div class="flag-text">
-              <p class="label">{String(i + 1).padStart(2, '0')} · {f.kind}</p>
-              <h3>{f.ready ? <a href={`/work/${f.slug}/`}>{f.name}</a> : f.name}</h3>
-              <p class="question">“{f.question}”</p>
-              <p class="outcome" set:html={rich(f.outcome)} />
-              <ul class="chips">{f.tags.map((t) => <li>{t}</li>)}</ul>
-              <p class="label fstatus">{f.status}</p>
-              <p class="flinks">
-                {f.ready && <a class="textlink" href={`/work/${f.slug}/`}>Read the case study →</a>}
-                {f.links.map((l) => <a class="textlink" href={l.href} rel="noopener">{l.label} ↗</a>)}
-              </p>
-            </div>
-            <Pipeline stages={f.stages} />
-          </article>
-        ))}
-      </div>
-    </div>
-  </section>
-
   <!-- 04 Index -->
   <section class="section" id="index">
     <div class="wrap">
       <div class="section-head">
-        <h2 class="label"><span class="num">03</span> Index</h2>
+        <h2 class="label"><span class="num">04</span> More work</h2>
         <a class="label" href="/work/">All projects →</a>
       </div>
       <table class="ledger">
-        <thead><tr><th class="label">No.</th><th class="label">Project</th><th class="label">Type</th><th class="label note-col">What it shows</th><th class="label go">Link</th></tr></thead>
+        <thead><tr><th class="label">No.</th><th class="label">Project</th><th class="label">Type</th><th class="label note-col">In one line</th><th class="label go">Link</th></tr></thead>
         <tbody>
           {ledger.map((r, i) => (
             <tr>
@@ -145,11 +171,11 @@ const doors = [
   <section class="section" id="now">
     <div class="wrap">
       <div class="section-head">
-        <h2 class="label"><span class="num">04</span> Currently</h2>
+        <h2 class="label"><span class="num">05</span> Right now</h2>
       </div>
       <div class="now">
         <div><p class="label">Studying</p><p class="nowmain">M.Sc. Big Data & Business Analytics</p><p class="nowsub">FOM University of Applied Sciences, Essen</p></div>
-        <div><p class="label">Building</p><p class="nowmain">faultline</p><p class="nowsub">An open-source reliability assistant for dbt pipelines, with its own fault-injection benchmark</p></div>
+        <div><p class="label">Building</p><p class="nowmain">faultline</p><p class="nowsub">A free tool that finds why a company's data broke, tested on 192 breakdowns I created on purpose</p></div>
         <div class="avail"><p class="label">Available</p><p class="nowmain">20 hours a week, from now</p><p class="nowsub">Werkstudent roles in applied AI and data · Essen, NRW or remote</p><a class="btn" href={mailto()}>Email me</a></div>
       </div>
     </div>
@@ -179,7 +205,7 @@ const doors = [
   .proof-band { padding: 4px 0 56px; }
   .proof-head { display: flex; justify-content: space-between; gap: 16px; padding: 14px 0 12px; }
   .proof-head p { color: var(--muted); }
-  .proof { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--rule-strong); border-bottom: 1px solid var(--rule); }
+  .proof { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--rule-strong); border-bottom: 1px solid var(--rule); }
   .proof li + li { border-left: 1px solid var(--rule); }
   .metric { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 18px 20px 18px; text-decoration: none; height: 100%; }
   .metric:hover { background: var(--surface); }
@@ -192,6 +218,21 @@ const doors = [
   .kit .chips { margin: 0; }
   .langs { font-size: 14px; color: var(--muted); }
   .langs .label { margin-right: 8px; }
+
+  /* How I build */
+  .flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; counter-reset: s; }
+  .step { position: relative; display: flex; flex-direction: column; gap: 6px; padding: 18px 28px 20px 18px; border: 1px solid var(--rule); background: var(--bg); }
+  .step + .step { border-left: none; }
+  .step:not(:last-child)::after { content: '→'; position: absolute; right: -9px; top: 50%; transform: translateY(-50%); z-index: 1; background: var(--bg); color: var(--accent); font-family: var(--mono); font-size: 14px; line-height: 1; padding: 2px 0; }
+  .st { font-size: 17px; line-height: 1.3; letter-spacing: -0.01em; }
+  .sd { font-size: 14px; color: var(--muted); line-height: 1.45; }
+  .sd b { font-weight: 500; color: var(--ink); }
+  .fork { background: var(--surface); }
+  .ai { border-top: 2px solid var(--accent); }
+  .out .st { color: var(--accent); }
+  .why { list-style: none; margin: 22px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .why li { font-size: 15px; line-height: 1.5; color: var(--muted); }
+  .why b { color: var(--ink); font-weight: 500; }
 
   /* Doors */
   .doors { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--rule); }
@@ -210,7 +251,12 @@ const doors = [
   .flag h3 { font-size: 32px; letter-spacing: -0.02em; margin: 10px 0 8px; }
   .flag h3 a { text-decoration: none; }
   .flag h3 a:hover { color: var(--accent); }
-  .question { font-style: italic; color: var(--muted); font-size: 18px; max-width: 26em; }
+  .problem { font-size: 18px; line-height: 1.5; max-width: 30em; margin-top: 4px; }
+  .fpipe { grid-column: 1 / -1; }
+  .result { border-left: 2px solid var(--accent); padding: 6px 0 6px 28px; }
+  .rcount { font-size: clamp(44px, 5vw, 72px); line-height: 1; letter-spacing: -0.035em; margin-top: 10px; }
+  .rlabel { font-size: 17px; margin-top: 10px; max-width: 26em; }
+  .rdetail { font-size: 15px; color: var(--muted); margin-top: 12px; max-width: 32em; line-height: 1.5; }
   .outcome { margin-top: 14px; font-size: 16px; line-height: 1.5; max-width: 30em; }
   .outcome :global(strong) { font-weight: 500; color: var(--accent); font-size: 1.15em; }
   .chips { list-style: none; padding: 0; margin: 20px 0 0; display: flex; flex-wrap: wrap; gap: 6px; }
@@ -238,10 +284,15 @@ const doors = [
   .avail .btn { align-self: flex-start; margin-top: 16px; }
 
   @media (max-width: 1000px) {
-    .proof, .doors { grid-template-columns: repeat(2, 1fr); }
-    .proof li:nth-child(3), .doors li:nth-child(3) { border-left: none; }
-    .proof li:nth-child(n + 3), .doors li:nth-child(n + 3) { border-top: 1px solid var(--rule); }
+    .doors { grid-template-columns: repeat(2, 1fr); }
+    .doors li:nth-child(3) { border-left: none; }
+    .doors li:nth-child(n + 3) { border-top: 1px solid var(--rule); }
     .flag { grid-template-columns: 1fr; gap: 28px; }
+    .flow { grid-template-columns: 1fr; }
+    .step + .step { border-left: 1px solid var(--rule); border-top: none; }
+    .step:not(:last-child)::after { content: '↓'; right: auto; left: 18px; top: auto; bottom: -9px; transform: none; padding: 0 2px; }
+    .why { grid-template-columns: 1fr; gap: 12px; }
+    .result { padding-left: 18px; }
   }
   @media (max-width: 720px) {
     .hero-in { padding-top: 28px; padding-bottom: 16px; }
@@ -251,6 +302,11 @@ const doors = [
     .lede { font-size: 16px; }
     .status { margin-top: 18px; font-size: 15px; }
     .proof-head p { display: none; }
+    .proof { grid-template-columns: 1fr; }
+    .proof li + li { border-left: none; border-top: 1px solid var(--rule); }
+    .metric { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; align-items: baseline; padding: 12px 4px; }
+    .mtop { width: auto; grid-row: span 2; flex-direction: column; align-items: flex-start; gap: 6px; }
+    .value { font-size: 30px; }
     .doors { grid-template-columns: 1fr; }
     .doors li + li { border-left: none; border-top: 1px solid var(--rule); }
     .door { min-height: 0; padding: 18px 20px; }
@@ -261,8 +317,6 @@ const doors = [
     .flag h3 { font-size: 26px; }
   }
   @media (max-width: 420px) {
-    .metric { padding: 14px 12px; }
-    .mtop { flex-direction: column; align-items: flex-start; }
     .mlabel { font-size: 13px; }
   }
 </style>
