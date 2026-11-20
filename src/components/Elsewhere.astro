@@ -1,5 +1,5 @@
 ---
-import { SITE, LINKS } from '../config';
+import { SITE, LINKS, mailto } from '../config';
 interface Props { num: string; showHiring?: boolean }
 const { num, showHiring = true } = Astro.props;
 ---
@@ -10,7 +10,7 @@ const { num, showHiring = true } = Astro.props;
       <li><a href={LINKS.github} rel="noopener"><span class="label">GitHub</span>Code, tests and eval files for every project ↗</a></li>
       <li><a href={LINKS.substack} rel="noopener"><span class="label">Substack</span>A weekly build log, every Tuesday ↗</a></li>
       <li><a href={LINKS.linkedin} rel="noopener"><span class="label">LinkedIn</span>Career and contact ↗</a></li>
-      <li><a href={`mailto:${SITE.email}`}><span class="label">Email</span>{SITE.email}</a></li>
+      <li><a href={mailto()}><span class="label">Email</span>{SITE.email}</a></li>
       {showHiring && <li><a href="/hiring/"><span class="label">Hiring?</span>Availability, roles and practicalities →</a></li>}
     </ul>
   </div>

@@ -18,7 +18,7 @@ const facts = [
   { label: 'When', value: 'October 2026' },
   { label: 'Role', value: 'Sole developer: classifier, gate, app, auth, eval' },
   { label: 'Origin', value: 'A real client brief from a furniture shop with three workshops' },
-  { label: 'Status', value: 'Live demo · EN and DE · 52 tests' },
+  { label: 'Status', value: 'Live demo · EN and DE · 57 tests' },
 ];
 
 const toc = [
@@ -47,9 +47,28 @@ const toc = [
   metrics={metrics}
   facts={facts}
   toc={toc}
+  tldr={{
+    problem: 'A furniture shop with three workshops routes every incoming order by hand, and misrouted jobs cost days.',
+    result: 'On 60 hand-written requests it routed 40% on its own at 95.8% accuracy and sent 23.3% to a review queue instead of guessing. Real-shop accuracy: pending.',
+    role: 'Sole developer: classifier, calibrated gate, review queue, app, auth and eval.',
+  }}
+  reproduce={{
+    repo,
+    commands: `git clone ${repo} && cd werkbank
+npm install
+npm test          # classifier, tenant isolation, split orders, auth, i18n
+npm run model     # regenerate synthetic data, retrain, re-evaluate
+npm run dev       # http://localhost:3000, Postgres in-process via PGlite`,
+    files: [
+      { path: 'reports/eval.md', what: 'Accuracy, routed share and review share per test set' },
+      { path: 'reports/eval.json', what: 'The same numbers, machine-readable' },
+      { path: 'scripts/eval.ts', what: 'The script that writes both reports' },
+    ],
+    note: 'All training data is synthetic. The 60 hand-written requests were not used for training or thresholds.',
+  }}
   stack={['Next.js', 'TypeScript', 'Postgres', 'Naive Bayes', 'Vitest', 'PWA', 'Google sign-in (OIDC)', 'Vercel']}
   prev={{ href: '/work/faultline/', label: 'faultline' }}
-  next={{ href: '/#finbert-fusion', label: 'FinBERT fusion' }}
+  next={{ href: '/work/portfolio/', label: 'This website' }}
 >
   <section id="plain">
     <h2><span class="num">01</span>In plain language</h2>
@@ -165,6 +184,13 @@ const toc = [
 
   <section id="results">
     <h2><span class="num">07</span>What came out</h2>
+    <figure class="shot">
+      <a href="https://werkbank-gamma.vercel.app" rel="noopener">
+        <img src="/shots/werkbank-review.webp" width="1380" height="819" loading="lazy"
+          alt="The Werkbank review queue in the demo shop. Three orders the system was unsure about, each with the reason in plain words, its best guesses with percentages, and one button per workshop." />
+      </a>
+      <figcaption class="caption">The review queue in the demo shop. Each card says why the system held back: unknown words, rules and model disagreeing, or two workshops too close to call. The headboard is a fair catch: its top guess is wrong, which is why it waits for a person.</figcaption>
+    </figure>
     <table>
       <thead><tr><th>Test set</th><th>Auto-routed</th><th>Auto accuracy</th><th>To review</th><th>Accuracy of all routed</th></tr></thead>
       <tbody>

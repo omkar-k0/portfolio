@@ -1,5 +1,5 @@
 ---
-import { SITE } from '../config';
+import { SITE, CV, mailto } from '../config';
 const path = Astro.url.pathname;
 const items = [
   // Pages are added here as they go live (milestones 2 and 3).
@@ -17,7 +17,8 @@ const items = [
         {items.map((i) => (
           <li><a href={i.href} class="item" aria-current={!i.href.includes('#') && path.startsWith(i.href) ? 'page' : undefined}>{i.label}</a></li>
         ))}
-        <li><a href={`mailto:${SITE.email}`} class="btn">Email me</a></li>
+        <li><a href={CV.href} class="item">CV ↓</a></li>
+        <li><a href={mailto()} class="btn">Email me</a></li>
       </ul>
     </nav>
     <div class="tools">

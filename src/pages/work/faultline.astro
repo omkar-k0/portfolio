@@ -48,6 +48,26 @@ const toc = [
   metrics={metrics}
   facts={facts}
   toc={toc}
+  tldr={{
+    problem: 'When a dbt pipeline breaks, an engineer digs through tests, lineage and commits for hours to find what broke it.',
+    result: 'Named the exact root cause in 43 of 48 dev incidents (89.6%), with 0 confidently wrong answers and 0 false alarms on 30 clean runs. Held-out score: pending.',
+    role: 'Sole developer: fault injector, 192-incident benchmark, eval harness, monitors and triage.',
+  }}
+  reproduce={{
+    repo,
+    commands: `git clone ${repo} && cd faultline
+make setup            # uv env, install, build the 4 dbt test projects
+make check            # ruff, mypy --strict, dbt build, pytest
+make fetch-benchmark  # loads the train and dev incidents
+make eval-dev         # scores every method on dev, writes eval/results/dev/`,
+    files: [
+      { path: 'eval/results/dev/triage.md', what: 'The 89.6% table, per fault type, with config hash' },
+      { path: 'eval/results/dev/ablations.md', what: 'Triage without tests and without lineage' },
+      { path: 'benchmark/manifest.json', what: 'The 192 incidents and 70 clean runs in release benchmark-v1' },
+      { path: 'docs/EVAL.md', what: 'How top-1, top-3 and "not confirmed" are counted' },
+    ],
+    note: 'The held-out split ships sealed and stays unopened until the method is frozen.',
+  }}
   stack={['Python 3.12', 'dbt Core', 'DuckDB', 'sqlglot', 'networkx', 'hypothesis', 'Ollama (qwen2.5 7B)', 'GitHub Actions']}
   prev={{ href: '/work/guidance-reconciliation-engine/', label: 'Guidance Reconciliation Engine' }}
   next={{ href: '/work/werkbank/', label: 'Werkbank' }}
@@ -168,6 +188,24 @@ const toc = [
 
   <section id="results">
     <h2><span class="num">07</span>What came out</h2>
+    <figure class="shot term">
+      <p class="term-bar label">$ faultline eval --split dev --baseline triage</p>
+      <pre><code>| Fault type          | n  | Top-1          | Wrong top-1 |
+|---------------------|----|----------------|-------------|
+| schema_change       | 6  | 100.0% (6/6)   | 0.0% (0/6)  |
+| late_or_missing     | 6  | 100.0% (6/6)   | 0.0% (0/6)  |
+| duplicate_keys      | 6  | 100.0% (6/6)   | 0.0% (0/6)  |
+| null_spike          | 6  | 100.0% (6/6)   | 0.0% (0/6)  |
+| distribution_shift  | 6  |  66.7% (4/6)   | 0.0% (0/6)  |
+| model_logic_bug     | 6  |  83.3% (5/6)   | 0.0% (0/6)  |
+| broken_join         | 6  | 100.0% (6/6)   | 0.0% (0/6)  |
+| timezone_error      | 6  |  66.7% (4/6)   | 0.0% (0/6)  |
+| all faulted         | 48 |  89.6% (43/48) | 0.0% (0/48) |
+
+Without the tests (every proposed cause ranked) top-1 would be 39.6% (19/48).
+False alarms on clean runs: 0.0% (0/30).</code></pre>
+      <figcaption class="caption">Output of the tool, trimmed to three columns. Full table: <a href="https://github.com/omkar-k0/faultline/blob/main/eval/results/dev/triage.md" rel="noopener">eval/results/dev/triage.md</a> (config hash 2d6665853400).</figcaption>
+    </figure>
     <p>
       Five methods on the same 48 dev incidents. Teal is the share of root causes named exactly. Grey is the
       share named confidently and wrongly.

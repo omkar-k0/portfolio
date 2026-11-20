@@ -8,7 +8,7 @@ const repo = 'https://github.com/omkar-k0/portfolio';
 const metrics: Metric[] = [
   { value: '100', label: 'Lighthouse accessibility, performance and SEO on the home page', evidence: 'measured', source: 'Lighthouse 12, mobile profile, local build, 19 Nov 2026' },
   { value: '~100 kB', label: 'total download for the home page, fonts included', evidence: 'measured', source: 'Lighthouse total-byte-weight: 99,867 bytes' },
-  { value: '0', label: 'cookies, trackers or third-party requests', evidence: 'measured', source: 'privacy page and build output' },
+  { value: '0', label: 'cookies and third-party requests; analytics are cookieless and first-party', evidence: 'measured', source: 'privacy page and build output' },
   { value: '1', label: 'file holds every number on the site, each with its evidence level', evidence: 'measured', source: 'src/data/projects.ts' },
 ];
 
@@ -39,8 +39,26 @@ const toc = [
   metrics={metrics}
   facts={facts}
   toc={toc}
+  tldr={{
+    problem: 'Portfolio sites tend to show screenshots and adjectives. A reviewer cannot tell which numbers were measured.',
+    result: 'A static site where every number carries an evidence tag and a source; Lighthouse 100 on accessibility, performance and SEO.',
+    role: 'Design direction, writing, build and deployment.',
+  }}
+  reproduce={{
+    repo,
+    commands: `git clone ${repo} && cd portfolio
+npm install
+npm run build     # fails on purpose if the Impressum address is missing
+npx astro preview
+npx lighthouse http://localhost:4321 --only-categories=performance,accessibility,seo`,
+    files: [
+      { path: 'src/data/projects.ts', what: 'Every number on the site, with evidence level and source' },
+      { path: 'src/config.ts', what: 'Name, availability, links and contact details' },
+    ],
+  }}
   stack={['Astro 5', 'TypeScript', 'Plain CSS tokens', 'IBM Plex (self-hosted)', 'Vercel', 'Vercel Web Analytics', 'Lighthouse']}
   prev={{ href: '/work/werkbank/', label: 'Werkbank' }}
+  next={{ href: '/work/guidance-reconciliation-engine/', label: 'Guidance Reconciliation Engine' }}
 >
   <section id="plain">
     <h2><span class="num">01</span>In plain language</h2>

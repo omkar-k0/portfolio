@@ -1,11 +1,11 @@
 ---
-import { SITE, LINKS } from '../config';
+import { SITE, LINKS, mailto } from '../config';
 const updated = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 const links = [
   { label: 'GitHub', href: LINKS.github },
   { label: 'LinkedIn', href: LINKS.linkedin },
   { label: 'Substack', href: LINKS.substack },
-  { label: 'Email', href: `mailto:${SITE.email}` },
+  { label: 'Email', href: mailto() },
   { label: 'RSS', href: '/rss.xml' },
 ];
 ---
@@ -13,7 +13,7 @@ const links = [
   <div class="wrap contact">
     <p class="ask">{SITE.seeking.split(' · ')[0]}.</p>
     <div class="contact-cta">
-      <a class="btn" href={`mailto:${SITE.email}`}>Email me</a>
+      <a class="btn" href={mailto()}>Email me</a>
       <a class="btn btn-outline" href="/hiring/">Hiring details</a>
     </div>
   </div>

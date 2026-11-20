@@ -35,3 +35,17 @@ export const LEGAL = {
   phone: '+49 155 65924087',
   updated: '2026-11-19',
 };
+
+// Email links open with a subject line already filled in.
+export const mailto = (subject = 'Werkstudent role – hello from your website') =>
+  `mailto:${SITE.email}?subject=${encodeURIComponent(subject)}`;
+
+export const CV = { href: '/cv/Omkar_Khadilkar_CV.pdf', label: 'CV (PDF)' };
+
+// Keywords for recruiters, taken from the CV skills section.
+export const SKILLS = [
+  'Python', 'SQL', 'TypeScript', 'pandas', 'scikit-learn', 'statsmodels',
+  'dbt Core', 'DuckDB', 'PostgreSQL', 'LLM pipelines (Claude)', 'FinBERT',
+  'GitHub Actions', 'Next.js', 'Vercel',
+];
+export const LANGUAGES = 'English C1 (IELTS 7.5) · German A1, learning · Marathi native';

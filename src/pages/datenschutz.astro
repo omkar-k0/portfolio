@@ -1,6 +1,6 @@
 ---
 import Legal from '../layouts/Legal.astro';
-import { SITE, LEGAL } from '../config';
+import { SITE, LEGAL, mailto } from '../config';
 
 const hasAddress = Boolean(LEGAL.street && LEGAL.postcode);
 const updated = new Date(LEGAL.updated).toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -16,7 +16,7 @@ const updated = new Date(LEGAL.updated).toLocaleDateString('de-DE', { day: 'nume
   <address>
     {LEGAL.name}<br />
     {hasAddress ? `${LEGAL.street}, ${LEGAL.postcode} ${LEGAL.city}, ${LEGAL.country}` : `${LEGAL.city}, ${LEGAL.country}`}<br />
-    E-Mail: <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+    E-Mail: <a href={mailto('Datenschutz')}>{SITE.email}</a>
     {LEGAL.phone && <><br />Telefon: <a href={`tel:${LEGAL.phone.replace(/\s/g, '')}`}>{LEGAL.phone}</a></>}
   </address>
 

@@ -1,7 +1,7 @@
 ---
 // Offline until LEGAL.street and LEGAL.postcode are set. To publish: rename this file to impressum.astro and add the footer link.
 import Legal from '../layouts/Legal.astro';
-import { SITE, LEGAL } from '../config';
+import { SITE, LEGAL, mailto } from '../config';
 
 // Never publish an Impressum without a postal address: fail the build instead.
 if (!LEGAL.street || !LEGAL.postcode) {
@@ -19,7 +19,7 @@ if (!LEGAL.street || !LEGAL.postcode) {
 
   <h2>Kontakt</h2>
   <p>
-    E-Mail: <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+    E-Mail: <a href={mailto('Impressum')}>{SITE.email}</a>
     {LEGAL.phone && <><br />Telefon: {LEGAL.phone}</>}
   </p>
 

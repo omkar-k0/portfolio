@@ -48,7 +48,31 @@ const toc = [
   metrics={metrics}
   facts={facts}
   toc={toc}
+  tldr={{
+    problem: 'Companies give revenue guidance every quarter. Checking it against what they later reported means reading hundreds of filings by hand.',
+    result: '188 guidance items from 185 SEC releases reconciled with citations; only 7 (3.7%) needed the LLM. Accuracy against hand labels: pending.',
+    role: 'Sole developer: SEC data pipeline, rules, confidence gate, Claude layer and the live site.',
+  }}
+  reproduce={{
+    repo,
+    commands: `git clone ${repo} && cd guidance-reconciliation-engine
+python -m venv .venv && source .venv/bin/activate
+pip install -e ".[dev]"
+cp .env.example .env      # SEC contact e-mail, Anthropic key
+set -a && source .env && set +a
+pytest                    # 23 unit tests on synthetic inputs
+gre fetch                 # releases and XBRL facts from SEC
+gre run --no-llm          # rules only, free
+gre run                   # with Claude on the low-confidence rest
+gre eval                  # needs data/labels/worksheet.csv filled in`,
+    files: [
+      { path: 'data/processed/results.json', what: 'Every reconciled item with its route, confidence and citation' },
+      { path: 'data/labels/worksheet.csv', what: 'Blind hand labels for the accuracy run (in progress)' },
+      { path: 'tests/', what: 'The 23 unit tests' },
+    ],
+  }}
   stack={['Python', 'SEC EDGAR', 'XBRL', 'Claude Haiku (tool use)', 'pytest', 'Vercel']}
+  prev={{ href: '/work/portfolio/', label: 'This website' }}
   next={{ href: '/work/faultline/', label: 'faultline' }}
 >
   <section id="plain">
@@ -184,6 +208,13 @@ const toc = [
 
   <section id="results">
     <h2><span class="num">07</span>What came out</h2>
+    <figure class="shot">
+      <a href="https://guidance-reconciliation-engine.vercel.app" rel="noopener">
+        <img src="/shots/gre-decisions.webp" width="1380" height="750" loading="lazy"
+          alt="The live engine, filtered to items the LLM decided. One AMD quarter is labelled MET with its reasoning; the next is labelled UNVERIFIABLE because the period could not be matched. Each item links to the filing on sec.gov." />
+      </a>
+      <figcaption class="caption">The live site, filtered to the 7 items the LLM decided. The second one is the gate working: the period did not match cleanly, so it says UNVERIFIABLE instead of guessing.</figcaption>
+    </figure>
     <p>
       Of 174 quarters with a reported figure, the engine found 2 where revenue came in below the low end of
       guidance. Both are well-known misses: NVIDIA's second quarter of fiscal 2023 (guided $8.10B ± 2%,

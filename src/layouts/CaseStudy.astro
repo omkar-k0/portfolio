@@ -2,6 +2,7 @@
 import Base from './Base.astro';
 import EvidenceTag from '../components/EvidenceTag.astro';
 import type { Metric } from '../data/projects';
+import { CV, mailto } from '../config';
 
 interface Props {
   title: string;
@@ -15,8 +16,13 @@ interface Props {
   stack: string[];
   prev?: { href: string; label: string };
   next?: { href: string; label: string };
+  // Three lines that answer what, how well, and my role before any prose.
+  tldr: { problem: string; result: string; role: string };
+  // Exact commands to rerun the numbers on this page. Rendered as the last section.
+  reproduce?: { repo: string; commands: string; files: { path: string; what: string }[]; note?: string };
 }
-const { title, question, description, crumb, links, metrics, facts, toc, stack, prev, next } = Astro.props;
+const { title, question, description, crumb, links, metrics, facts, toc, stack, prev, next, tldr, reproduce } = Astro.props;
+const fullToc = reproduce ? [...toc, { id: 'reproduce', label: 'Reproduce it' }] : toc;
 ---
 <Base title={`${title} · Case study · Omkar Khadilkar`} description={description}>
   <article class="cs">
@@ -32,6 +38,14 @@ const { title, question, description, crumb, links, metrics, facts, toc, stack, 
     </header>
 
     <div class="wrap">
+      <div class="tldr">
+        <p class="label tldr-h">In 30 seconds</p>
+        <dl>
+          <div><dt class="label">Problem</dt><dd>{tldr.problem}</dd></div>
+          <div><dt class="label">Result</dt><dd>{tldr.result}</dd></div>
+          <div><dt class="label">My role</dt><dd>{tldr.role}</dd></div>
+        </dl>
+      </div>
       <ul class="tiles">
         {metrics.map((m) => (
           <li>
@@ -51,14 +65,38 @@ const { title, question, description, crumb, links, metrics, facts, toc, stack, 
         <details open>
           <summary class="label">On this page</summary>
           <ol>
-            {toc.map((t, i) => (<li><a href={`#${t.id}`}><span class="mono">{String(i + 1).padStart(2, '0')}</span> {t.label}</a></li>))}
+            {fullToc.map((t, i) => (<li><a href={`#${t.id}`}><span class="mono">{String(i + 1).padStart(2, '0')}</span> {t.label}</a></li>))}
           </ol>
         </details>
       </nav>
-      <div class="prose"><slot /></div>
+      <div class="prose">
+        <slot />
+        {reproduce && (
+          <section id="reproduce">
+            <h2><span class="num">{String(fullToc.length).padStart(2, '0')}</span>Reproduce it</h2>
+            <p>Every number on this page comes from these commands, run in <a href={reproduce.repo} rel="noopener">the repository</a>.</p>
+            <pre class="repro"><code>{reproduce.commands}</code></pre>
+            <table>
+              <thead><tr><th>File</th><th>What it holds</th></tr></thead>
+              <tbody>{reproduce.files.map((r) => <tr><td class="n">{r.path}</td><td>{r.what}</td></tr>)}</tbody>
+            </table>
+            {reproduce.note && <p class="caption">{reproduce.note}</p>}
+          </section>
+        )}
+      </div>
     </div>
 
     <footer class="wrap cs-foot">
+      <aside class="cs-contact">
+        <div>
+          <p class="label">Hiring for applied AI or data?</p>
+          <p class="cc-line">I'm looking for a 20-hour/week Werkstudent role in Essen, NRW or remote, available now. Happy to walk you through {title} on a call.</p>
+        </div>
+        <div class="cc-btns">
+          <a class="btn" href={mailto(`About ${title} – Werkstudent role`)}>Email me</a>
+          <a class="btn btn-outline" href={CV.href}>Download CV</a>
+        </div>
+      </aside>
       <div class="stack">
         <p class="label">Built with</p>
         <ul>{stack.map((s) => <li>{s}</li>)}</ul>
@@ -80,6 +118,15 @@ const { title, question, description, crumb, links, metrics, facts, toc, stack, 
   .q { font-size: clamp(19px, 2vw, 24px); color: var(--muted); font-style: italic; max-width: 32em; }
   .cs-links { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; margin-top: 32px; }
 
+  .tldr dl { display: contents; }
+  .tldr { display: grid; grid-template-columns: 1fr 3fr 3fr 3fr; gap: 0 24px; margin: 0 0 28px; padding: 18px 20px; background: var(--surface); border: 1px solid var(--rule); border-left: 2px solid var(--accent); }
+  .tldr-h { color: var(--accent); align-self: start; padding-top: 2px; }
+  .tldr dd { margin: 6px 0 0; font-size: 15px; line-height: 1.45; }
+  .repro { background: var(--surface); border: 1px solid var(--rule); padding: 16px 18px; overflow-x: auto; font-family: var(--mono); font-size: 13px; line-height: 1.6; margin: 0 0 20px; max-width: 100%; }
+  .repro code { background: none; border: none; padding: 0; font-size: inherit; }
+  .cs-contact { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; border: 1px solid var(--rule); border-left: 2px solid var(--accent); padding: 22px 24px; margin-bottom: 40px; }
+  .cc-line { font-size: 18px; margin-top: 8px; max-width: 34em; }
+  .cc-btns { display: flex; gap: 14px; flex-wrap: wrap; }
   .tiles { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
   .tiles li { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 22px 20px; }
   .tiles li + li { border-left: 1px solid var(--rule); }
@@ -116,6 +163,14 @@ const { title, question, description, crumb, links, metrics, facts, toc, stack, 
   .prose :global(th) { text-align: left; font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); font-weight: 400; padding: 0 12px 10px 0; border-bottom: 1px solid var(--rule-strong); }
   .prose :global(td) { padding: 10px 12px 10px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
   .prose :global(td.n) { font-family: var(--mono); white-space: nowrap; }
+  .prose :global(.shot) { margin: 4px 0 28px; }
+  .prose :global(.shot img) { display: block; width: 100%; height: auto; border: 1px solid var(--rule-strong); border-radius: 2px; }
+  .prose :global(.shot a:hover img) { border-color: var(--accent); }
+  .prose :global(.term) { border: 1px solid var(--rule-strong); border-radius: 2px; background: var(--surface); }
+  .prose :global(.term-bar) { text-transform: none; letter-spacing: 0; margin: 0; padding: 10px 16px; border-bottom: 1px solid var(--rule); color: var(--muted); max-width: none; }
+  .prose :global(.term pre) { margin: 0; padding: 14px 16px; overflow-x: auto; font-family: var(--mono); font-size: 12.5px; line-height: 1.55; }
+  .prose :global(.term pre code) { background: none; border: none; padding: 0; font-size: inherit; }
+  .prose :global(.term .caption) { padding: 0 16px 12px; }
   .prose :global(.decisions) { display: grid; gap: 14px; margin-top: 8px; }
   .prose :global(.decision) { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--rule); }
   .prose :global(.decision > div) { padding: 16px 18px; }
@@ -139,6 +194,7 @@ const { title, question, description, crumb, links, metrics, facts, toc, stack, 
     .tiles li:nth-child(3) { border-left: none; }
     .tiles li:nth-child(n + 3) { border-top: 1px solid var(--rule); }
     .facts { grid-template-columns: repeat(2, 1fr); }
+    .tldr { grid-template-columns: 1fr; gap: 12px; }
     .layout { grid-template-columns: 1fr; padding-top: 32px; }
     .toc { position: static; border: 1px solid var(--rule); padding: 14px 16px; }
     .toc summary { cursor: pointer; margin-bottom: 0; }
