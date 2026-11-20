@@ -57,10 +57,10 @@ export const proof: (Metric & { project: string; slug: string })[] = [
     slug: 'faultline',
   },
   {
-    value: '188',
-    label: 'guidance items reconciled, 4% escalated to the LLM',
+    value: '97.9%',
+    label: 'of 188 guidance items right against blind hand labels; 4% needed the LLM',
     evidence: 'measured',
-    source: 'guidance-reconciliation-engine final run, 24 Oct 2026',
+    source: 'gre eval on 188 hand labels, 20 Nov 2026 (always-MET baseline 91.5%)',
     project: 'Guidance Reconciliation Engine',
     slug: 'guidance-reconciliation-engine',
   },
@@ -72,9 +72,9 @@ export const flagships: Flagship[] = [
     ready: true,
     name: 'Guidance Reconciliation Engine',
     kind: 'Product',
-    status: 'Live · accuracy pending',
+    status: 'Live · 97.9% on hand labels',
     question: 'Did the company hit the guidance it gave last quarter?',
-    outcome: 'Decides **181 of 188** forecasts with rules alone. The LLM sees only the unclear 7, and must quote the filing.',
+    outcome: 'Gets **184 of 188** forecasts right against blind hand labels. Rules decide 181; the LLM sees only the unclear 7, and must quote the filing.',
     tags: ['Python', 'SEC EDGAR', 'Claude Haiku'],
     stages: [
       { label: 'Fetch', detail: '8-K releases and XBRL facts' },
@@ -82,7 +82,7 @@ export const flagships: Flagship[] = [
       { label: 'Rules', detail: 'Clean numeric matches' },
       { label: 'LLM', detail: 'Ambiguous rest, quote-checked', escalation: true },
     ],
-    facts: ['185 releases, 11 companies', '7 of 188 sent to the LLM', 'Accuracy pending hand labels'],
+    facts: ['185 releases, 11 companies', '7 of 188 sent to the LLM', '97.9% vs 91.5% baseline'],
     links: [
       { label: 'Live', href: 'https://guidance-reconciliation-engine.vercel.app' },
       { label: 'Repo', href: 'https://github.com/omkar-k0/guidance-reconciliation-engine' },
@@ -178,7 +178,7 @@ export const work: WorkItem[] = [
     name: 'Guidance Reconciliation Engine', kind: 'Product',
     answers: 'Did the company hit the revenue guidance it gave last quarter?',
     metric: { value: '7 of 188', label: 'sent to the LLM', evidence: 'measured', source: 'results.json' },
-    status: 'Live · accuracy pending', href: caseStudy('guidance-reconciliation-engine'), external: false,
+    status: 'Live · 97.9% on hand labels', href: caseStudy('guidance-reconciliation-engine'), external: false,
   },
   {
     name: 'faultline', kind: 'Open source',

@@ -70,12 +70,12 @@ Self-scored against the checks above on a local production build (the blind revi
 |---|---|---|---|
 | 1. 6-second rule | 8 | 10 | — |
 | 2. Recruiter fit | 6 | 10 | — (certificates still to add) |
-| 3. Product confidence | 4 | 8 | 3.5: GRE accuracy vs hand labels and faultline held-out are pending |
+| 3. Product confidence | 4 | 8 → 10 (20 Nov, after GRE labels) | — |
 | 4. Scannability | 8 | 10 | — |
 | 5. Conversion | 6 | 10 | — |
 | 6. 30-second skim | 8 | 10 | — |
 | 7. Technical reviewer | 8 | 10 | — |
 
-What moves 3 to 10: `gre eval` on the 188 hand labels, or the faultline held-out run.
+3.5 now passes: the GRE headline is 97.9% on 188 blind hand labels (baseline 91.5%). faultline's held-out run is still pending.
 
 Measured on 20 Nov 2026: home height 4,516 px at 1440 wide; name, role, availability, four proof numbers and both buttons above the fold at 1440×900 and 390×844; no case-study paragraph over 90 words; Lighthouse home and Werkbank 100/100/96/100 (the 96 is the analytics script, which only exists on Vercel).

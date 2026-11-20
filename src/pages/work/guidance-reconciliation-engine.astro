@@ -12,7 +12,7 @@ const metrics: Metric[] = [
   { value: '185', label: 'earnings releases read, 11 companies, Jan 2022 to Oct 2026', evidence: 'measured', source: 'data/processed/results.json' },
   { value: '7 of 188', label: 'items sent to the LLM (3.7%); the rest decided by rules', evidence: 'measured', source: 'data/processed/results.json, route field' },
   { value: '23', label: 'unit tests on synthetic inputs', evidence: 'measured', source: 'tests/' },
-  { value: '—', label: 'accuracy against hand labels: labelling not done yet', evidence: 'pending', source: 'gre eval needs data/labels/worksheet.csv' },
+  { value: '97.9%', label: 'accuracy on all 188 items, hand-labelled blind (always-MET baseline: 91.5%)', evidence: 'measured', source: 'gre eval → data/processed/eval.json, 20 Nov 2026' },
 ];
 
 const facts = [
@@ -20,7 +20,7 @@ const facts = [
   { label: 'When', value: 'October 2026' },
   { label: 'Role', value: 'Sole developer: data, rules, gate, LLM layer, site' },
   { label: 'Data', value: 'SEC 8-K earnings releases and XBRL company facts' },
-  { label: 'Status', value: 'Live · accuracy pending' },
+  { label: 'Status', value: 'Live · 97.9% on hand labels' },
 ];
 
 const toc = [
@@ -50,7 +50,7 @@ const toc = [
   toc={toc}
   tldr={{
     problem: 'Companies give revenue guidance every quarter. Checking it against what they later reported means reading hundreds of filings by hand.',
-    result: '188 guidance items from 185 SEC releases reconciled with citations; only 7 (3.7%) needed the LLM. Accuracy against hand labels: pending.',
+    result: '184 of 188 guidance items right against blind hand labels (97.9%); only 7 (3.7%) needed the LLM. All 110 high-confidence rule decisions were right.',
     role: 'Sole developer: SEC data pipeline, rules, confidence gate, Claude layer and the live site.',
   }}
   reproduce={{
@@ -64,10 +64,11 @@ pytest                    # 23 unit tests on synthetic inputs
 gre fetch                 # releases and XBRL facts from SEC
 gre run --no-llm          # rules only, free
 gre run                   # with Claude on the low-confidence rest
-gre eval                  # needs data/labels/worksheet.csv filled in`,
+gre eval                  # scores against data/labels/worksheet.csv`,
     files: [
       { path: 'data/processed/results.json', what: 'Every reconciled item with its route, confidence and citation' },
-      { path: 'data/labels/worksheet.csv', what: 'Blind hand labels for the accuracy run (in progress)' },
+      { path: 'data/labels/worksheet.csv', what: 'The 188 blind hand labels, with notes' },
+      { path: 'data/processed/eval.json', what: 'Accuracy, by route, confusion table and calibration' },
       { path: 'tests/', what: 'The 23 unit tests' },
     ],
   }}
@@ -213,7 +214,7 @@ gre eval                  # needs data/labels/worksheet.csv filled in`,
         <img src="/shots/gre-decisions.webp" width="1380" height="750" loading="lazy"
           alt="The live engine, filtered to items the LLM decided. One AMD quarter is labelled MET with its reasoning; the next is labelled UNVERIFIABLE because the period could not be matched. Each item links to the filing on sec.gov." />
       </a>
-      <figcaption class="caption">The live site, filtered to the 7 items the LLM decided. The second one is the gate working: the period did not match cleanly, so it says UNVERIFIABLE instead of guessing.</figcaption>
+      <figcaption class="caption">The live site, filtered to the 7 items the LLM decided. The second one refused because the period label did not match. The hand label says MET, so it counts as one of the 4 errors (section 09).</figcaption>
     </figure>
     <p>
       Of 174 quarters with a reported figure, the engine found 2 where revenue came in below the low end of
@@ -229,18 +230,39 @@ gre eval                  # needs data/labels/worksheet.csv filled in`,
       11 items are UNVERIFIABLE because their quarter had not been reported yet when the engine ran on
       24 October 2026. One more is UNVERIFIABLE because the model declined it (see section 09).
     </p>
+    <h3>Scored against hand labels</h3>
+    <p>
+      I labelled all 188 items blind, from the filings, without seeing the engine's answers. Then
+      <code>gre eval</code> compared the two.
+    </p>
+    <table>
+      <thead><tr><th>Slice</th><th>Items</th><th>Right</th><th>Accuracy</th></tr></thead>
+      <tbody>
+        <tr><td>All items</td><td class="n">188</td><td class="n">184</td><td class="n">97.9%</td></tr>
+        <tr><td>Answer "MET" for everything (baseline)</td><td class="n">188</td><td class="n">172</td><td class="n">91.5%</td></tr>
+        <tr><td>Rules, confidence ≥ 0.95</td><td class="n">110</td><td class="n">110</td><td class="n">100%</td></tr>
+        <tr><td>Rules, confidence 0.75–0.95</td><td class="n">71</td><td class="n">68</td><td class="n">95.8%</td></tr>
+        <tr><td>LLM</td><td class="n">7</td><td class="n">6</td><td class="n">85.7%</td></tr>
+      </tbody>
+    </table>
+    <p>
+      The baseline row matters: most quarters are beats, so 91.5% is free. The engine's real work is the
+      other 16 items, the 2 misses and the 14 that cannot be checked. It got 13 of those 16 right. The 3 it got
+      wrong all sit in the lower rule band, which is where the threshold should move (section 10).
+    </p>
+    <p class="caption">One labeller, no second rater. Labels: data/labels/worksheet.csv. Scores: data/processed/eval.json.</p>
   </section>
 
   <section id="refuses">
     <h2><span class="num">08</span>What it refuses to claim</h2>
     <p>
-      <strong>Accuracy.</strong> The engine has not been scored against hand labels yet, so no accuracy number
-      appears anywhere. The labelling sheet is blind: it hides the system's labels so they cannot bias the
-      person checking.
+      <strong>Accuracy beyond these 188 items.</strong> 97.9% is measured on this run: 11 large US tech
+      companies whose releases follow a tidy format. Other companies, other formats or other guidance types
+      may score lower.
     </p>
     <p>
-      <strong>A "beat rate" for these companies.</strong> The chart shows the engine's output. Until the labels
-      exist, it is a description of what the engine decided, not a finding about the companies.
+      <strong>A "beat rate" for these companies.</strong> The chart shows the engine's output on 11 hand-picked
+      companies. That describes these releases, not how often companies beat guidance in general.
     </p>
   </section>
 
@@ -262,25 +284,27 @@ gre eval                  # needs data/labels/worksheet.csv filled in`,
     <p>
       All three cleared the gate. The confidence deductions only catch the problems they were written for, and
       "second figure in the same release" was not one of them. The fix is a structural rule, not another
-      deduction: one quarterly total-revenue item per release. These are exactly the errors hand labelling is
-      for, and why accuracy stays pending until it is done.
+      deduction: one quarterly total-revenue item per release. Hand labelling caught all three, and they are
+      3 of the engine's 4 errors.
     </p>
-    <h3>The model caught an extractor bug</h3>
+    <h3>The model refused where the rule was right</h3>
     <p>
       For AMD's October 2024 release, the extractor attached the wrong period label to correct guidance. The
-      model noticed that the label and the reported period did not agree and returned UNVERIFIABLE instead of
-      MET. The rule layer had said MET. Refusing was the right call.
+      model noticed that the label and the reported period did not agree and returned UNVERIFIABLE. The rule
+      layer had said MET, and the hand label agrees with the rule. This is the 4th error. It is the safe kind:
+      a refusal, not a wrong answer. But it still counts against accuracy, and the real fix is the period label.
     </p>
   </section>
 
   <section id="open">
     <h2><span class="num">10</span>Still open</h2>
     <ul>
-      <li>Hand-label the items, run <code>gre eval</code>, and replace the pending accuracy with a measured one.</li>
       <li>Enforce one quarterly item per release, and fix AMD's period label.</li>
       <li>Split UNVERIFIABLE into "cannot tell" and "not reported yet".</li>
       <li>RESTATED never fired in this run. The detection exists but has not been seen working on real data.</li>
-      <li>Calibrate the 0.75 threshold once labels exist.</li>
+      <li>Move the threshold. Temperature scaling on the labels cuts calibration error from 0.062 to 0.009 and
+        suggests a scaled threshold of 0.711 for 95% precision. Not applied yet, and it needs a second labeller
+        and more companies before I trust it.</li>
     </ul>
   </section>
 </CaseStudy>
