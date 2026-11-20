@@ -7,6 +7,7 @@ export const SITE = {
   location: 'Essen, Germany',
   study: 'M.Sc. Big Data & Business Analytics, FOM',
   availability: 'Available now · 20 h/week',
+  seeking: 'Seeking a 20-hour/week Werkstudent role in applied AI and data · Essen, NRW or remote · available now',
   email: 'omkarkhadilkar8@gmail.com',
 };
 

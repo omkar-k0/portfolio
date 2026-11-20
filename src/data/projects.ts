@@ -24,6 +24,7 @@ export interface Flagship {
   kind: 'Product' | 'Research' | 'Open source';
   status: string;
   question: string;
+  outcome: string; // one line for the home page; **bold** marks the key number
   tags: string[];
   stages: Stage[];
   facts: string[]; // short real facts under the pipeline card
@@ -73,6 +74,7 @@ export const flagships: Flagship[] = [
     kind: 'Product',
     status: 'Live · accuracy pending',
     question: 'Did the company hit the guidance it gave last quarter?',
+    outcome: 'Decides **181 of 188** forecasts with rules alone. The LLM sees only the unclear 7, and must quote the filing.',
     tags: ['Python', 'SEC EDGAR', 'Claude Haiku'],
     stages: [
       { label: 'Fetch', detail: '8-K releases and XBRL facts' },
@@ -93,6 +95,7 @@ export const flagships: Flagship[] = [
     kind: 'Open source',
     status: 'Benchmark v1 released · triage built · held-out pending',
     question: 'Why did the dbt pipeline break, and where is the evidence?',
+    outcome: 'Names the exact root cause for **89.6%** of 48 dev incidents, with **0** confidently wrong. Held-out score pending.',
     tags: ['dbt Core', 'sqlglot', 'DuckDB'],
     stages: [
       { label: 'Gather', detail: 'Monitor anomalies, failed tests' },
@@ -114,6 +117,7 @@ export const flagships: Flagship[] = [
     kind: 'Product',
     status: 'Live',
     question: 'Which workshop should take this furniture order?',
+    outcome: 'Right on **95.8%** of the orders it routes on its own. Unsure orders wait for a person.',
     tags: ['Classifier', 'Postgres', 'PWA · EN/DE'],
     stages: [
       { label: 'Request', detail: 'Free text, English or German' },
@@ -134,6 +138,7 @@ export const flagships: Flagship[] = [
     kind: 'Research',
     status: 'Research · code being published',
     question: 'When should a small model hand a sentence to an LLM?',
+    outcome: 'Reaches **0.878** accuracy by sending only the unsure 12% to an LLM. The gain is 5 sentences, reported as such.',
     tags: ['FinBERT', 'Confidence gating', 'SEC filings'],
     stages: [
       { label: 'Filings', detail: 'Risk Factors and MD&A, 6 firms' },
@@ -147,12 +152,12 @@ export const flagships: Flagship[] = [
 ];
 
 export const ledger = [
-  { name: 'Sustainability commitment classifier', kind: 'Tool', note: '1,562 commitment sentences, 12.3% quantified', href: 'https://github.com/omkar-k0/sustainability-commitment-classifier' },
-  { name: 'DAX 40 capital structure', kind: 'Research', note: 'Panel of 32 firms, 127 observations · graded 1.3', href: '' },
-  { name: 'ESG and bond spreads', kind: 'Research', note: 'Null result: ESG changes do not move spreads', href: '' },
-  { name: 'Dem Fragen', kind: 'Product', note: 'Legal first information for India · live, real eval pending', href: 'https://github.com/omkar-k0/cuddly-octo-palm-tree' },
-  { name: 'GradeLens', kind: 'Tool', note: 'Grade trajectory extension for FOM students · v0.4', href: 'https://github.com/omkar-k0/gradelens' },
-  { name: 'profile-hud', kind: 'Tool', note: 'GitHub Action for profile cards · 156+ tests', href: 'https://github.com/omkar-k0/profile-hud' },
+  { name: 'Sustainability commitment classifier', kind: 'Tool', note: 'Only 12.3% of 1,562 climate commitments come with a number', href: 'https://github.com/omkar-k0/sustainability-commitment-classifier' },
+  { name: 'DAX 40 capital structure', kind: 'Research', note: 'More profitable DAX firms carry less debt · graded 1.3', href: '' },
+  { name: 'ESG and bond spreads', kind: 'Research', note: 'An honest null: ESG rating changes did not move bond spreads', href: '' },
+  { name: 'Dem Fragen', kind: 'Product', note: 'Plain-language answers under Indian law, with sources · real eval pending', href: 'https://github.com/omkar-k0/cuddly-octo-palm-tree' },
+  { name: 'GradeLens', kind: 'Tool', note: 'Shows FOM students what each exam needs for a target grade', href: 'https://github.com/omkar-k0/gradelens' },
+  { name: 'profile-hud', kind: 'Tool', note: 'GitHub profile cards built from real repo data · 156+ tests', href: 'https://github.com/omkar-k0/profile-hud' },
 ];
 
 // Full work index (/work/). Numbered straight through, flagships first.

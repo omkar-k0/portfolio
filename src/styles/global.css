@@ -82,6 +82,8 @@ h1, h2, h3 { font-weight: 400; }
   background: var(--accent); color: var(--accent-ink); border: 1px solid var(--accent);
 }
 .btn:hover { filter: brightness(1.08); }
+.btn-outline { background: transparent; color: var(--ink); border-color: var(--ink); }
+.btn-outline:hover { background: var(--ink); color: var(--bg); filter: none; }
 .textlink {
   font-family: var(--mono); font-size: 13px; text-decoration: underline;
   text-underline-offset: 4px; text-decoration-thickness: 1px;

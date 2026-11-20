@@ -1,6 +1,6 @@
 ---
 import type { Stage } from '../data/projects';
-interface Props { stages: Stage[]; facts: string[] }
+interface Props { stages: Stage[]; facts?: string[] }
 const { stages, facts } = Astro.props;
 ---
 <figure class="pipe">
@@ -17,9 +17,11 @@ const { stages, facts } = Astro.props;
       </li>
     ))}
   </ol>
-  <ul class="facts">
-    {facts.map((f) => <li>{f}</li>)}
-  </ul>
+  {facts && facts.length > 0 && (
+    <ul class="facts">
+      {facts.map((f) => <li>{f}</li>)}
+    </ul>
+  )}
 </figure>
 
 <style>

@@ -7,6 +7,8 @@ import { proof, flagships, ledger } from '../data/projects';
 
 // Until a case study page exists, links point to the project's row on this page.
 const ready = new Set(flagships.filter((f) => f.ready).map((f) => f.slug));
+// Escape, then turn **x** into <strong>x</strong>.
+const rich = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
 const projectHref = (slug: string) => (ready.has(slug) ? `/work/${slug}/` : `#${slug}`);
 
 const doors = [
@@ -29,11 +31,11 @@ const doors = [
           Every answer carries a confidence score, a citation, or the word <code>unverifiable</code>.
         </p>
         <div class="cta reveal">
-          <a class="btn" href="#work">See the work</a>
-          <a class="textlink" href={`mailto:${SITE.email}`}>Email me →</a>
+          <a class="btn" href="/work/">View case studies</a>
+          <a class="btn btn-outline" href={`mailto:${SITE.email}`}>Email me</a>
         </div>
       </div>
-      <p class="label status"><span class="dot"></span>{SITE.availability}</p>
+      <p class="status"><span class="dot"></span>{SITE.seeking}</p>
     </div>
   </section>
 
@@ -95,6 +97,7 @@ const doors = [
               <p class="label">{String(i + 1).padStart(2, '0')} · {f.kind}</p>
               <h3>{f.ready ? <a href={`/work/${f.slug}/`}>{f.name}</a> : f.name}</h3>
               <p class="question">“{f.question}”</p>
+              <p class="outcome" set:html={rich(f.outcome)} />
               <ul class="chips">{f.tags.map((t) => <li>{t}</li>)}</ul>
               <p class="label fstatus">{f.status}</p>
               <p class="flinks">
@@ -102,7 +105,7 @@ const doors = [
                 {f.links.map((l) => <a class="textlink" href={l.href} rel="noopener">{l.label} ↗</a>)}
               </p>
             </div>
-            <Pipeline stages={f.stages} facts={f.facts} />
+            <Pipeline stages={f.stages} />
           </article>
         ))}
       </div>
@@ -117,7 +120,7 @@ const doors = [
         <a class="label" href="/work/">All projects →</a>
       </div>
       <table class="ledger">
-        <thead><tr><th class="label">No.</th><th class="label">Project</th><th class="label">Type</th><th class="label note-col">Note</th><th></th></tr></thead>
+        <thead><tr><th class="label">No.</th><th class="label">Project</th><th class="label">Type</th><th class="label note-col">What it shows</th><th></th></tr></thead>
         <tbody>
           {ledger.map((r, i) => (
             <tr>
@@ -162,7 +165,7 @@ const doors = [
   .lede { max-width: 34em; color: var(--muted); font-size: 18px; }
   .lede code { font-family: var(--mono); font-size: 0.9em; color: var(--ink); border-bottom: 1px solid var(--accent); }
   .cta { display: flex; align-items: center; gap: 24px; }
-  .status { margin-top: 72px; padding-top: 16px; border-top: 1px solid var(--rule); display: flex; align-items: center; gap: 8px; }
+  .status { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--rule); display: flex; align-items: center; gap: 10px; font-size: 16px; }
   .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); display: inline-block; }
 
   /* Proof */
@@ -193,6 +196,8 @@ const doors = [
   .flag h3 a { text-decoration: none; }
   .flag h3 a:hover { color: var(--accent); }
   .question { font-style: italic; color: var(--muted); font-size: 18px; max-width: 26em; }
+  .outcome { margin-top: 14px; font-size: 16px; line-height: 1.5; max-width: 30em; }
+  .outcome :global(strong) { font-weight: 500; color: var(--accent); font-size: 1.15em; }
   .chips { list-style: none; padding: 0; margin: 20px 0 0; display: flex; flex-wrap: wrap; gap: 6px; }
   .chips li { font-family: var(--mono); font-size: 11px; border: 1px solid var(--rule-strong); padding: 4px 8px; border-radius: 2px; }
   .fstatus { margin-top: 18px; }
