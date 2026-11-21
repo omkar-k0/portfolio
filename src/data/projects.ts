@@ -232,6 +232,12 @@ export const work: WorkItem[] = [
     status: 'Live demo', href: caseStudy('werkbank'), external: false,
   },
   {
+    name: 'fuelcycle', kind: 'Open source',
+    answers: 'Can you trust a year of fuel prices, and prove the checks work?',
+    metric: { value: '99.7%', label: 'of 586 planted errors caught', evidence: 'measured', source: 'fuelcycle results/dq_eval.json' },
+    status: 'Done for France · 3.3M events', href: caseStudy('fuelcycle'), external: false,
+  },
+  {
     name: 'FinBERT fusion', kind: 'Research',
     answers: 'When should a small model hand a sentence to an LLM?',
     metric: { value: '0.878', label: 'accuracy (FinBERT alone 0.844)', evidence: 'measured', source: 'test n = 147' },

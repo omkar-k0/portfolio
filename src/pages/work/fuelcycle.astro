@@ -1,0 +1,270 @@
+---
+import CaseStudy from '../../layouts/CaseStudy.astro';
+import ThoughtProcess from '../../components/ThoughtProcess.astro';
+import type { Metric } from '../../data/projects';
+
+const repo = 'https://github.com/omkar-k0/fuelcycle';
+const demo = 'https://fuelcycle-seven.vercel.app';
+
+const metrics: Metric[] = [
+  { value: '3,297,846', label: 'French fuel price events in one year, every one checked by the gate', evidence: 'measured', source: 'silver_price_events, 1 Nov 2025 to 31 Oct 2026' },
+  { value: '99.7%', label: 'of 586 planted errors caught, 2 false alarms in 118,795 clean events', evidence: 'measured', source: 'results/dq_eval.json, 14 real days' },
+  { value: '92%', label: '"fill now" calls right, against 72% for always filling now', evidence: 'backtested', source: 'results/forecast_eval.json, 8 weeks rolling origin' },
+  { value: '—', label: 'precision on the 7,050 real anomalies it flags: needs hand labels', evidence: 'pending', source: 'not labelled yet' },
+];
+
+const facts = [
+  { label: 'Type', value: 'Data engineering + analysis' },
+  { label: 'When', value: 'November 2026' },
+  { label: 'Role', value: 'Solo: adapter, pipeline, quality gate, evaluation, forecast, demo' },
+  { label: 'Scale', value: '3.3M events · 10,150 stations · 12 months · 54 s rebuild on 3 GB RAM' },
+  { label: 'Status', value: 'Done for France · Germany adapter next' },
+];
+
+const toc = [
+  { id: 'plain', label: 'In plain language' },
+  { id: 'question', label: 'The question' },
+  { id: 'obvious', label: 'Why the obvious fails' },
+  { id: 'gate', label: 'The gate' },
+  { id: 'system', label: 'Thought process' },
+  { id: 'decisions', label: 'Decisions' },
+  { id: 'results', label: 'What came out' },
+  { id: 'refuses', label: 'What it refuses to claim' },
+  { id: 'broke', label: 'What broke' },
+  { id: 'open', label: 'Still open' },
+];
+---
+<CaseStudy
+  title="fuelcycle"
+  question="Can you trust a year of fuel prices, and prove the checks work?"
+  description="A DuckDB and dbt pipeline over 3.3 million French fuel price events: a data-quality gate scored by planting known errors, daily price marts, and a next-day forecast that answers only when it is sure."
+  crumb="Open source · 04"
+  links={[
+    { label: 'Open the demo page', href: demo, primary: true },
+    { label: 'Source on GitHub', href: repo },
+    { label: 'Gate evaluation', href: `${repo}/blob/main/results/dq_eval.json` },
+  ]}
+  metrics={metrics}
+  facts={facts}
+  toc={toc}
+  tldr={{
+    problem: 'A year of station-level fuel prices is 3.3 million events. Most pipelines drop bad rows silently, so nobody can say how clean the result is.',
+    result: 'Every event gets a verdict and a reason; the gate caught 99.7% of 586 planted errors with 2 false alarms. A next-day forecast answers on 3.4% of days, and its "fill now" call is right 92% of the time.',
+    role: 'Solo: source adapter, bronze/silver/gold pipeline, quality gate, fault injection, forecast and demo.',
+  }}
+  reproduce={{
+    repo,
+    commands: `git clone ${repo} && cd fuelcycle
+python3 -m venv .venv && source .venv/bin/activate && make setup
+make data        # French archives -> canonical daily files
+make all         # pipeline, gate evaluation, forecast backtest, page data
+make test        # end-to-end tests on a synthetic sample (what CI runs)`,
+    files: [
+      { path: 'results/dq_eval.json', what: 'Planted errors per type: injected, caught, right reason, false alarms' },
+      { path: 'results/dq_eval_v1_hourly_peers.json', what: 'The earlier, weaker gate (68.8% on outliers), kept for comparison' },
+      { path: 'results/forecast_eval.json', what: 'Backtest: error, band coverage, answer rate, fill-now and wait accuracy' },
+    ],
+    note: 'Price data from prix-carburants.gouv.fr under Licence Ouverte 2.0. It is downloaded, not stored in the repo.',
+  }}
+  stack={['DuckDB', 'dbt', 'Parquet', 'Python', 'LightGBM', 'Conformal prediction', 'GitHub Actions', 'Vercel']}
+  prev={{ href: '/work/werkbank/', label: 'Werkbank' }}
+  next={{ href: '/work/portfolio/', label: 'This website' }}
+>
+  <section id="plain">
+    <h2><span class="num">01</span>In plain language</h2>
+    <p>
+      France publishes every price change at every petrol station. I built a pipeline that loads a year of it,
+      about 3.3 million changes, and checks every single one before anything is counted.
+    </p>
+    <p>
+      If a price looks wrong, it gets a label saying why. Nothing is quietly thrown away. To prove the checks
+      work, I planted 586 known errors in real data and counted how many were caught.
+    </p>
+    <p>
+      On top of the clean data sits a forecast for "fill up today or wait?". It only answers on the days it is
+      actually confident. On every other day it says "uncertain".
+    </p>
+  </section>
+
+  <section id="question">
+    <h2><span class="num">02</span>The question</h2>
+    <p class="callout">
+      How do you know your data is right, and how do you prove the checks themselves work?
+    </p>
+  </section>
+
+  <section id="obvious">
+    <h2><span class="num">03</span>Why the obvious approach fails</h2>
+    <p>
+      <strong>Dropping bad rows in the load step</strong> makes the numbers look clean, but nobody can say how
+      many rows went missing, or why.
+    </p>
+    <p>
+      <strong>Writing data tests and calling it done</strong> proves the tests run, not that they catch anything.
+      A test that never fires looks the same as a test that is broken.
+    </p>
+    <p>
+      <strong>A forecast that always answers</strong> gives advice on days when tomorrow's price is a coin flip.
+      For fuel prices that is most days.
+    </p>
+  </section>
+
+  <section id="gate">
+    <h2><span class="num">04</span>The gate</h2>
+    <p>Every price event ends up in exactly one of three states, each with a reason code.</p>
+    <table>
+      <thead><tr><th>Outcome</th><th>Rules</th></tr></thead>
+      <tbody>
+        <tr><td>Quarantined</td><td>Unreadable, zero or negative price, outside 0.80–3.50 €, unknown station, timestamp outside the file's day, duplicate</td></tr>
+        <tr><td>Flagged</td><td>A spike of more than 8% that reverts within an hour; more than max(30 ct, 6 MAD) from stations of the same type in the same département that day</td></tr>
+        <tr><td>Accepted</td><td>Everything else</td></tr>
+      </tbody>
+    </table>
+    <p>
+      The outlier rule abstains when fewer than 5 comparable stations reported that day. A dbt test checks every
+      day that the number of events in equals the number of events out, so nothing can disappear.
+    </p>
+  </section>
+
+  <section id="system">
+    <h2><span class="num">05</span>Thought process</h2>
+    <p>Left to right, the path one price change takes, from the government file to the forecast.</p>
+    <ThoughtProcess
+      steps={[
+        { title: 'Adapt', points: ['French yearly XML', 'Old millième prices to euros', 'Paris time zone attached'], takeaway: 'One canonical format; a second country is one adapter.' },
+        { title: 'Freeze', points: ['One Parquet file per day', 'Checksums in a manifest', 'Non-price files refused'], takeaway: 'Raw data kept as it came.' },
+        { title: 'Judge', points: ['Six hard rules, two soft', 'A reason code on every flag', 'In = out, tested daily'], takeaway: 'Nothing is dropped silently.', model: true },
+        { title: 'Aggregate', points: ['Price in force at noon (ASOF join)', 'France, 95 départements, 135 cities', 'Who reprices first'], takeaway: 'Daily grain, because the market moves daily.' },
+        { title: 'Forecast', points: ['Quantile models, 3 fuels', 'Band calibrated on last week', 'Answer only if the band is one-sided'], takeaway: '"Uncertain" is an answer.' },
+      ]}
+      note="The French feed is converted into the same daily layout as Germany's Tankerkönig feed, so the pipeline after the adapter does not care which country the data comes from."
+    />
+  </section>
+
+  <section id="decisions">
+    <h2><span class="num">06</span>Decisions, and what they cost</h2>
+    <div class="decisions">
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Flag and keep</strong>
+          <p>Every event gets a verdict and a reason, and the in = out test can prove nothing vanished.</p></div>
+        <div><span class="label">Instead of</span><strong>Drop bad rows on load</strong>
+          <p>Cheaper, but nobody could say what was lost. Cost: a bigger table and one more test per day.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Plant errors, then score</strong>
+          <p>586 labelled errors in copies of 14 real days, scored on caught and right reason.</p></div>
+        <div><span class="label">Instead of</span><strong>Trust that tests pass</strong>
+          <p>Passing tests say nothing about what they would catch.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Daily grain</strong>
+          <p>In November 2025, 86% of station-fuel-days had exactly one price change.</p></div>
+        <div><span class="label">Instead of</span><strong>An hourly grid per city</strong>
+          <p>It spilled about 2 GB a month to disk on a 3 GB machine and added nothing. Hourly stays switchable for Germany.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>French open data now</strong>
+          <p>Every price change, openly licensed, downloadable today.</p></div>
+        <div><span class="label">Instead of</span><strong>Waiting for German data</strong>
+          <p>Tankerkönig's history now needs a verified account and sign-ups were paused. Cost: not the local market yet.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="results">
+    <h2><span class="num">07</span>What came out</h2>
+    <h3>The gate, scored on planted errors</h3>
+    <table>
+      <thead><tr><th>Planted error</th><th>Planted</th><th>Caught</th><th>Right reason</th></tr></thead>
+      <tbody>
+        <tr><td>Duplicate</td><td class="n">67</td><td class="n">100%</td><td class="n">100%</td></tr>
+        <tr><td>Zero or negative price</td><td class="n">65</td><td class="n">100%</td><td class="n">100%</td></tr>
+        <tr><td>Price out of range</td><td class="n">81</td><td class="n">100%</td><td class="n">100%</td></tr>
+        <tr><td>Regional outlier</td><td class="n">80</td><td class="n">97.5%</td><td class="n">97.5%</td></tr>
+        <tr><td>Spike that reverts</td><td class="n">79</td><td class="n">100%</td><td class="n">100%</td></tr>
+        <tr><td>Timestamp outside the file's day</td><td class="n">70</td><td class="n">100%</td><td class="n">100%</td></tr>
+        <tr><td>Unknown station</td><td class="n">62</td><td class="n">100%</td><td class="n">100%</td></tr>
+        <tr><td>Unreadable</td><td class="n">82</td><td class="n">100%</td><td class="n">100%</td></tr>
+        <tr><td><strong>All</strong></td><td class="n"><strong>586</strong></td><td class="n"><strong>99.7%</strong></td><td></td></tr>
+      </tbody>
+    </table>
+    <p class="caption">Precision 99.7%: 2 false alarms among 118,795 clean events. 264 events were already flagged on the untouched copy; those are real anomalies with unknown truth and are not scored.</p>
+
+    <h3>Fill up today?</h3>
+    <figure class="shot">
+      <a href={demo} rel="noopener">
+        <img src="/shots/fuelcycle-forecast.webp" width="804" height="313" loading="lazy"
+          alt="Line chart of the national E10 price over eight weeks in September and October 2026. The actual price, the forecast and its shaded 80% band move closely together. Orange dots mark days the model said fill now, during price rises; teal dots mark days it said wait, during the fall at the end of October." />
+      </a>
+      <figcaption class="caption">France, E10, the last 8 weeks of the backtest. Orange dots: "fill now". Teal dots: "wait". Every other day it answered "uncertain".</figcaption>
+    </figure>
+    <table>
+      <thead><tr><th>Backtest, 19,679 area-fuel-days</th><th>Model</th><th>Baseline</th></tr></thead>
+      <tbody>
+        <tr><td>Error on tomorrow's price</td><td class="n">0.709 ct</td><td class="n">0.712 ct (tomorrow = today)</td></tr>
+        <tr><td>80% band contains tomorrow's price</td><td class="n">80.8%</td><td class="n">76.4% before calibration</td></tr>
+        <tr><td>Days it answers</td><td class="n">3.4%</td><td class="n">–</td></tr>
+        <tr><td>"Fill now" right</td><td class="n">92%</td><td class="n">72% always fill now</td></tr>
+        <tr><td>"Wait" right</td><td class="n">44%</td><td class="n">28% always wait</td></tr>
+      </tbody>
+    </table>
+    <p>
+      The point forecast is no better than "tomorrow = today": day-to-day prices are close to a random walk. The
+      value is in knowing when not to answer. When it does say "fill now", it beats the base rate by 20 points.
+    </p>
+  </section>
+
+  <section id="refuses">
+    <h2><span class="num">08</span>What it refuses to claim</h2>
+    <p>
+      <strong>That the gate finds unknown errors.</strong> The planted errors were written alongside the rules.
+      The score shows the rules work as built and rarely raise false alarms, not that they would catch a kind of
+      error nobody thought of.
+    </p>
+    <p>
+      <strong>That "wait" is good advice.</strong> It beats its base rate but is still wrong more often than
+      right, so it should not be shown to users. That call came from this test window and has to hold on the
+      next months.
+    </p>
+    <p>
+      <strong>That some stations lead prices.</strong> Leaders and followers come out in about equal numbers,
+      which is what chance gives when neighbours all reprice overnight.
+    </p>
+  </section>
+
+  <section id="broke">
+    <h2><span class="num">09</span>What broke</h2>
+    <h3>DuckDB silently dropped rows</h3>
+    <p>
+      The in = out test failed on planted rows with an unreadable price: DuckDB's <code>UNPIVOT</code> drops
+      NULLs by default. Fixed with <code>INCLUDE NULLS</code>. Without that test, those rows would have vanished.
+    </p>
+    <h3>81% of all flags were motorway stations</h3>
+    <p>
+      The first full run flagged 20,418 events, and 16,522 of them came from the 477 motorway stations. They are
+      expensive by design, not wrong. Comparing each station with stations of the same type cut the flags to
+      5,064.
+    </p>
+    <h3>Small peer groups hid outliers</h3>
+    <p>
+      Comparing stations within the same hour often left one or two peers, so an outlier was compared with
+      itself. Only 68.8% of planted outliers were caught. Comparing over the whole day, and abstaining under 5
+      peers, raised it to 97.5%.
+    </p>
+    <h3>The demo page shipped empty</h3>
+    <p>
+      A <code>.gitignore</code> line meant for raw data also matched the page's data folder, so every chart was
+      blank on the first deploy. Now each chart loads on its own and the page says so when data is missing.
+    </p>
+  </section>
+
+  <section id="open">
+    <h2><span class="num">10</span>Still open</h2>
+    <ul>
+      <li>Hand-label a sample of the 7,050 real flags to measure precision on real anomalies.</li>
+      <li>A shuffled-time baseline for the leader/follower roles.</li>
+      <li>Confirm "fill now" and "never show wait" on months the forecast has not seen.</li>
+      <li>The German adapter for Tankerkönig once account access works, with the hourly marts switched on.</li>
+    </ul>
+  </section>
+</CaseStudy>
