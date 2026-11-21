@@ -1,13 +1,14 @@
 ---
 import DotGrid from './DotGrid.astro';
 import Glyph from './Glyph.astro';
+import type { Chart } from '../../data/projects';
 interface Props {
-  slug: string; index: number; kind: string;
-  total: number; hit: number; cols: number;
+  slug: string; index: number; kind: string; chart: Chart;
   count: string; countLabel: string; detail: string;
 }
-const { slug, index, kind, total, hit, cols, count, countLabel, detail } = Astro.props;
-const tone = kind === 'Open source' ? 'oss' : 'product';
+const { slug, index, kind, chart, count, countLabel, detail } = Astro.props;
+const tone = kind === 'Open source' ? 'oss' : kind === 'Research' ? 'research' : 'product';
+const dotSize = chart.type === 'dots' ? (chart.total > 300 ? 7 : chart.total > 100 ? 9 : 13) : 0;
 ---
 <div class={`cover ${tone}`}>
   <div class="ctop">
@@ -18,13 +19,23 @@ const tone = kind === 'Open source' ? 'oss' : 'product';
   <div class="res">
     <p class="rcount">{count}</p>
     <p class="rlabel">{countLabel}</p>
-    <DotGrid total={total} filled={hit} cols={cols} size={total > 100 ? 9 : 13} label={`${count} ${countLabel}`} />
+    {chart.type === 'dots' && <DotGrid total={chart.total} filled={chart.hit} cols={chart.cols} size={dotSize} label={`${count} ${countLabel}`} />}
+    {chart.type === 'bar' && (
+      <div class="bar" role="img" aria-label={`${chart.pct}% of the whole`}>
+        <span class="barfill" style={`width:${chart.pct}%`}></span>
+        <span class="barlab label" style={`left:calc(${chart.pct}% + 8px)`}>{chart.pct}%</span>
+      </div>
+    )}
     <p class="rdetail">{detail}</p>
   </div>
 </div>
 <style>
   .cover { --tone: var(--accent); position: relative; overflow: hidden; background: color-mix(in srgb, var(--tone) 9%, var(--bg)); border: 1px solid color-mix(in srgb, var(--tone) 30%, transparent); padding: 22px 26px 26px; display: grid; grid-template-columns: 200px 1fr; gap: 10px 32px; align-items: start; }
   .cover.oss { --tone: var(--accent-2); }
+  .cover.research { --tone: var(--accent-3); }
+  .bar { position: relative; height: 22px; background: var(--bg); border: 1px solid color-mix(in srgb, var(--tone) 45%, transparent); max-width: 420px; }
+  .barfill { position: absolute; inset: 0 auto 0 0; background: var(--tone); }
+  .barlab { position: absolute; top: 3px; color: var(--ink); }
   .ctop { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: flex-start; height: 22px; }
   .pill { border: 1px solid var(--tone); color: var(--ink); background: var(--bg); padding: 3px 10px; border-radius: 999px; }
   .big { position: absolute; right: 18px; top: 4px; font-size: 96px; line-height: 1; letter-spacing: -0.05em; color: var(--tone); opacity: 0.12; pointer-events: none; }

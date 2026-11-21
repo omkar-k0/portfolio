@@ -5,7 +5,7 @@ import Cover from '../components/visual/Cover.astro';
 import DotGrid from '../components/visual/DotGrid.astro';
 import EvidenceTag from '../components/EvidenceTag.astro';
 import { SITE, LINKS, CV, SKILLS, LANGUAGES, mailto } from '../config';
-import { flagships, ledger } from '../data/projects';
+import { flagships, ledger, extras } from '../data/projects';
 const live = flagships.filter((f) => f.ready && f.plain);
 
 // Until a case study page exists, links point to the project's row on this page.
@@ -130,11 +130,30 @@ const doors = [
                 {f.links.map((l) => <a class="textlink" href={l.href} rel="noopener">{l.label === 'Repo' ? 'Code' : l.label === 'Live' ? 'Try it' : l.label} ↗</a>)}
               </p>
             </div>
-            <Cover slug={f.slug} index={i + 1} kind={f.kind} total={f.plain!.dots.total} hit={f.plain!.dots.hit} cols={f.plain!.dots.cols}
+            <Cover slug={f.slug} index={i + 1} kind={f.kind} chart={{ type: 'dots', ...f.plain!.dots }}
               count={f.plain!.count} countLabel={f.plain!.countLabel} detail={f.plain!.detail} />
             <div class="fpipe"><Pipeline stages={f.plain!.stages} title="How it works" keyLabel="only the hard cases reach this step" /></div>
           </article>
         ))}
+        {extras.map((x, j) => (
+          <article class={`flag extra ${x.kind === 'Open source' ? 'oss' : x.kind === 'Research' ? 'research' : ''}`} id={`card-${x.slug}`} data-batch={x.batch} hidden>
+            <div class="flag-text">
+              <p class="label">{String(live.length + j + 1).padStart(2, '0')} · {x.kind}</p>
+              <h3>{x.links[0]?.href.startsWith('/') ? <a href={x.links[0].href}>{x.name}</a> : x.name}</h3>
+              <p class="problem">{x.problem}</p>
+              {x.links.length > 0 && (
+                <p class="flinks">{x.links.map((l) => <a class="textlink" href={l.href} rel={l.href.startsWith('/') ? undefined : 'noopener'}>{l.label}</a>)}</p>
+              )}
+            </div>
+            <Cover slug={x.slug} index={live.length + j + 1} kind={x.kind} chart={x.chart}
+              count={x.count} countLabel={x.countLabel} detail={x.detail} />
+          </article>
+        ))}
+      </div>
+      <div class="more-wrap">
+        <button type="button" id="more-btn" class="more-btn" aria-controls="work" hidden>
+          <span class="more-txt">Show 3 more</span> <span class="more-arrow" aria-hidden="true">↓</span>
+        </button>
       </div>
     </div>
   </section>
@@ -162,7 +181,7 @@ const doors = [
   </section>
 
   <!-- 04 Index -->
-  <section class="section" id="index">
+  <section class="section" id="index" data-ledger>
     <div class="wrap">
       <div class="section-head">
         <h2 class="label"><span class="num">04</span> More work</h2>
@@ -172,8 +191,8 @@ const doors = [
         <thead><tr><th class="label">No.</th><th class="label">Project</th><th class="label">Type</th><th class="label note-col">In one line</th><th class="label go">Link</th></tr></thead>
         <tbody>
           {ledger.map((r, i) => (
-            <tr>
-              <td class="mono n">{String(i + 5).padStart(2, '0')}</td>
+            <tr data-slug={r.slug}>
+              <td class="mono n">{String(i + live.length + 1).padStart(2, '0')}</td>
               <td>{r.href ? <a href={r.href} rel="noopener">{r.name}</a> : r.name}</td>
               <td class="label">{r.kind}</td>
               <td class="note note-col">{r.note}</td>
@@ -199,6 +218,45 @@ const doors = [
     </div>
   </section>
 </Base>
+
+<script>
+  // Cards 04 to 09 load three at a time. A card shown above leaves the More work table.
+  const btn = document.getElementById('more-btn') as HTMLButtonElement | null;
+  const cards = [...document.querySelectorAll<HTMLElement>('.flag.extra')];
+  const rows = [...document.querySelectorAll<HTMLElement>('[data-ledger] tr[data-slug]')];
+  const batches = [...new Set(cards.map((c) => Number(c.dataset.batch)))].sort();
+  let shown = 0;
+  const render = () => {
+    const open = new Set<string>();
+    cards.forEach((c) => {
+      const on = batches.indexOf(Number(c.dataset.batch)) < shown;
+      c.hidden = !on;
+      if (on) open.add(c.id.replace('card-', ''));
+    });
+    rows.forEach((r) => (r.hidden = open.has(r.dataset.slug ?? '')));
+    if (!btn) return;
+    const done = shown >= batches.length;
+    btn.querySelector('.more-txt')!.textContent = done ? 'Show fewer' : 'Show 3 more';
+    btn.querySelector('.more-arrow')!.textContent = done ? '↑' : '↓';
+    btn.setAttribute('aria-expanded', String(shown > 0));
+  };
+  if (btn && cards.length) {
+    btn.hidden = false;
+    btn.addEventListener('click', () => {
+      if (shown >= batches.length) {
+        shown = 0;
+        render();
+        document.getElementById('work')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+      shown += 1;
+      render();
+      const first = cards.find((c) => Number(c.dataset.batch) === batches[shown - 1]);
+      first?.querySelector('a, h3')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    render();
+  }
+</script>
 
 <style>
   section[id] { scroll-margin-top: 60px; }
@@ -279,6 +337,12 @@ const doors = [
   .flag h3 a:hover { color: var(--accent); }
   .problem { font-size: 18px; line-height: 1.5; max-width: 30em; margin-top: 4px; }
   .fpipe { grid-column: 1 / -1; }
+  .flag[hidden] { display: none; }
+  .flag.research { --accent: var(--accent-3); }
+  .more-wrap { display: flex; justify-content: center; padding-top: 28px; border-top: 1px solid var(--rule); }
+  .more-btn { font: inherit; font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink); background: var(--bg); border: 1px solid var(--rule-strong); border-radius: 999px; padding: 10px 20px; cursor: pointer; display: inline-flex; gap: 8px; align-items: center; }
+  .more-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .more-arrow { font-size: 15px; }
   .flag.oss { --accent: var(--accent-2); }
   .result { border-left: 2px solid var(--accent); padding: 6px 0 6px 28px; }
   .rcount { font-size: clamp(44px, 5vw, 72px); line-height: 1; letter-spacing: -0.035em; margin-top: 10px; }

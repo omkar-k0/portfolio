@@ -193,13 +193,76 @@ export const flagships: Flagship[] = [
   },
 ];
 
+// Home page cards 04 to 09, revealed three at a time under the flagships.
+// chart: dots = a real success count; bar = a measured share; none = a finding or nothing measured yet.
+export type Chart =
+  | { type: 'dots'; total: number; hit: number; cols: number }
+  | { type: 'bar'; pct: number }
+  | { type: 'none' };
+export interface ExtraCard {
+  slug: string; name: string; kind: string; batch: 2 | 3;
+  problem: string; count: string; countLabel: string; detail: string; chart: Chart;
+  links: { label: string; href: string }[];
+}
+export const extras: ExtraCard[] = [
+  {
+    slug: 'fuelcycle', name: 'fuelcycle', kind: 'Open source', batch: 2,
+    problem: 'Fuel prices change thousands of times a day across France. Most data pipelines quietly drop bad records, so nobody knows how clean the result is. This one checks every price change and says why it kept or rejected it.',
+    count: '584 of 586', countLabel: 'planted errors caught, with 2 false alarms in almost 119,000 clean records',
+    detail: 'I hid 586 mistakes in 14 real days of data on purpose to test the checks. How well it handles the real oddities it finds still needs a check by hand.',
+    chart: { type: 'dots', total: 586, hit: 584, cols: 40 },
+    links: [{ label: 'How it works →', href: '/work/fuelcycle/' }, { label: 'Code ↗', href: 'https://github.com/omkar-k0/fuelcycle' }],
+  },
+  {
+    slug: 'sustainability', name: 'Sustainability commitment classifier', kind: 'Tool', batch: 2,
+    problem: 'Company sustainability reports are full of climate promises. This tool reads them and sorts each promise: does it come with a number and a target year, or is it vague?',
+    count: '120 of 1,562', countLabel: 'climate promises from five German companies come with a number and a target year',
+    detail: 'So about 92 in 100 promises cannot be checked later. A first version counted the year itself as a number and said 12.3%; I found and fixed that.',
+    chart: { type: 'bar', pct: 7.7 },
+    links: [{ label: 'Code ↗', href: 'https://github.com/omkar-k0/sustainability-commitment-classifier' }],
+  },
+  {
+    slug: 'dax', name: 'DAX 40 capital structure', kind: 'Research', batch: 2,
+    problem: 'Why do some big German companies borrow more than others? A study of the non-financial firms in the DAX 40 index, written for my M.Sc. with a team of four.',
+    count: '127', countLabel: 'company-years from 32 firms, analysed in Python',
+    detail: 'Main finding: more profitable firms tend to borrow less. Graded 1.3.',
+    chart: { type: 'none' },
+    links: [],
+  },
+  {
+    slug: 'esg', name: 'ESG and bond spreads', kind: 'Research', batch: 3,
+    problem: 'When a company gets a better green rating, does it get to borrow money more cheaply? I tested this on the bonds of large German companies.',
+    count: 'No', countLabel: 'measurable effect in 56 observations',
+    detail: 'The honest answer was no: none of the tests came close to a real effect. Reporting a result that found nothing is part of the work.',
+    chart: { type: 'none' },
+    links: [],
+  },
+  {
+    slug: 'gradelens', name: 'GradeLens', kind: 'Tool', batch: 3,
+    problem: 'FOM students can see their grades, but not what they still need. This browser extension shows the grade each remaining exam needs to reach a target average.',
+    count: 'v0.4', countLabel: 'working Chrome extension with automated tests',
+    detail: 'Not measured with real students yet.',
+    chart: { type: 'none' },
+    links: [{ label: 'Code ↗', href: 'https://github.com/omkar-k0/gradelens' }],
+  },
+  {
+    slug: 'demfragen', name: 'Dem Fragen', kind: 'Product', batch: 3,
+    problem: 'People in India often do not know what the law says about their problem, or when they need a lawyer. This app answers in plain words and shows the legal source.',
+    count: 'Not tested yet', countLabel: 'on real legal questions',
+    detail: 'So far only a practice run with made-up questions. No accuracy number until real cases are checked.',
+    chart: { type: 'none' },
+    links: [{ label: 'Code ↗', href: 'https://github.com/omkar-k0/cuddly-octo-palm-tree' }],
+  },
+];
+
 export const ledger = [
-  { name: 'Sustainability commitment classifier', kind: 'Tool', note: 'Only 7.7% of 1,562 climate promises come with a number and a target year', href: 'https://github.com/omkar-k0/sustainability-commitment-classifier' },
-  { name: 'DAX 40 capital structure', kind: 'Research', note: 'More profitable big German firms borrow less · grade 1.3', href: '' },
-  { name: 'ESG and bond spreads', kind: 'Research', note: 'Better green ratings did not make company borrowing cheaper', href: '' },
-  { name: 'Dem Fragen', kind: 'Product', note: 'Plain answers to legal questions in India, with sources · not yet tested on real cases', href: 'https://github.com/omkar-k0/cuddly-octo-palm-tree' },
-  { name: 'GradeLens', kind: 'Tool', note: 'Shows FOM students what each exam needs for a target grade', href: 'https://github.com/omkar-k0/gradelens' },
-  { name: 'profile-hud', kind: 'Tool', note: 'Profile cards built from real project data · 156+ tests', href: 'https://github.com/omkar-k0/profile-hud' },
+  { slug: 'fuelcycle', name: 'fuelcycle', kind: 'Open source', note: 'Checks every French fuel price change in a year and says why it kept or rejected it', href: '/work/fuelcycle/' },
+  { slug: 'sustainability', name: 'Sustainability commitment classifier', kind: 'Tool', note: 'Only 7.7% of 1,562 climate promises come with a number and a target year', href: 'https://github.com/omkar-k0/sustainability-commitment-classifier' },
+  { slug: 'dax', name: 'DAX 40 capital structure', kind: 'Research', note: 'More profitable big German firms borrow less · grade 1.3', href: '' },
+  { slug: 'esg', name: 'ESG and bond spreads', kind: 'Research', note: 'Better green ratings did not make company borrowing cheaper', href: '' },
+  { slug: 'gradelens', name: 'GradeLens', kind: 'Tool', note: 'Shows FOM students what each exam needs for a target grade', href: 'https://github.com/omkar-k0/gradelens' },
+  { slug: 'demfragen', name: 'Dem Fragen', kind: 'Product', note: 'Plain answers to legal questions in India, with sources · not yet tested on real cases', href: 'https://github.com/omkar-k0/cuddly-octo-palm-tree' },
+  { slug: 'profile-hud', name: 'profile-hud', kind: 'Tool', note: 'Profile cards built from real project data · 156+ tests', href: 'https://github.com/omkar-k0/profile-hud' },
 ];
 
 // Full work index (/work/). Numbered straight through, flagships first.

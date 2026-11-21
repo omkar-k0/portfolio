@@ -14,6 +14,7 @@
   --accent: #0c6e70;
   --accent-ink: #ffffff;
   --accent-2: #9a4508;
+  --accent-3: #3d5a80;
   --wordmark: rgba(17, 17, 17, 0.06);
 
   --sans: 'IBM Plex Sans', system-ui, sans-serif;
@@ -35,6 +36,7 @@
   --accent: #3fb8b9;
   --accent-ink: #0f1112;
   --accent-2: #f0a04b;
+  --accent-3: #9db8dc;
   --wordmark: rgba(236, 236, 234, 0.05);
   color-scheme: dark;
 }

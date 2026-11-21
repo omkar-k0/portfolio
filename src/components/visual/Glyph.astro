@@ -49,6 +49,78 @@ const { slug } = Astro.props;
       <text x="166" y="94" class="t">unsure</text>
     </g>
   )}
+  {slug === 'fuelcycle' && (
+    <g>
+      <polyline points="8,70 30,66 50,68 70,60 90,63 104,22 118,61 140,56 160,58 190,50" class="s" />
+      <circle cx="104" cy="22" r="9" class="ring" />
+      <text x="116" y="16" class="t">rejected,</text>
+      <text x="116" y="27" class="t">with a reason</text>
+      <line x1="8" y1="88" x2="190" y2="88" class="s thin" />
+      <text x="8" y="104" class="t">price changes over a day</text>
+    </g>
+  )}
+  {slug === 'sustainability' && (
+    <g>
+      <rect x="40" y="6" width="96" height="98" rx="3" class="box" />
+      <line x1="52" y1="24" x2="124" y2="24" class="s thin" />
+      <line x1="52" y1="36" x2="118" y2="36" class="s thin" />
+      <rect x="50" y="44" width="76" height="12" class="band" />
+      <line x1="52" y1="50" x2="122" y2="50" class="s" />
+      <line x1="52" y1="64" x2="116" y2="64" class="s thin" />
+      <line x1="52" y1="76" x2="124" y2="76" class="s thin" />
+      <line x1="52" y1="88" x2="106" y2="88" class="s thin" />
+      <text x="142" y="48" class="t">−50%</text>
+      <text x="142" y="59" class="t">by 2030</text>
+    </g>
+  )}
+  {slug === 'dax' && (
+    <g>
+      <line x1="16" y1="96" x2="190" y2="96" class="s thin" />
+      <line x1="16" y1="96" x2="16" y2="8" class="s thin" />
+      <circle cx="34" cy="24" r="4" class="dot" /><circle cx="52" cy="36" r="4" class="dot" /><circle cx="70" cy="30" r="4" class="dot" />
+      <circle cx="88" cy="50" r="4" class="dot" /><circle cx="108" cy="46" r="4" class="dot" /><circle cx="126" cy="62" r="4" class="dot" />
+      <circle cx="146" cy="70" r="4" class="dot" /><circle cx="166" cy="66" r="4" class="dot" /><circle cx="180" cy="82" r="4" class="dot" />
+      <line x1="26" y1="24" x2="186" y2="82" class="s" />
+      <text x="22" y="108" class="t">more profit → less debt</text>
+    </g>
+  )}
+  {slug === 'esg' && (
+    <g>
+      <line x1="16" y1="96" x2="190" y2="96" class="s thin" />
+      <line x1="16" y1="96" x2="16" y2="8" class="s thin" />
+      <circle cx="34" cy="40" r="4" class="dot" /><circle cx="52" cy="64" r="4" class="dot" /><circle cx="70" cy="48" r="4" class="dot" />
+      <circle cx="88" cy="70" r="4" class="dot" /><circle cx="108" cy="38" r="4" class="dot" /><circle cx="126" cy="60" r="4" class="dot" />
+      <circle cx="146" cy="44" r="4" class="dot" /><circle cx="166" cy="66" r="4" class="dot" /><circle cx="180" cy="52" r="4" class="dot" />
+      <line x1="26" y1="54" x2="186" y2="54" class="s dash" />
+      <text x="22" y="108" class="t">green rating → no change</text>
+    </g>
+  )}
+  {slug === 'gradelens' && (
+    <g>
+      <text x="10" y="22" class="t">target average</text>
+      <rect x="10" y="34" width="180" height="16" rx="2" class="box" />
+      <rect x="10" y="34" width="110" height="16" rx="2" class="band" />
+      <line x1="150" y1="28" x2="150" y2="58" class="s" />
+      <rect x="10" y="70" width="40" height="22" rx="2" class="box" />
+      <rect x="58" y="70" width="40" height="22" rx="2" class="box" />
+      <rect x="106" y="70" width="40" height="22" rx="2" class="box hit" />
+      <text x="114" y="85" class="t">2.0?</text>
+      <text x="10" y="106" class="t">what each exam needs</text>
+    </g>
+  )}
+  {slug === 'demfragen' && (
+    <g>
+      <rect x="8" y="14" width="76" height="40" rx="10" class="box" />
+      <text x="36" y="39" class="t">?</text>
+      <path d="M90 34 L 112 34" class="s" />
+      <rect x="116" y="8" width="76" height="70" rx="3" class="box" />
+      <line x1="126" y1="24" x2="182" y2="24" class="s thin" />
+      <line x1="126" y1="36" x2="176" y2="36" class="s thin" />
+      <rect x="124" y="44" width="60" height="12" class="band" />
+      <line x1="126" y1="62" x2="170" y2="62" class="s thin" />
+      <text x="118" y="96" class="t">answer + legal source</text>
+    </g>
+  )}
 </svg>
 <style>
   .glyph { width: 100%; max-width: 240px; height: auto; display: block; }
