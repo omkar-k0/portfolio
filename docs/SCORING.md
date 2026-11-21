@@ -51,7 +51,7 @@ Viewports: desktop 1440 × 900, phone 390 × 844. "First screen" means without s
 1. In 30 seconds of scrolling the home page, all flagships, their outcomes and the contact are seen.
 2. The work index states the number of projects and offers filters.
 3. A case study's summary box and metric tiles answer "what, how well, my role" without reading prose.
-4. Home page height is under about 5,000 px on desktop.
+4. Home page height is under about 5,500 px on desktop (raised from 5,000 on 21 Nov 2026 by Omkar: the extra height is visuals, not text).
 5. Each case study links to the next and previous one.
 
 ## 7. Technical reviewer (case studies)

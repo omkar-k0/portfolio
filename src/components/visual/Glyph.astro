@@ -1,0 +1,68 @@
+---
+// One simple drawing per project that says what it does. Decorative: the text next to it carries the meaning.
+interface Props { slug: string }
+const { slug } = Astro.props;
+---
+<svg class="glyph" viewBox="0 0 200 110" aria-hidden="true">
+  {slug === 'guidance-reconciliation-engine' && (
+    <g>
+      <text x="20" y="18" class="t">promised range</text>
+      <rect x="40" y="40" width="110" height="22" class="band" />
+      <line x1="40" y1="34" x2="40" y2="68" class="s" />
+      <line x1="150" y1="34" x2="150" y2="68" class="s" />
+      <line x1="10" y1="51" x2="190" y2="51" class="s thin" />
+      <circle cx="128" cy="51" r="7" class="dot" />
+      <line x1="128" y1="62" x2="128" y2="84" class="s thin dash" />
+      <text x="100" y="100" class="t">what they reported</text>
+    </g>
+  )}
+  {slug === 'faultline' && (
+    <g>
+      <rect x="8" y="40" width="30" height="30" rx="3" class="box" />
+      <rect x="58" y="40" width="30" height="30" rx="3" class="box" />
+      <rect x="108" y="40" width="30" height="30" rx="3" class="box hit" />
+      <rect x="158" y="40" width="30" height="30" rx="3" class="box faded" />
+      <line x1="38" y1="55" x2="58" y2="55" class="s" />
+      <line x1="88" y1="55" x2="108" y2="55" class="s" />
+      <line x1="138" y1="55" x2="145" y2="55" class="s" />
+      <line x1="151" y1="55" x2="158" y2="55" class="s faded" />
+      <circle cx="123" cy="55" r="27" class="ring" />
+      <line x1="142" y1="74" x2="156" y2="90" class="s ringline" />
+      <text x="96" y="104" class="t">the cause</text>
+    </g>
+  )}
+  {slug === 'werkbank' && (
+    <g>
+      <rect x="10" y="30" width="44" height="54" rx="3" class="box" />
+      <line x1="18" y1="44" x2="46" y2="44" class="s thin" />
+      <line x1="18" y1="54" x2="46" y2="54" class="s thin" />
+      <line x1="18" y1="64" x2="38" y2="64" class="s thin" />
+      <path d="M58 57 C 90 57, 100 14, 132 14" class="s" />
+      <path d="M58 57 C 90 57, 100 38, 132 38" class="s" />
+      <path d="M58 57 C 90 57, 100 62, 132 62" class="s" />
+      <path d="M58 57 C 90 57, 100 86, 132 86" class="s dash" />
+      <rect x="136" y="6" width="24" height="16" rx="2" class="bin" />
+      <rect x="136" y="30" width="24" height="16" rx="2" class="bin" />
+      <rect x="136" y="54" width="24" height="16" rx="2" class="bin" />
+      <circle cx="148" cy="80" r="5" class="dot" />
+      <path d="M138 98 C 138 88, 158 88, 158 98" class="s person" />
+      <text x="166" y="94" class="t">unsure</text>
+    </g>
+  )}
+</svg>
+<style>
+  .glyph { width: 100%; max-width: 240px; height: auto; display: block; }
+  .s { stroke: var(--ink); stroke-width: 2; fill: none; stroke-linecap: round; }
+  .thin { stroke-width: 1.2; opacity: 0.6; }
+  .dash { stroke-dasharray: 4 4; }
+  .t { font-family: var(--mono); font-size: 9px; fill: var(--muted); }
+  .band { fill: var(--tone); opacity: 0.25; stroke: var(--tone); stroke-width: 1.5; }
+  .dot { fill: var(--tone); }
+  .box { fill: var(--bg); stroke: var(--ink); stroke-width: 2; }
+  .box.hit { stroke: var(--tone); stroke-width: 2.5; }
+  .faded { opacity: 0.35; }
+  .ring { fill: none; stroke: var(--tone); stroke-width: 2.5; }
+  .ringline { stroke: var(--tone); stroke-width: 3; }
+  .bin { fill: var(--tone); opacity: 0.85; }
+  .person { stroke: var(--tone); stroke-width: 2.5; }
+</style>

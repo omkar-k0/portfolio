@@ -1,0 +1,25 @@
+---
+// Unit chart: one dot per item. Filled = counted, hollow = not. Real counts only.
+interface Props { total: number; filled: number; cols: number; label: string; size?: number; tone?: 'accent' | 'ink'; groups?: { n: number; kind: 'fill' | 'mute' | 'hollow' }[] }
+const { total, filled, cols, label, size = 10, tone = 'accent', groups } = Astro.props;
+const seq = groups ?? [{ n: filled, kind: 'fill' as const }, { n: total - filled, kind: 'hollow' as const }];
+const kinds: string[] = seq.flatMap((g) => Array(g.n).fill(g.kind));
+const gap = Math.round(size * 0.45);
+const rows = Math.ceil(kinds.length / cols);
+const w = cols * size + (cols - 1) * gap;
+const h = rows * size + (rows - 1) * gap;
+const r = size / 2;
+---
+<svg class={`dots ${tone}`} viewBox={`0 0 ${w} ${h}`} width={w} height={h} role="img" aria-label={label}>
+  {kinds.map((k, i) => {
+    const x = (i % cols) * (size + gap) + r;
+    const y = Math.floor(i / cols) * (size + gap) + r;
+    return <circle cx={x} cy={y} r={k === 'hollow' ? r - 1 : r} class={k} />;
+  })}
+</svg>
+<style>
+  .dots { display: block; max-width: 100%; height: auto; }
+  .fill { fill: var(--tone, var(--accent)); }
+  .mute { fill: var(--muted); opacity: 0.45; }
+  .hollow { fill: none; stroke: var(--ink); stroke-width: 1.5; }
+</style>

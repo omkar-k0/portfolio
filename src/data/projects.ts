@@ -30,7 +30,7 @@ export interface Flagship {
   facts: string[]; // short real facts under the pipeline card
   links: { label: string; href: string }[];
   // Home page copy for a reader with no technical background. Technical detail lives in the case study.
-  plain?: { problem: string; count: string; countLabel: string; detail: string; stages: Stage[] };
+  plain?: { problem: string; count: string; countLabel: string; detail: string; stages: Stage[]; dots: { total: number; hit: number; cols: number } };
 }
 
 export const proof: (Metric & { project: string; slug: string })[] = [
@@ -88,6 +88,7 @@ export const flagships: Flagship[] = [
     plain: {
       problem: 'Every quarter, big companies tell investors how much money they expect to make. This tool reads the official filings and checks whether they kept that promise.',
       count: '184 of 188',
+      dots: { total: 188, hit: 184, cols: 24 },
       countLabel: 'promises checked correctly, compared with my own check by hand',
       detail: 'Simple rules settle almost all of them. AI looks only at the 7 unclear cases and has to quote the filing. When it cannot be sure, it says so.',
       stages: [
@@ -122,6 +123,7 @@ export const flagships: Flagship[] = [
     plain: {
       problem: 'Companies move their data through long chains of steps every night. When one step breaks, an engineer can spend hours finding out why. This tool finds the cause and shows the evidence.',
       count: '43 of 48',
+      dots: { total: 48, hit: 43, cols: 16 },
       countLabel: 'test breakdowns traced to the exact cause',
       detail: 'It missed 5 and never blamed the wrong thing. A final test on cases it has never seen is still to come.',
       stages: [
@@ -156,6 +158,7 @@ export const flagships: Flagship[] = [
     plain: {
       problem: 'A furniture shop gets orders as messages and has to send each one to the right workshop: carpentry, upholstery, paint or metal. This tool reads the order and sends it on.',
       count: '23 of 24',
+      dots: { total: 24, hit: 23, cols: 12 },
       countLabel: 'orders it handled alone went to the right workshop',
       detail: 'Out of 60 test orders it decided 24 alone, flagged 22 for a quick check and sent 14 to a person instead of guessing.',
       stages: [

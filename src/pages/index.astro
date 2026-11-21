@@ -1,6 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
 import Pipeline from '../components/Pipeline.astro';
+import Cover from '../components/visual/Cover.astro';
+import DotGrid from '../components/visual/DotGrid.astro';
 import EvidenceTag from '../components/EvidenceTag.astro';
 import { SITE, LINKS, CV, SKILLS, LANGUAGES, mailto } from '../config';
 import { flagships, ledger } from '../data/projects';
@@ -22,7 +24,6 @@ const doors = [
 <Base>
   <!-- 00 Hero: name, role, availability, proof and both calls to action fit the first screen -->
   <section class="hero">
-    <div class="gridlines" aria-hidden="true">{Array.from({ length: 12 }, () => <span />)}</div>
     <div class="wrap hero-in">
       <p class="who reveal"><span class="nm">{SITE.name}</span> · {SITE.role}</p>
       <p class="label eyebrow reveal">{SITE.location} · {SITE.study}</p>
@@ -81,6 +82,27 @@ const doors = [
         <li class="step ai"><span class="label">4</span><span class="st">AI looks at the hard ones</span><span class="sd">Only the few cases rules can't settle</span></li>
         <li class="step out"><span class="label">5</span><span class="st">Answer with its source</span><span class="sd">Or a plain “I can't tell”, never a guess</span></li>
       </ol>
+      <figure class="run">
+        <figcaption>
+          <p class="label">One real run · Guidance Reconciliation Engine</p>
+          <p class="run-h">188 questions came in. Rules settled 181. Only 7 needed AI.</p>
+        </figcaption>
+        <div class="run-d">
+        <DotGrid total={188} filled={0} cols={47} size={11} tone="ink"
+          groups={[{ n: 181, kind: 'mute' }, { n: 6, kind: 'fill' }, { n: 1, kind: 'hollow' }]}
+          label="188 dots: 181 settled by simple rules, 6 answered by AI with a quote from the filing, 1 where the AI said it could not tell" />
+        </div>
+        <div class="run-m">
+        <DotGrid total={188} filled={0} cols={19} size={11} tone="ink"
+          groups={[{ n: 181, kind: 'mute' }, { n: 6, kind: 'fill' }, { n: 1, kind: 'hollow' }]}
+          label="188 dots: 181 settled by simple rules, 6 answered by AI with a quote from the filing, 1 where the AI said it could not tell" />
+        </div>
+        <ul class="legend">
+          <li><i class="lg mute"></i>181 settled by simple rules</li>
+          <li><i class="lg fill"></i>6 answered by AI, with a quote from the filing</li>
+          <li><i class="lg hollow"></i>1 where the AI said “I can't tell”</li>
+        </ul>
+      </figure>
       <ul class="why">
         <li><b>Rules first,</b> because most cases are routine and rules are cheap and explainable.</li>
         <li><b>AI only where needed,</b> because it costs more and can be wrong with confidence.</li>
@@ -98,7 +120,7 @@ const doors = [
       </div>
       <div class="flagships">
         {live.map((f, i) => (
-          <article class="flag" id={f.slug}>
+          <article class={`flag ${f.kind === 'Open source' ? 'oss' : ''}`} id={f.slug}>
             <div class="flag-text">
               <p class="label">{String(i + 1).padStart(2, '0')} · {f.kind}</p>
               <h3><a href={`/work/${f.slug}/`}>{f.name}</a></h3>
@@ -108,12 +130,8 @@ const doors = [
                 {f.links.map((l) => <a class="textlink" href={l.href} rel="noopener">{l.label === 'Repo' ? 'Code' : l.label === 'Live' ? 'Try it' : l.label} ↗</a>)}
               </p>
             </div>
-            <div class="result">
-              <p class="label">Result</p>
-              <p class="rcount">{f.plain!.count}</p>
-              <p class="rlabel">{f.plain!.countLabel}</p>
-              <p class="rdetail">{f.plain!.detail}</p>
-            </div>
+            <Cover slug={f.slug} index={i + 1} kind={f.kind} total={f.plain!.dots.total} hit={f.plain!.dots.hit} cols={f.plain!.dots.cols}
+              count={f.plain!.count} countLabel={f.plain!.countLabel} detail={f.plain!.detail} />
             <div class="fpipe"><Pipeline stages={f.plain!.stages} title="How it works" keyLabel="only the hard cases reach this step" /></div>
           </article>
         ))}
@@ -220,6 +238,14 @@ const doors = [
   .langs .label { margin-right: 8px; }
 
   /* How I build */
+  .run { margin: 28px 0 0; padding: 22px 24px; background: var(--surface); border: 1px solid var(--rule); display: grid; grid-template-columns: 1fr; gap: 14px; }
+  .run-m { display: none; }
+  .run-h { font-size: 20px; letter-spacing: -0.01em; margin-top: 6px; }
+  .legend { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 28px; font-size: 14px; color: var(--muted); }
+  .lg { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; vertical-align: -1px; }
+  .lg.mute { background: var(--muted); opacity: 0.45; }
+  .lg.fill { background: var(--accent); }
+  .lg.hollow { border: 1.5px solid var(--ink); }
   .flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; counter-reset: s; }
   .step { position: relative; display: flex; flex-direction: column; gap: 6px; padding: 18px 28px 20px 18px; border: 1px solid var(--rule); background: var(--bg); }
   .step + .step { border-left: none; }
@@ -246,13 +272,14 @@ const doors = [
 
   /* Flagships */
   .flagships { display: flex; flex-direction: column; }
-  .flag { scroll-margin-top: 80px; display: grid; grid-template-columns: 5fr 7fr; gap: 48px; padding: 40px 0; border-top: 1px solid var(--rule); align-items: center; }
+  .flag { scroll-margin-top: 80px; display: grid; grid-template-columns: 4fr 7fr; gap: 40px; padding: 32px 0; border-top: 1px solid var(--rule); align-items: center; }
   .flag:first-child { border-top: none; padding-top: 0; }
   .flag h3 { font-size: 32px; letter-spacing: -0.02em; margin: 10px 0 8px; }
   .flag h3 a { text-decoration: none; }
   .flag h3 a:hover { color: var(--accent); }
   .problem { font-size: 18px; line-height: 1.5; max-width: 30em; margin-top: 4px; }
   .fpipe { grid-column: 1 / -1; }
+  .flag.oss { --accent: var(--accent-2); }
   .result { border-left: 2px solid var(--accent); padding: 6px 0 6px 28px; }
   .rcount { font-size: clamp(44px, 5vw, 72px); line-height: 1; letter-spacing: -0.035em; margin-top: 10px; }
   .rlabel { font-size: 17px; margin-top: 10px; max-width: 26em; }
@@ -292,6 +319,8 @@ const doors = [
     .step + .step { border-left: 1px solid var(--rule); border-top: none; }
     .step:not(:last-child)::after { content: '↓'; right: auto; left: 18px; top: auto; bottom: -9px; transform: none; padding: 0 2px; }
     .why { grid-template-columns: 1fr; gap: 12px; }
+    .run-d { display: none; }
+    .run-m { display: block; }
     .result { padding-left: 18px; }
   }
   @media (max-width: 720px) {
