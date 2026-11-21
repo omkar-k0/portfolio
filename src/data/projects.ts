@@ -240,7 +240,7 @@ export const extras: ExtraCard[] = [
   {
     slug: 'gradelens', name: 'GradeLens', kind: 'Tool', batch: 3,
     problem: 'FOM students can see their grades, but not what they still need. This browser extension shows the grade each remaining exam needs to reach a target average.',
-    count: 'v0.4', countLabel: 'working Chrome extension with automated tests',
+    count: 'v1.0', countLabel: 'Chrome extension in English and German, 25 automated tests',
     detail: 'Not measured with real students yet.',
     chart: { type: 'none' },
     links: [{ label: 'Code ↗', href: 'https://github.com/omkar-k0/gradelens' }],
@@ -336,7 +336,7 @@ export const work: WorkItem[] = [
   {
     name: 'GradeLens', kind: 'Tool',
     answers: 'What does each remaining FOM exam need for my target grade?',
-    metric: { value: 'v0.4', label: 'unit and end-to-end tests', evidence: 'measured', source: 'repo README' },
+    metric: { value: 'v1.0', label: 'English and German · 25 unit tests + browser tests', evidence: 'measured', source: 'repo, npm test, 21 Nov 2026' },
     status: 'Chrome extension', href: 'https://github.com/omkar-k0/gradelens', external: true,
   },
   {

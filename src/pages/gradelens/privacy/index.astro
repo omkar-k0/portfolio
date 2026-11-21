@@ -1,0 +1,60 @@
+---
+import Legal from '../../../layouts/Legal.astro';
+import { SITE, LEGAL, mailto } from '../../../config';
+---
+<Legal title="Grade Lens: privacy policy" description="Privacy policy of the Grade Lens Chrome extension for FOM students. Datenschutzhinweise der Chrome-Erweiterung Grade Lens.">
+  <p class="note">Applies to the Chrome extension “Grade Lens for FOM”, version 1.0.0 and later. Last updated 21 November 2026. Deutsche Fassung weiter unten.</p>
+
+  <h2>In one sentence</h2>
+  <p>Grade Lens collects nothing: it reads your grades on the FOM Online Campus page, calculates in your browser, and sends nothing anywhere.</p>
+
+  <h2>What the extension reads</h2>
+  <p>
+    On <code>oc-digital.de</code> only, Grade Lens copies the study book response that the FOM Online Campus already
+    loads for you (your modules, grades, credits and exam dates). It does not read passwords, cookies or tokens,
+    and it makes no network requests of its own.
+  </p>
+
+  <h2>What it stores</h2>
+  <p>
+    In Chrome's local extension storage on your own device: the view you chose, your language, your target grade
+    and the grades you picked for open modules. Your grades from the portal are kept in memory only, while the page
+    is open. You can delete everything by removing the extension.
+  </p>
+
+  <h2>What it sends</h2>
+  <p>
+    Nothing. There is no server, no account, no analytics and no third party. The fonts are part of the extension,
+    so not even a font server is contacted.
+  </p>
+
+  <h2>Who is responsible</h2>
+  <address>
+    {LEGAL.name}, {LEGAL.city}, {LEGAL.country}<br />
+    E-mail: <a href={mailto('Grade Lens privacy')}>{SITE.email}</a>
+  </address>
+  <p>The source code is public, so every statement here can be checked: <a href="https://github.com/omkar-k0/gradelens" rel="noopener">github.com/omkar-k0/gradelens</a>.</p>
+  <p class="note">Grade Lens is an independent student project, not affiliated with or endorsed by FOM.</p>
+
+  <h2 lang="de">Deutsche Fassung</h2>
+  <div lang="de">
+    <h3>In einem Satz</h3>
+    <p>Grade Lens erhebt keine Daten: Es liest deine Noten auf der Seite des FOM Online Campus, rechnet in deinem Browser und sendet nichts.</p>
+    <h3>Was die Erweiterung liest</h3>
+    <p>
+      Nur auf <code>oc-digital.de</code> kopiert Grade Lens die Antwort mit dem Studienbuch, die der FOM Online Campus
+      ohnehin für dich lädt (Module, Noten, ECTS und Prüfungstermine). Passwörter, Cookies oder Tokens werden nicht
+      gelesen, und die Erweiterung stellt keine eigenen Anfragen.
+    </p>
+    <h3>Was gespeichert wird</h3>
+    <p>
+      Im lokalen Speicher von Chrome auf deinem Gerät: die gewählte Ansicht, die Sprache, deine Zielnote und die Noten,
+      die du für offene Module auswählst. Deine Noten aus dem Portal bleiben nur im Arbeitsspeicher, solange die Seite
+      offen ist. Alles wird gelöscht, wenn du die Erweiterung entfernst.
+    </p>
+    <h3>Was gesendet wird</h3>
+    <p>Nichts. Kein Server, kein Konto, keine Statistik, keine Dritten. Die Schriften sind Teil der Erweiterung.</p>
+    <h3>Verantwortlich</h3>
+    <p>{LEGAL.name}, {LEGAL.city}, E-Mail: <a href={mailto('Grade Lens Datenschutz')}>{SITE.email}</a></p>
+  </div>
+</Legal>
