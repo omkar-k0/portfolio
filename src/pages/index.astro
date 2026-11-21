@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Pipeline from '../components/Pipeline.astro';
+import Slots from '../components/Slots.astro';
 import Cover from '../components/visual/Cover.astro';
 import ResultsCarousel from '../components/visual/ResultsCarousel.astro';
 import EvidenceTag from '../components/EvidenceTag.astro';
@@ -105,10 +106,7 @@ const doors = [
               <p class="label">{String(i + 1).padStart(2, '0')} · {f.kind}</p>
               <h3><a href={`/work/${f.slug}/`}>{f.name}</a></h3>
               <p class="problem">{f.plain!.problem}</p>
-              <p class="flinks">
-                <a class="textlink" href={`/work/${f.slug}/`}>How it works →</a>
-                {f.links.map((l) => <a class="textlink" href={l.href} rel="noopener">{l.label === 'Repo' ? 'Code' : l.label === 'Live' ? 'Try it' : l.label} ↗</a>)}
-              </p>
+              <Slots slots={f.plain!.slots} name={f.name} />
             </div>
             <Cover slug={f.slug} index={i + 1} kind={f.kind} chart={{ type: 'dots', ...f.plain!.dots }}
               count={f.plain!.count} countLabel={f.plain!.countLabel} detail={f.plain!.detail} />
@@ -119,11 +117,9 @@ const doors = [
           <article class={`flag extra ${x.kind === 'Open source' ? 'oss' : x.kind === 'Research' ? 'research' : ''}`} id={`card-${x.slug}`} data-batch={x.batch} hidden>
             <div class="flag-text">
               <p class="label">{String(live.length + j + 1).padStart(2, '0')} · {x.kind}</p>
-              <h3>{x.links[0]?.href.startsWith('/') ? <a href={x.links[0].href}>{x.name}</a> : x.name}</h3>
+              <h3>{x.slots.how.href?.startsWith('/') ? <a href={x.slots.how.href}>{x.name}</a> : x.name}</h3>
               <p class="problem">{x.problem}</p>
-              {x.links.length > 0 && (
-                <p class="flinks">{x.links.map((l) => <a class="textlink" href={l.href} rel={l.href.startsWith('/') ? undefined : 'noopener'}>{l.label}</a>)}</p>
-              )}
+              <Slots slots={x.slots} name={x.name} />
             </div>
             <Cover slug={x.slug} index={live.length + j + 1} kind={x.kind} chart={x.chart}
               count={x.count} countLabel={x.countLabel} detail={x.detail} />

@@ -1,0 +1,33 @@
+---
+// The same three actions on every home card: How it works, Try it, Code.
+// A slot with no link shows why, so every card has the same shape and nothing is a dead end.
+import type { Slots } from '../data/projects';
+interface Props { slots: Slots; name: string }
+const { slots, name } = Astro.props;
+const rows = [
+  { key: 'how', label: 'How it works', slot: slots.how },
+  { key: 'try', label: 'Try it', slot: slots.try },
+  { key: 'code', label: 'Code', slot: slots.code },
+] as const;
+const internal = (h: string) => h.startsWith('/');
+---
+<ul class="slots" aria-label={`${name}: links`}>
+  {rows.map(({ label, slot }) => (
+    <li>
+      {slot.href ? (
+        <a class="textlink" href={slot.href} rel={internal(slot.href) ? undefined : 'noopener'}>
+          {label} {internal(slot.href) ? '→' : '↗'}
+        </a>
+      ) : (
+        <span class="off" title={slot.note}>{label}</span>
+      )}
+      {slot.note && <span class="why">{slot.note}</span>}
+    </li>
+  ))}
+</ul>
+<style>
+  .slots { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px 26px; }
+  .slots li { display: flex; flex-direction: column; gap: 2px; }
+  .off { font-family: var(--mono); font-size: 13px; color: var(--muted); text-decoration: line-through; text-decoration-color: var(--rule-strong); }
+  .why { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+</style>

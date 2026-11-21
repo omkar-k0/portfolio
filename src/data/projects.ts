@@ -30,7 +30,7 @@ export interface Flagship {
   facts: string[]; // short real facts under the pipeline card
   links: { label: string; href: string }[];
   // Home page copy for a reader with no technical background. Technical detail lives in the case study.
-  plain?: { problem: string; count: string; countLabel: string; detail: string; stages: Stage[]; dots: { total: number; hit: number; cols: number } };
+  plain?: { problem: string; count: string; countLabel: string; detail: string; stages: Stage[]; dots: { total: number; hit: number; cols: number }; slots: Slots };
 }
 
 export const proof: (Metric & { project: string; slug: string })[] = [
@@ -88,6 +88,7 @@ export const flagships: Flagship[] = [
     plain: {
       problem: 'Every quarter, big companies tell investors how much money they expect to make. This tool reads the official filings and checks whether they kept that promise.',
       count: '184 of 188',
+      slots: { how: { href: '/work/guidance-reconciliation-engine/' }, try: { href: 'https://guidance-reconciliation-engine.vercel.app' }, code: { href: 'https://github.com/omkar-k0/guidance-reconciliation-engine' } },
       dots: { total: 188, hit: 184, cols: 24 },
       countLabel: 'promises checked correctly, compared with my own check by hand',
       detail: 'Simple rules settle almost all of them. AI looks only at the 7 unclear cases and has to quote the filing. When it cannot be sure, it says so.',
@@ -123,6 +124,7 @@ export const flagships: Flagship[] = [
     plain: {
       problem: 'Companies move their data through long chains of steps every night. When one step breaks, an engineer can spend hours finding out why. This tool finds the cause and shows the evidence.',
       count: '43 of 48',
+      slots: { how: { href: '/work/faultline/' }, try: { href: 'https://github.com/omkar-k0/faultline#develop', note: 'runs on your machine' }, code: { href: 'https://github.com/omkar-k0/faultline' } },
       dots: { total: 48, hit: 43, cols: 16 },
       countLabel: 'test breakdowns traced to the exact cause',
       detail: 'It missed 5 and never blamed the wrong thing. A final test on cases it has never seen is still to come.',
@@ -158,6 +160,7 @@ export const flagships: Flagship[] = [
     plain: {
       problem: 'A furniture shop gets orders as messages and has to send each one to the right workshop: carpentry, upholstery, paint or metal. This tool reads the order and sends it on.',
       count: '23 of 24',
+      slots: { how: { href: '/work/werkbank/' }, try: { href: 'https://werkbank-gamma.vercel.app' }, code: { href: 'https://github.com/omkar-k0/werkbank' } },
       dots: { total: 24, hit: 23, cols: 12 },
       countLabel: 'orders it handled alone went to the right workshop',
       detail: 'Out of 60 test orders it decided 24 alone, flagged 22 for a quick check and sent 14 to a person instead of guessing.',
@@ -195,6 +198,10 @@ export const flagships: Flagship[] = [
 
 // Home page cards 04 to 09, revealed three at a time under the flagships.
 // chart: dots = a real success count; bar = a measured share; none = a finding or nothing measured yet.
+// The same three actions on every home card. A slot without href shows its note instead of a link.
+export interface Slot { href?: string; note?: string }
+export interface Slots { how: Slot; try: Slot; code: Slot }
+
 export type Chart =
   | { type: 'dots'; total: number; hit: number; cols: number }
   | { type: 'bar'; pct: number }
@@ -202,7 +209,7 @@ export type Chart =
 export interface ExtraCard {
   slug: string; name: string; kind: string; batch: 2 | 3;
   problem: string; count: string; countLabel: string; detail: string; chart: Chart;
-  links: { label: string; href: string }[];
+  slots: Slots;
 }
 export const extras: ExtraCard[] = [
   {
@@ -211,7 +218,7 @@ export const extras: ExtraCard[] = [
     count: '584 of 586', countLabel: 'planted errors caught, with 2 false alarms in almost 119,000 clean records',
     detail: 'I hid 586 mistakes in 14 real days of data on purpose to test the checks. How well it handles the real oddities it finds still needs a check by hand.',
     chart: { type: 'dots', total: 586, hit: 584, cols: 40 },
-    links: [{ label: 'How it works →', href: '/work/fuelcycle/' }, { label: 'Code ↗', href: 'https://github.com/omkar-k0/fuelcycle' }],
+    slots: { how: { href: '/work/fuelcycle/' }, try: { href: 'https://fuelcycle-seven.vercel.app' }, code: { href: 'https://github.com/omkar-k0/fuelcycle' } },
   },
   {
     slug: 'sustainability', name: 'Sustainability commitment classifier', kind: 'Tool', batch: 2,
@@ -219,7 +226,7 @@ export const extras: ExtraCard[] = [
     count: '120 of 1,562', countLabel: 'climate promises from five German companies come with a number and a target year',
     detail: 'So about 92 in 100 promises cannot be checked later. A first version counted the year itself as a number and said 12.3%; I found and fixed that.',
     chart: { type: 'bar', pct: 7.7 },
-    links: [{ label: 'Code ↗', href: 'https://github.com/omkar-k0/sustainability-commitment-classifier' }],
+    slots: { how: { href: 'https://github.com/omkar-k0/sustainability-commitment-classifier#readme', note: 'README' }, try: { note: 'no live demo yet' }, code: { href: 'https://github.com/omkar-k0/sustainability-commitment-classifier' } },
   },
   {
     slug: 'dax', name: 'DAX 40 capital structure', kind: 'Research', batch: 2,
@@ -227,7 +234,7 @@ export const extras: ExtraCard[] = [
     count: '127', countLabel: 'company-years from 32 firms, analysed in Python',
     detail: 'Main finding: more profitable firms tend to borrow less. Graded 1.3.',
     chart: { type: 'none' },
-    links: [],
+    slots: { how: { note: 'FOM paper, not public' }, try: { note: 'research, nothing to run' }, code: { note: 'being published' } },
   },
   {
     slug: 'esg', name: 'ESG and bond spreads', kind: 'Research', batch: 3,
@@ -235,7 +242,7 @@ export const extras: ExtraCard[] = [
     count: 'No', countLabel: 'measurable effect in 56 observations',
     detail: 'The honest answer was no: none of the tests came close to a real effect. Reporting a result that found nothing is part of the work.',
     chart: { type: 'none' },
-    links: [],
+    slots: { how: { note: 'write-up in progress' }, try: { note: 'research, nothing to run' }, code: { href: 'https://github.com/krakmo1/esg-bond-spreads' } },
   },
   {
     slug: 'gradelens', name: 'GradeLens', kind: 'Tool', batch: 3,
@@ -243,7 +250,7 @@ export const extras: ExtraCard[] = [
     count: 'v1.0', countLabel: 'Chrome extension in English and German, 25 automated tests',
     detail: 'Not measured with real students yet.',
     chart: { type: 'none' },
-    links: [{ label: 'Code ↗', href: 'https://github.com/omkar-k0/gradelens' }],
+    slots: { how: { href: 'https://github.com/omkar-k0/gradelens#how-it-works', note: 'README' }, try: { href: 'https://github.com/omkar-k0/gradelens#install', note: 'install from GitHub' }, code: { href: 'https://github.com/omkar-k0/gradelens' } },
   },
   {
     slug: 'demfragen', name: 'Dem Fragen', kind: 'Product', batch: 3,
@@ -251,7 +258,7 @@ export const extras: ExtraCard[] = [
     count: 'Not tested yet', countLabel: 'on real legal questions',
     detail: 'So far only a practice run with made-up questions. No accuracy number until real cases are checked.',
     chart: { type: 'none' },
-    links: [{ label: 'Code ↗', href: 'https://github.com/omkar-k0/cuddly-octo-palm-tree' }],
+    slots: { how: { href: 'https://github.com/omkar-k0/cuddly-octo-palm-tree#readme', note: 'README' }, try: { note: 'no public demo yet' }, code: { href: 'https://github.com/omkar-k0/cuddly-octo-palm-tree' } },
   },
 ];
 
