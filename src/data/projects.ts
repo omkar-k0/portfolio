@@ -191,7 +191,7 @@ export const flagships: Flagship[] = [
 ];
 
 export const ledger = [
-  { name: 'Sustainability commitment classifier', kind: 'Tool', note: 'Only 12.3% of 1,562 climate promises come with a number', href: 'https://github.com/omkar-k0/sustainability-commitment-classifier' },
+  { name: 'Sustainability commitment classifier', kind: 'Tool', note: 'Only 7.7% of 1,562 climate promises come with a number and a target year', href: 'https://github.com/omkar-k0/sustainability-commitment-classifier' },
   { name: 'DAX 40 capital structure', kind: 'Research', note: 'More profitable big German firms borrow less · grade 1.3', href: '' },
   { name: 'ESG and bond spreads', kind: 'Research', note: 'Better green ratings did not make company borrowing cheaper', href: '' },
   { name: 'Dem Fragen', kind: 'Product', note: 'Plain answers to legal questions in India, with sources · not yet tested on real cases', href: 'https://github.com/omkar-k0/cuddly-octo-palm-tree' },
@@ -246,7 +246,7 @@ export const work: WorkItem[] = [
   {
     name: 'Sustainability commitment classifier', kind: 'Tool',
     answers: 'Which climate commitments in a sustainability report come with a number?',
-    metric: { value: '12.3%', label: 'of 1,562 commitments quantified', evidence: 'measured', source: 'repo output, re-run 16 Oct 2026' },
+    metric: { value: '7.7%', label: 'of 1,562 commitments quantified', evidence: 'measured', source: 'repo README, corrected 21 Nov 2026 (was 12.3%: the year itself counted as a figure)' },
     status: 'Done · rule-based', href: 'https://github.com/omkar-k0/sustainability-commitment-classifier', external: true,
   },
   {
