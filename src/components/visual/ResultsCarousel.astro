@@ -1,0 +1,168 @@
+---
+// Auto-advancing slides of real results. Every number comes from an eval file named under each slide.
+// Pauses on hover, on keyboard focus, off-screen, and never auto-plays for reduced-motion users.
+import DotGrid from './DotGrid.astro';
+import HBars from './HBars.astro';
+---
+<section class="rc" aria-roledescription="carousel" aria-label="Real results from my projects">
+  <div class="rc-top">
+    <div class="rc-ctl">
+      <div class="rc-dots" role="tablist" aria-label="Choose a result">
+        {[1, 2, 3, 4, 5, 6].map((n) => <button type="button" class="rc-dot" role="tab" aria-label={`Result ${n}`} data-go={n - 1}></button>)}
+      </div>
+      <button type="button" class="rc-btn" data-prev aria-label="Previous result">←</button>
+      <button type="button" class="rc-btn" data-next aria-label="Next result">→</button>
+      <button type="button" class="rc-btn rc-play" data-play aria-label="Pause the slides">Pause</button>
+    </div>
+  </div>
+  <div class="rc-slides" aria-live="off">
+    <div class="rc-slide is-on" role="group" aria-roledescription="slide" aria-label="1 of 6">
+      <p class="label rc-p">Guidance Reconciliation Engine · one real run</p>
+      <p class="rc-h">188 questions came in. Rules settled 181. Only 7 needed AI.</p>
+      <div class="run-d">
+        <DotGrid total={188} filled={0} cols={47} size={11} tone="ink" groups={[{ n: 181, kind: 'mute' }, { n: 6, kind: 'fill' }, { n: 1, kind: 'hollow' }]}
+          label="188 dots: 181 settled by simple rules, 6 answered by AI with a quote from the filing, 1 where the AI said it could not tell" />
+      </div>
+      <div class="run-m">
+        <DotGrid total={188} filled={0} cols={19} size={11} tone="ink" groups={[{ n: 181, kind: 'mute' }, { n: 6, kind: 'fill' }, { n: 1, kind: 'hollow' }]}
+          label="188 dots: 181 settled by simple rules, 6 answered by AI with a quote from the filing, 1 where the AI said it could not tell" />
+      </div>
+      <ul class="legend">
+        <li><i class="lg mute"></i>181 settled by simple rules</li>
+        <li><i class="lg fill"></i>6 answered by AI, with a quote from the filing</li>
+        <li><i class="lg hollow"></i>1 where the AI said “I can't tell”</li>
+      </ul>
+      <p class="rc-src">Source: data/processed/results.json, run of 24 Oct 2026</p>
+    </div>
+
+    <div class="rc-slide" role="group" aria-roledescription="slide" aria-label="2 of 6">
+      <p class="label rc-p">Guidance Reconciliation Engine · checked by hand</p>
+      <p class="rc-h">The surer the rules were, the more often they were right.</p>
+      <HBars rows={[
+        { label: 'Rules, very sure', value: 110, max: 110, text: '110 of 110 right' },
+        { label: 'Rules, less sure', value: 68, max: 71, text: '68 of 71 right' },
+        { label: 'AI, hard cases', value: 6, max: 7, text: '6 of 7 right' },
+      ]} />
+      <p class="rc-src">Source: data/processed/eval.json, 188 hand labels, 20 Nov 2026</p>
+    </div>
+
+    <div class="rc-slide oss" role="group" aria-roledescription="slide" aria-label="3 of 6">
+      <p class="label rc-p">faultline · 48 test breakdowns</p>
+      <p class="rc-h">Who named the exact cause, and who blamed the wrong thing?</p>
+      <HBars rows={[
+        { label: 'faultline: right', value: 43, max: 48, text: '43 of 48 · 0 wrong' },
+        { label: 'AI reading logs: right', value: 1, max: 48, text: '1 of 48', tone: 'mute' },
+        { label: 'AI reading logs: wrong', value: 7, max: 48, text: '7 of 48', tone: 'warn' },
+        { label: 'Simple guess: wrong', value: 11, max: 48, text: '11 of 48 (0 right)', tone: 'warn' },
+      ]} />
+      <p class="rc-src">Source: eval/results/dev, triage, raw_log_llm and dbt_tests_guess</p>
+    </div>
+
+    <div class="rc-slide" role="group" aria-roledescription="slide" aria-label="4 of 6">
+      <p class="label rc-p">Werkbank · 60 hand-written test orders</p>
+      <p class="rc-h">Sure orders go straight through. Unsure ones wait for a person.</p>
+      <div class="stack" role="img" aria-label="Of 60 orders: 24 decided alone, 23 of them right; 22 flagged for a quick check; 14 sent to a person">
+        <span class="sb a" style="width:40%">24<span class="sw"> alone</span></span>
+        <span class="sb b" style="width:36.7%">22<span class="sw"> quick check</span></span>
+        <span class="sb c" style="width:23.3%">14<span class="sw"> to a person</span></span>
+      </div>
+      <ul class="legend">
+        <li><i class="lg fill"></i>Decided alone: 23 of 24 went to the right workshop</li>
+        <li><i class="lg half"></i>Flagged for a quick check</li>
+        <li><i class="lg hollow"></i>Sent to a person instead of a guess</li>
+      </ul>
+      <p class="rc-src">Source: reports/eval.md, hand-written set, n = 60</p>
+    </div>
+
+    <div class="rc-slide oss" role="group" aria-roledescription="slide" aria-label="5 of 6">
+      <p class="label rc-p">fuelcycle · fill up today or wait?</p>
+      <p class="rc-h">When it is sure enough to answer, its "fill now" call beats the simple habit.</p>
+      <HBars rows={[
+        { label: 'fuelcycle says "fill now"', value: 92, max: 100, text: 'right 92% of the time' },
+        { label: 'Always fill now', value: 72, max: 100, text: 'right 72% of the time', tone: 'mute' },
+      ]} />
+      <p class="rc-note">It only answers on 3.4% of days. On the rest it says it is not sure. Every one of 3,297,846 price changes was checked first.</p>
+      <p class="rc-src">Source: results/forecast_eval.json, 8-week backtest</p>
+    </div>
+
+    <div class="rc-slide" role="group" aria-roledescription="slide" aria-label="6 of 6">
+      <p class="label rc-p">Sustainability classifier · 1,562 climate promises</p>
+      <p class="rc-h">Only 120 promises come with a number and a target year.</p>
+      <div class="bar1" role="img" aria-label="7.7% of 1,562 promises have a number and a target year">
+        <span style="width:7.7%"></span><b>7.7%</b>
+      </div>
+      <p class="rc-note">The other 1,442 cannot be checked later. Five German companies' reports.</p>
+      <p class="rc-src">Source: repository README, corrected 21 Nov 2026</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.rc').forEach((rc) => {
+    const slides = [...rc.querySelectorAll<HTMLElement>('.rc-slide')];
+    const dots = [...rc.querySelectorAll<HTMLButtonElement>('.rc-dot')];
+    const play = rc.querySelector<HTMLButtonElement>('[data-play]')!;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let i = 0, playing = !reduce, hover = false, visible = true, timer = 0;
+    const show = (n: number) => {
+      i = (n + slides.length) % slides.length;
+      slides.forEach((s, k) => { s.classList.toggle('is-on', k === i); s.toggleAttribute('inert', k !== i); });
+      dots.forEach((d, k) => d.setAttribute('aria-selected', String(k === i)));
+    };
+    const tick = () => { clearTimeout(timer); if (playing && !hover && visible) timer = window.setTimeout(() => { show(i + 1); tick(); }, 7000); };
+    const setPlay = (p: boolean) => { playing = p; play.textContent = p ? 'Pause' : 'Play'; play.setAttribute('aria-label', p ? 'Pause the slides' : 'Play the slides'); tick(); };
+    rc.querySelector('[data-prev]')!.addEventListener('click', () => { show(i - 1); tick(); });
+    rc.querySelector('[data-next]')!.addEventListener('click', () => { show(i + 1); tick(); });
+    dots.forEach((d) => d.addEventListener('click', () => { show(Number(d.dataset.go)); tick(); }));
+    play.addEventListener('click', () => setPlay(!playing));
+    rc.addEventListener('mouseenter', () => { hover = true; tick(); });
+    rc.addEventListener('mouseleave', () => { hover = false; tick(); });
+    rc.addEventListener('focusin', () => { hover = true; tick(); });
+    rc.addEventListener('focusout', () => { hover = false; tick(); });
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting; tick(); }).observe(rc);
+    show(0); setPlay(playing);
+  });
+</script>
+
+<style>
+  .rc { position: relative; margin: 20px 0 0; padding: 18px 24px 12px; background: var(--surface); border: 1px solid var(--rule); }
+  .rc-top { position: absolute; top: 14px; right: 18px; z-index: 1; }
+  .rc-btn { font: inherit; font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink); background: var(--bg); border: 1px solid var(--rule-strong); border-radius: 999px; padding: 5px 12px; cursor: pointer; min-width: 34px; }
+  .rc-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .rc-slides { display: grid; }
+  .rc-slide { grid-area: 1 / 1; opacity: 0; visibility: hidden; transition: opacity 0.5s ease, visibility 0.5s; display: flex; flex-direction: column; gap: 10px; }
+  .rc-slide.is-on { opacity: 1; visibility: visible; }
+  .rc-slide.oss { --accent: var(--accent-2); }
+  .rc-p { color: var(--muted); padding-right: 330px; min-height: 24px; display: flex; align-items: center; }
+  .rc-h { font-size: 20px; letter-spacing: -0.01em; max-width: 36em; }
+  .rc-note { font-size: 15px; color: var(--muted); max-width: 46em; }
+  .rc-src { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: auto; padding-top: 4px; }
+  .run-m { display: none; }
+  .legend { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 28px; font-size: 14px; color: var(--muted); }
+  .lg { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; vertical-align: -1px; }
+  .lg.mute { background: var(--muted); opacity: 0.45; }
+  .lg.fill { background: var(--accent); }
+  .lg.half { background: color-mix(in srgb, var(--accent) 45%, var(--bg)); }
+  .lg.hollow { border: 1.5px solid var(--ink); }
+  .stack { display: flex; height: 40px; border: 1px solid var(--rule-strong); max-width: 900px; }
+  .sb { display: flex; align-items: center; padding: 0 10px; font-family: var(--mono); font-size: 12px; white-space: nowrap; overflow: hidden; }
+  .sb.a { background: var(--accent); color: var(--accent-ink); }
+  .sb.b { background: color-mix(in srgb, var(--accent) 45%, var(--bg)); color: var(--ink); }
+  .sb.c { background: var(--bg); color: var(--ink); border-left: 1px solid var(--rule-strong); }
+  .bar1 { position: relative; height: 40px; background: var(--bg); border: 1px solid var(--rule-strong); max-width: 900px; display: flex; align-items: center; }
+  .bar1 span { position: absolute; inset: 0 auto 0 0; background: var(--accent); }
+  .bar1 b { position: relative; margin-left: calc(7.7% + 10px); font-weight: 400; font-family: var(--mono); font-size: 13px; }
+  .rc-ctl { display: flex; gap: 6px; align-items: center; }
+  .rc-dots { display: flex; gap: 0; margin-right: 4px; }
+  .rc-dot { width: 24px; height: 24px; border: none; background: transparent; padding: 0; cursor: pointer; display: grid; place-items: center; }
+  .rc-dot::before { content: ''; width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid var(--ink); }
+  .rc-dot[aria-selected='true']::before { background: var(--ink); }
+  @media (max-width: 1000px) {
+    .run-d { display: none; }
+    .run-m { display: block; }
+    .rc { padding: 18px 16px 14px; }
+    .sb { font-size: 11px; padding: 0 6px; }
+    .sw { display: none; }
+    .rc-p { padding-right: 0; padding-top: 40px; }
+  }
+</style>

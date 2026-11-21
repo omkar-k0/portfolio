@@ -1,0 +1,32 @@
+---
+// Horizontal bars on a shared scale. Each row: label, value, max, optional second (wrong) value.
+interface Row { label: string; value: number; max: number; text: string; tone?: 'accent' | 'mute' | 'warn' }
+interface Props { rows: Row[] }
+const { rows } = Astro.props;
+---
+<ul class="hb">
+  {rows.map((r) => (
+    <li>
+      <span class="hl">{r.label}</span>
+      <span class="ht" role="img" aria-label={`${r.label}: ${r.text}`}>
+        <span class={`hf ${r.tone ?? 'accent'}`} style={`width:${Math.max(0.6, (r.value / r.max) * 100)}%`}></span>
+      </span>
+      <span class="hv">{r.text}</span>
+    </li>
+  ))}
+</ul>
+<style>
+  .hb { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .hb li { display: grid; grid-template-columns: minmax(150px, 15em) 1fr minmax(120px, 13em); gap: 16px; align-items: center; }
+  .hl { font-size: 15px; }
+  .ht { height: 14px; background: var(--bg); border: 1px solid var(--rule); position: relative; }
+  .hf { position: absolute; inset: 0 auto 0 0; }
+  .hf.accent { background: var(--accent); }
+  .hf.mute { background: var(--muted); opacity: 0.5; }
+  .hf.warn { background: var(--accent-2); }
+  .hv { font-size: 14px; color: var(--muted); }
+  @media (max-width: 720px) {
+    .hb li { grid-template-columns: 1fr auto; gap: 6px 12px; }
+    .ht { grid-column: 1 / -1; grid-row: 2; }
+  }
+</style>

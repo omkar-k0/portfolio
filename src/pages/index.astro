@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Pipeline from '../components/Pipeline.astro';
 import Cover from '../components/visual/Cover.astro';
-import DotGrid from '../components/visual/DotGrid.astro';
+import ResultsCarousel from '../components/visual/ResultsCarousel.astro';
 import EvidenceTag from '../components/EvidenceTag.astro';
 import { SITE, LINKS, CV, SKILLS, LANGUAGES, mailto } from '../config';
 import { flagships, ledger, extras } from '../data/projects';
@@ -82,27 +82,7 @@ const doors = [
         <li class="step ai"><span class="label">4</span><span class="st">AI looks at the hard ones</span><span class="sd">Only the few cases rules can't settle</span></li>
         <li class="step out"><span class="label">5</span><span class="st">Answer with its source</span><span class="sd">Or a plain “I can't tell”, never a guess</span></li>
       </ol>
-      <figure class="run">
-        <figcaption>
-          <p class="label">One real run · Guidance Reconciliation Engine</p>
-          <p class="run-h">188 questions came in. Rules settled 181. Only 7 needed AI.</p>
-        </figcaption>
-        <div class="run-d">
-        <DotGrid total={188} filled={0} cols={47} size={11} tone="ink"
-          groups={[{ n: 181, kind: 'mute' }, { n: 6, kind: 'fill' }, { n: 1, kind: 'hollow' }]}
-          label="188 dots: 181 settled by simple rules, 6 answered by AI with a quote from the filing, 1 where the AI said it could not tell" />
-        </div>
-        <div class="run-m">
-        <DotGrid total={188} filled={0} cols={19} size={11} tone="ink"
-          groups={[{ n: 181, kind: 'mute' }, { n: 6, kind: 'fill' }, { n: 1, kind: 'hollow' }]}
-          label="188 dots: 181 settled by simple rules, 6 answered by AI with a quote from the filing, 1 where the AI said it could not tell" />
-        </div>
-        <ul class="legend">
-          <li><i class="lg mute"></i>181 settled by simple rules</li>
-          <li><i class="lg fill"></i>6 answered by AI, with a quote from the filing</li>
-          <li><i class="lg hollow"></i>1 where the AI said “I can't tell”</li>
-        </ul>
-      </figure>
+      <ResultsCarousel />
       <ul class="why">
         <li><b>Rules first,</b> because most cases are routine and rules are cheap and explainable.</li>
         <li><b>AI only where needed,</b> because it costs more and can be wrong with confidence.</li>
@@ -314,7 +294,7 @@ const doors = [
   .fork { background: var(--surface); }
   .ai { border-top: 2px solid var(--accent); }
   .out .st { color: var(--accent); }
-  .why { list-style: none; margin: 22px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .why { list-style: none; margin: 18px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
   .why li { font-size: 15px; line-height: 1.5; color: var(--muted); }
   .why b { color: var(--ink); font-weight: 500; }
 
