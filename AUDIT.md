@@ -421,3 +421,14 @@ Rows: 395. Without a source: 0.
 | 127 observations, 32 firms, p = 0.09 and 0.004, grade 1.3 | FOM paper, not public; checked 16 Oct 2026 per vault note CV Evidence Audit |
 | Average 1.8, module grades, CGPI 8.29, IELTS 7.5 | Omkar's own records, not public |
 | Picnic 04/2026 to 09/2026, 14 h/week | Omkar's statement |
+
+## Added with Phase C (fuelcycle real flags)
+
+| Page | Figure | Source |
+|---|---|---|
+| /work/fuelcycle/, home card | 12 of 98 (12%), 12 of 100 | fuelcycle results/real_flags_eval.json: primary error 12, real 86, unsure 2 |
+| /work/fuelcycle/ | 13 of 99 | real_flags_eval.json: second error 13, real 86, unsure 1 |
+| /work/fuelcycle/ | 99 of 100, kappa 0.96 | real_flags_eval.json: agreement same_label 99, cohen_kappa 0.959 |
+| /work/fuelcycle/ | 97 of the 100, 9 of 95 | real_flags_eval.json: by_reason_primary regional_outlier n 97, error 9, unsure 2 |
+| /work/fuelcycle/ | 3 of 3 | real_flags_eval.json: spike_reversal 2 plus spike_reversal;regional_outlier 1, all error |
+| /work/fuelcycle/ | 7,050 | fuelcycle README.md:14 |

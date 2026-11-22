@@ -221,7 +221,7 @@ export const extras: ExtraCard[] = [
     slug: 'fuelcycle', name: 'fuelcycle', kind: 'Open source', batch: 2,
     problem: 'Fuel prices change thousands of times a day across France. Most data pipelines quietly drop bad records, so nobody knows how clean the result is. This one checks every price change and says why it kept or rejected it.',
     count: '584 of 586', countLabel: 'planted errors caught, with 2 false alarms in almost 119,000 clean records',
-    detail: 'I hid 586 mistakes in 14 real days of data on purpose to test the checks. How well it handles the real oddities it finds still needs a check by hand.',
+    detail: 'I hid 586 mistakes in 14 real days of data on purpose to test the checks. On real data it is noisier: of 100 prices it flagged, only 12 were real errors.',
     chart: { type: 'dots', total: 586, hit: 584, cols: 40 },
     keyLabel: 'nothing is dropped without a reason',
     stages: [
