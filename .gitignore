@@ -5,3 +5,7 @@ dist/
 .env
 .env.*
 .DS_Store
+cv/*.aux
+cv/*.log
+cv/*.out
+cv/*.pdf

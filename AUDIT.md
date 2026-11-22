@@ -393,3 +393,18 @@ Rows: 380. Without a source: 0.
 | /work/werkbank/ | 3000 | npm run dev # http://localhost:3000, Postgres in-process via PGlite | werkbank/README.md:120 |
 | /work/werkbank/ | 20 | I'm looking for a 20-hour/week Werkstudent role in Essen, NRW or remote, availab | werkbank/CLAUDE.md:3 |
 | /work/werkbank/ | 22 | Last updated 22 November 2026 | werkbank/package-lock.json:85 |
+
+## CV (cv/Omkar_Khadilkar_CV.tex, built to public/cv/Omkar_Khadilkar_CV.pdf)
+
+| Figure | Source |
+|---|---|
+| 192 incidents, 8 fault types, 4 dbt projects | faultline/README.md:7 and benchmark release |
+| 89.6% of 48 dev incidents, no wrong answers | faultline/eval/results/dev/triage.md (all faulted row) |
+| dbt tests 0%, raw logs to local LLM 2.1% | faultline/eval/results/dev/dbt_tests.md, raw_log_llm.md |
+| 181 of 188, 185 SEC releases | guidance-reconciliation-engine eval.json by_route.rule.n; README.md:26 |
+| 97.9%, baseline 91.5%, 110 high-confidence all right | guidance-reconciliation-engine data/processed/eval.json (accuracy, gold_distribution) |
+| 40% auto at 95.8%, 23% to review, 60 requests | werkbank/reports/eval.md:39 |
+| 1,562 commitments, 7.7% (120) | sustainability-commitment-classifier README (repo not public) |
+| 127 observations, 32 firms, p = 0.09 and 0.004, grade 1.3 | FOM paper, not public; checked 16 Oct 2026 per vault note CV Evidence Audit |
+| Average 1.8, module grades, CGPI 8.29, IELTS 7.5 | Omkar's own records, not public |
+| Picnic 04/2026 to 09/2026, 14 h/week | Omkar's statement |
