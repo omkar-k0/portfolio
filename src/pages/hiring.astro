@@ -4,7 +4,11 @@ import EvidenceTag from '../components/EvidenceTag.astro';
 import { SITE } from '../config';
 import Elsewhere from '../components/Elsewhere.astro';
 import { proof, flagships } from '../data/projects';
-const ready = new Set(flagships.filter((f) => f.ready).map((f) => f.slug));
+// A proof links to its case study when one is published (any src/pages/work/*.astro not starting with _).
+const ready = new Set([
+  ...flagships.filter((f) => f.ready).map((f) => f.slug),
+  ...Object.keys(import.meta.glob('./work/[!_]*.astro')).map((p) => p.split('/').pop()!.replace('.astro', '')),
+]);
 const href = (slug: string) => (ready.has(slug) ? `/work/${slug}/` : `/#${slug}`);
 const missing = proof.filter((m) => !ready.has(m.slug)).length;
 

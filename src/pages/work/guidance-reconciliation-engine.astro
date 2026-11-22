@@ -18,7 +18,7 @@ const metrics: Metric[] = [
 const facts = [
   { label: 'Type', value: 'Product' },
   { label: 'When', value: 'October 2026' },
-  { label: 'Role', value: 'Sole developer: data, rules, gate, LLM layer, site' },
+  { label: 'Role', value: 'Designed by me, code written with Claude' },
   { label: 'Data', value: 'SEC 8-K earnings releases and XBRL company facts' },
   { label: 'Status', value: 'Live · 97.9% on hand labels' },
 ];
@@ -51,7 +51,7 @@ const toc = [
   tldr={{
     problem: 'Companies give revenue guidance every quarter. Checking it against what they later reported means reading hundreds of filings by hand.',
     result: '184 of 188 guidance items right against blind hand labels (97.9%); only 7 (3.7%) needed the LLM. All 110 high-confidence rule decisions were right.',
-    role: 'Sole developer: SEC data pipeline, rules, confidence gate, Claude layer and the live site.',
+    role: 'My project: SEC data pipeline, rules, confidence gate, Claude layer and the live site. I researched and designed it and made the decisions, after talking options through with Claude for efficiency. Claude wrote the code; we debugged it together.',
   }}
   reproduce={{
     repo,

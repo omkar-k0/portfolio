@@ -20,7 +20,7 @@ export const SUBSTACK = {
 
 export const LINKS = {
   github: 'https://github.com/omkar-k0',
-  linkedin: 'https://www.linkedin.com/in/omkar-khadilkar-/',
+  linkedin: 'https://www.linkedin.com/in/omkar-khadilkar/',
   substack: 'https://substack.com/@krakmo',
 };
 
