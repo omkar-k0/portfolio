@@ -10,7 +10,7 @@ const metrics: Metric[] = [
   { value: '3,297,846', label: 'French fuel price events in one year, every one checked by the gate', evidence: 'measured', source: 'silver_price_events, 1 Nov 2025 to 31 Oct 2026' },
   { value: '99.7%', label: 'of 586 planted errors caught, 2 false alarms in 118,795 clean events', evidence: 'measured', source: 'results/dq_eval.json, 14 real days' },
   { value: '92%', label: '"fill now" calls right, against 72% for always filling now', evidence: 'backtested', source: 'results/forecast_eval.json, 8 weeks rolling origin' },
-  { value: '—', label: 'precision on the 7,050 real anomalies it flags: needs hand labels', evidence: 'pending', source: 'not labelled yet' },
+  { value: '12 of 98', label: 'real flags that are true errors: most flags are genuine expensive stations', evidence: 'measured', source: 'results/real_flags_eval.json, 100 random real flags; second check 13 of 99' },
 ];
 
 const facts = [
@@ -190,6 +190,19 @@ make test        # end-to-end tests on a synthetic sample (what CI runs)`,
       </tbody>
     </table>
     <p class="caption">Precision 99.7%: 2 false alarms among 118,795 clean events. 264 events were already flagged on the untouched copy; those are real anomalies with unknown truth and are not scored.</p>
+    <h3>And on real data?</h3>
+    <p>
+      Planted errors only test the faults I thought of. So I took 100 of the 7,050 prices the gate flagged on real
+      data, at random, and labelled each one without seeing why it was flagged. Gemini drafted a first pass and I
+      checked every row. As a second check, Claude Sonnet 5.5 labelled the same sheet on its own.
+    </p>
+    <p>
+      The answer is not flattering: <strong>12 of the 98 I could judge were real errors (12%)</strong>. The rest were
+      genuine prices, mostly stations that are simply expensive: Paris, motorways, islands, price caps held for days.
+      The second check found 13 of 99 and agreed with me on 99 of 100 rows (kappa 0.96). The spike rule was right
+      all 3 times; the regional rule, which raised 97 of the 100 flags, was right on 9 of 95.
+    </p>
+    <p class="caption">Source: <a href="https://github.com/omkar-k0/fuelcycle/blob/main/results/real_flags_eval.json" rel="noopener">results/real_flags_eval.json</a>, labels in <code>labels/</code>, rerun with <code>python3 scripts/score_real_flags.py</code>.</p>
 
     <h3>Fill up today?</h3>
     <figure class="shot">
@@ -262,7 +275,7 @@ make test        # end-to-end tests on a synthetic sample (what CI runs)`,
   <section id="open">
     <h2><span class="num">10</span>Still open</h2>
     <ul>
-      <li>Hand-label a sample of the 7,050 real flags to measure precision on real anomalies.</li>
+      <li>A better regional rule: compare a station with its own price history, not only its neighbours, then label a fresh sample.</li>
       <li>A shuffled-time baseline for the leader/follower roles.</li>
       <li>Confirm "fill now" and "never show wait" on months the forecast has not seen.</li>
       <li>The German adapter for Tankerkönig once account access works, with the hourly marts switched on.</li>
