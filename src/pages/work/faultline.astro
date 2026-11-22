@@ -216,7 +216,7 @@ False alarms on clean runs: 0.0% (0/30).</code></pre>
       rightLabel="right cause at top-1"
       wrongLabel="wrong cause at top-1"
       rows={[
-        { name: 'dbt tests', note: 'alert only', right: [0, 48], wrong: [0, 48] },
+        { name: 'dbt tests', note: 'alert only: fired on 11 of 48, names no cause', right: [0, 48], wrong: [0, 48] },
         { name: 'dbt tests + guess', note: 'alert plus naive cause', right: [0, 48], wrong: [11, 48] },
         { name: 'Raw logs → LLM', note: 'local qwen2.5 7B', right: [1, 48], wrong: [7, 48] },
         { name: 'faultline monitors', note: 'anomalies, ranked upstream-first', right: [27, 48], wrong: [16, 48] },
@@ -225,12 +225,14 @@ False alarms on clean runs: 0.0% (0/30).</code></pre>
       caption="Dev split, 48 faulted incidents. Each method also had 0 of 30 false alarms on clean runs. Files: eval/results/dev/*.md."
     />
     <p>
-      The monitors alone already detect 89.6% of incidents, but they point at the wrong place a third of the
-      time. Testing every proposed cause removes all of those wrong answers. The 5 incidents triage misses are
+      The monitors alone notice that something is wrong in 43 of 48 incidents (89.6%). But they name the right
+      cause in only 27 (56.2%) and a wrong one in 16. Testing every proposed cause removes all of those wrong answers. The 5 incidents triage misses are
       ones the monitors never flagged: two distribution shifts, two timezone errors and one logic bug.
     </p>
     <p>
-      A one-time check on the train split gave a similar picture: 85 of 96 right at top-1 (88.5%), 3 wrong.
+      The train split gave a similar picture: 86 of 96 right at top-1 (89.6%), 3 wrong, and 7 never flagged
+      by the monitors at all. (This is the run after the train split was fixed on 19 Nov; the first run said
+      85 of 96.)
       Both results reproduce byte for byte, and a test checks that they still do.
     </p>
     <p class="caption">Sources: <a href={res('dev/triage.md')}>triage</a>, <a href={res('dev/monitors.md')}>monitors</a>, <a href={res('dev/raw_log_llm.md')}>raw_log_llm</a>, <a href={res('dev/dbt_tests.md')}>dbt_tests</a>, <a href={res('dev/dbt_tests_guess.md')}>dbt_tests_guess</a>, <a href={res('train/triage.md')}>train/triage</a>.</p>
