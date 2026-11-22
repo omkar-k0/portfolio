@@ -55,7 +55,7 @@ import HBars from './HBars.astro';
         { label: 'AI reading logs: wrong', value: 7, max: 48, text: '7 of 48', tone: 'warn' },
         { label: 'Simple guess: wrong', value: 11, max: 48, text: '11 of 48 (0 right)', tone: 'warn' },
       ]} />
-      <p class="rc-src">Source: eval/results/dev, triage, raw_log_llm and dbt_tests_guess</p>
+      <p class="rc-src">Dev split, where the method was built; held-out test still to run. Source: eval/results/dev</p>
     </div>
 
     <div class="rc-slide" role="group" aria-roledescription="slide" aria-label="4 of 6">
@@ -71,6 +71,7 @@ import HBars from './HBars.astro';
         <li><i class="lg half"></i>Flagged for a quick check</li>
         <li><i class="lg hollow"></i>Sent to a person instead of a guess</li>
       </ul>
+      <p class="rc-note">60 orders I wrote, not a real shop. Payments not connected yet.</p>
       <p class="rc-src">Source: reports/eval.md, hand-written set, n = 60</p>
     </div>
 
@@ -81,7 +82,7 @@ import HBars from './HBars.astro';
         { label: 'fuelcycle says "fill now"', value: 92, max: 100, text: 'right 92% of the time' },
         { label: 'Always fill now', value: 72, max: 100, text: 'right 72% of the time', tone: 'mute' },
       ]} />
-      <p class="rc-note">It only answers on 3.4% of days. On the rest it says it is not sure. Every one of 3,297,846 price changes was checked first.</p>
+      <p class="rc-note">It answers on 3.4% of days only. The price forecast alone does not beat "tomorrow = today".</p>
       <p class="rc-src">Source: results/forecast_eval.json, 8-week backtest</p>
     </div>
 

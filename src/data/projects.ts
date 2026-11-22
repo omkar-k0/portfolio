@@ -146,7 +146,7 @@ export const flagships: Flagship[] = [
     ready: true,
     name: 'Werkbank',
     kind: 'Product',
-    status: 'Live',
+    status: 'Live demo · payments not connected',
     question: 'Which workshop should take this furniture order?',
     outcome: 'Right on **95.8%** of the orders it routes on its own. Unsure orders wait for a person.',
     tags: ['Classifier', 'Postgres', 'PWA · EN/DE'],
@@ -163,7 +163,7 @@ export const flagships: Flagship[] = [
       slots: { how: { href: '/work/werkbank/' }, try: { href: 'https://werkbank-gamma.vercel.app' }, code: { href: 'https://github.com/omkar-k0/werkbank' } },
       dots: { total: 24, hit: 23, cols: 12 },
       countLabel: 'orders it handled alone went to the right workshop',
-      detail: 'Out of 60 test orders it decided 24 alone, flagged 22 for a quick check and sent 14 to a person instead of guessing.',
+      detail: 'Of 60 orders I wrote by hand, it decided 24 alone, flagged 22 for a check and sent 14 to a person. Not yet tried on a real shop.',
       stages: [
         { label: 'Order arrives', detail: 'A message, in English or German' },
         { label: 'Read it', detail: 'Which workshop, what job, how urgent' },
@@ -302,7 +302,7 @@ export const work: WorkItem[] = [
     name: 'Werkbank', kind: 'Product',
     answers: 'Which workshop should take this furniture order?',
     metric: { value: '95.8%', label: 'on auto-routed orders', evidence: 'measured', source: 'reports/eval.md, n = 60' },
-    status: 'Live demo', href: caseStudy('werkbank'), external: false,
+    status: 'Live demo · payments not connected', href: caseStudy('werkbank'), external: false,
   },
   {
     name: 'fuelcycle', kind: 'Open source',

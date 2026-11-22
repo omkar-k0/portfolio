@@ -126,12 +126,14 @@ make eval-dev         # scores every method on dev, writes eval/results/dev/`,
         <tr><td>Lineage</td><td>Table and column lineage from compiled SQL; what feeds what</td><td>Built</td></tr>
         <tr><td>Monitors</td><td>Seven checks: schema, volume, freshness, null rate, distribution, duplicates, time shift</td><td>Built</td></tr>
         <tr><td>Triage</td><td>Group symptoms, propose causes, test each one, keep only survivors</td><td>Built (deterministic)</td></tr>
-        <tr><td>Local LLM</td><td>Re-rank survivors and write the report</td><td>Next milestone</td></tr>
+        <tr><td>Local LLM</td><td>Re-rank survivors and write the report</td><td>Built, not the default (see below)</td></tr>
       </tbody>
     </table>
     <p>
-      The headline number on this page comes from the deterministic layers alone. The model has not been
-      added yet, so it cannot have helped.
+      The headline number on this page comes from the deterministic layers alone. The local model re-ranker
+      is built and was scored on the same 48 dev incidents. Off the shelf it did worse: 42 of 48 right and
+      1 wrong, against 43 and 0 without it. Tuned on the train split it matched the rules (43 of 48, 0 wrong)
+      but did not beat them. So the rules rank by default and the model stays optional.
     </p>
   </section>
 
@@ -144,9 +146,9 @@ make eval-dev         # scores every method on dev, writes eval/results/dev/`,
         { title: 'Group', points: ['Symptoms joined by table lineage', 'One incident, not ten alerts', 'Stored in DuckDB'], takeaway: 'One problem, one report.' },
         { title: 'Propose', points: ['Data causes at seeds and sources', 'Code causes at changed models', 'With the commit that changed them'], takeaway: 'Every place it could have started.' },
         { title: 'Test', points: ['One check per cause', 'On aggregates, lineage, SQL, history', 'Failing causes are dropped'], takeaway: 'Guesses must survive the data.' },
-        { title: 'Rank and report', points: ['Survivors only', '"Not confirmed" if none survive', 'LLM re-ranker: next milestone'], takeaway: 'Never a confident wrong answer.', model: true },
+        { title: 'Rank and report', points: ['Survivors only', '"Not confirmed" if none survive', 'LLM re-ranker: optional, no gain on dev'], takeaway: 'Never a confident wrong answer.', model: true },
       ]}
-      note="The highlighted card is where the local model will sit. It will only ever see causes that already passed a test, never the data itself."
+      note="The highlighted card is where the optional local model sits. It only ever sees causes that already passed a test, never the data itself."
     />
   </section>
 
@@ -246,8 +248,9 @@ False alarms on clean runs: 0.0% (0/30).</code></pre>
       in code but the benchmark has not tested it yet.
     </p>
     <p>
-      <strong>That the model helps.</strong> The LLM re-ranker is not built. Every number above is from
-      deterministic code.
+      <strong>That the model helps.</strong> It does not, yet. The base local model made one confident wrong
+      call the rules did not make; the tuned one only tied them. Every headline number is from deterministic
+      code. Source: <a href="https://github.com/omkar-k0/faultline/blob/main/eval/results/dev/llm_slots.md" rel="noopener">eval/results/dev/llm_slots.md</a>.
     </p>
   </section>
 
@@ -275,8 +278,7 @@ False alarms on clean runs: 0.0% (0/30).</code></pre>
   <section id="open">
     <h2><span class="num">10</span>Still open</h2>
     <ul>
-      <li>Ablations: no tests, no lineage, no model. What each layer is actually worth.</li>
-      <li>The local LLM re-ranker, run on my own MacBook.</li>
+      <li>Milestone 6, in progress: the tuned local model and a hosted reference line.</li>
       <li>One run on the sealed held-out split.</li>
       <li>Incidents where "not confirmed" is the right answer, so abstaining gets tested.</li>
       <li>court_cases is a synthetic project I wrote. Real public court data comes after a licence check.</li>
