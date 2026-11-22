@@ -4,6 +4,12 @@ interface Row { name: string; note: string; right: [number, number]; wrong: [num
 interface Props { rows: Row[]; rightLabel: string; wrongLabel: string; caption: string }
 const { rows, rightLabel, wrongLabel, caption } = Astro.props;
 const pct = ([a, b]: [number, number]) => (b ? (100 * a) / b : 0);
+// Round half to even, like the Python that writes the result files (27/48 = 56.25 -> 56.2).
+const fmt = (x: number) => {
+  const t = x * 10, f = Math.floor(t), d = t - f;
+  const r = Math.abs(d - 0.5) < 1e-9 ? (f % 2 === 0 ? f : f + 1) : Math.round(t);
+  return (r / 10).toFixed(1);
+};
 ---
 <figure class="mb">
   <div class="legend">
@@ -15,8 +21,8 @@ const pct = ([a, b]: [number, number]) => (b ? (100 * a) / b : 0);
       <li class={r.ours ? 'ours' : ''}>
         <div class="who"><strong>{r.name}</strong><span>{r.note}</span></div>
         <div class="bars">
-          <div class="bar"><span class="fill right" style={`width:${pct(r.right)}%`}></span><b>{pct(r.right).toFixed(1)}% <em>({r.right[0]}/{r.right[1]})</em></b></div>
-          <div class="bar"><span class="fill wrong" style={`width:${pct(r.wrong)}%`}></span><b>{pct(r.wrong).toFixed(1)}% <em>({r.wrong[0]}/{r.wrong[1]})</em></b></div>
+          <div class="bar"><span class="fill right" style={`width:${pct(r.right)}%`}></span><b>{fmt(pct(r.right))}% <em>({r.right[0]}/{r.right[1]})</em></b></div>
+          <div class="bar"><span class="fill wrong" style={`width:${pct(r.wrong)}%`}></span><b>{fmt(pct(r.wrong))}% <em>({r.wrong[0]}/{r.wrong[1]})</em></b></div>
         </div>
       </li>
     ))}
