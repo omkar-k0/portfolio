@@ -37,7 +37,7 @@ const toc = [
 ---
 <CaseStudy
   title="faultline"
-  question="When a dbt pipeline breaks, what broke it, and where is the evidence?"
+  question="When a company's data breaks, what broke it, and where is the evidence?"
   description="An open-source reliability assistant for dbt Core with its own fault-injection benchmark: 192 incidents, five methods scored, a sealed held-out split."
   crumb="Open source · 02"
   links={[
@@ -49,9 +49,10 @@ const toc = [
   facts={facts}
   toc={toc}
   tldr={{
-    problem: 'When a dbt pipeline breaks, an engineer digs through tests, lineage and commits for hours to find what broke it.',
-    result: 'Named the exact root cause in 43 of 48 dev incidents (89.6%), with 0 confidently wrong answers and 0 false alarms on 30 clean runs. Held-out score: pending.',
-    role: 'My project: fault injector, 192-incident benchmark, eval harness, monitors and triage. I researched and designed it and made the decisions, after talking options through with Claude for efficiency. Claude wrote the code; we debugged it together.',
+    why: 'When company data breaks, reports and dashboards are wrong until someone finds the cause, and that can take hours of digging. This points straight at the cause and shows the evidence.',
+    problem: 'When the automated steps that prepare a company\'s data break, an engineer digs through checks, logs and recent code changes for hours to find out why.',
+    result: 'Found the exact cause in 43 of 48 test breakdowns (89.6%), never named a wrong cause and raised no false alarms. The final test, on breakdowns it has never seen, is still to come.',
+    role: 'I researched and designed it and made the decisions, after talking options through with Claude for efficiency. Claude wrote the code; we debugged it together.',
   }}
   reproduce={{
     repo,

@@ -1,10 +1,15 @@
 ---
+import HowIBuild from '../components/HowIBuild.astro';
+import { TOOLS } from '../config';
 import Base from '../layouts/Base.astro';
 import Elsewhere from '../components/Elsewhere.astro';
 
 const timeline = [
   { when: 'Since Oct 2025', what: 'M.Sc. Big Data & Business Analytics', where: 'FOM University of Applied Sciences, Essen', note: 'Average 1.8 so far. Information Security 1.0, Big Data Analytics 1.3, Business Analytics 1.3.' },
   { when: 'Apr – Sep 2026', what: 'Operations working student', where: 'Picnic GmbH, NRW', note: 'Night-shift logistics in a metric-driven operation, 14 hours a week alongside full-time study.' },
+  { when: 'Feb – Aug 2025', what: 'Junior Project Manager', where: 'Cirasthayi Technology, Pune', note: 'Client software development projects.' },
+  { when: 'Sep 2024 – Feb 2025', what: 'Automation for a law practice', where: "My father's practice, Jalgaon, India", note: 'He is a panel lawyer for about 25 banks. I built document extraction, scrapers for 7/12 land records and other government documents, and a bot that fills GRAS fee receipts. Also used the time to build my skills.' },
+  { when: 'Jun – Aug 2024', what: 'Patent Engineer', where: 'Krishna & Saurastri, Mumbai', note: '' },
   { when: '2020 – 2024', what: 'B.Tech. Electronics & Telecommunication Engineering', where: 'Somaiya Vidyavihar University, Mumbai, India', note: 'CGPI 8.29, minor in Information Technology.' },
 ];
 ---
@@ -20,7 +25,9 @@ const timeline = [
       <div class="prose">
         <p>
           I'm from Maharashtra, India, and studied electronics and telecommunication engineering in Mumbai, with a
-          minor in IT. In October 2025 I moved to Essen for a master's in Big Data and Business Analytics at FOM.
+          minor in IT. After graduating in 2024 I worked as a patent engineer in Mumbai, built automation for my
+          father's law practice, and was a junior project manager at a software startup in Pune. In October 2025 I
+          moved to Essen for a master's in Big Data and Business Analytics at FOM.
         </p>
         <p>
           From April to September 2026 I worked night shifts in operations at Picnic, 14 hours a week alongside
@@ -34,9 +41,11 @@ const timeline = [
     </div>
   </section>
 
+  <HowIBuild num="02" />
+
   <section class="section">
     <div class="wrap two">
-      <div class="section-head col"><h2 class="label"><span class="num">02</span> How I work</h2></div>
+      <div class="section-head col"><h2 class="label"><span class="num">03</span> How I work</h2></div>
       <ol class="principles">
         <li><span class="pt">Cheap and transparent first.</span> Rules and small models handle the routine cases. A language model only sees the ambiguous rest.</li>
         <li><span class="pt">Every decision carries its confidence.</span> And a citation, so someone can check it.</li>
@@ -50,7 +59,7 @@ const timeline = [
 
   <section class="section">
     <div class="wrap two">
-      <div class="section-head col"><h2 class="label"><span class="num">03</span> Background</h2></div>
+      <div class="section-head col"><h2 class="label"><span class="num">04</span> Background</h2></div>
       <ol class="timeline">
         {timeline.map((t) => (
           <li>
@@ -61,6 +70,17 @@ const timeline = [
           </li>
         ))}
       </ol>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap two">
+      <div class="section-head col"><h2 class="label"><span class="num">05</span> Tools, and what I used them for</h2></div>
+      <ul class="tools">
+        {TOOLS.map((t) => (
+          <li><a href={t.href}><span class="tname">{t.tool}</span><span class="tuse">{t.use}</span></a></li>
+        ))}
+      </ul>
     </div>
   </section>
 
@@ -82,6 +102,12 @@ const timeline = [
   .when { grid-row: span 3; padding-top: 4px; }
   .what { font-size: 19px; letter-spacing: -0.01em; }
   .where { color: var(--ink); font-size: 15px; }
+  .tools { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
+  .tools a { display: grid; grid-template-columns: 14em 1fr; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--rule); text-decoration: none; }
+  .tools a:hover .tname { color: var(--accent); }
+  .tname { font-weight: 500; }
+  .tuse { color: var(--muted); }
+  @media (max-width: 720px) { .tools a { grid-template-columns: 1fr; gap: 2px; } }
   .tnote { color: var(--muted); font-size: 14px; margin-top: 4px; }
   @media (max-width: 1000px) { .two { grid-template-columns: 1fr; } }
   @media (max-width: 720px) {

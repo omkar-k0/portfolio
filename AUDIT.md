@@ -7,23 +7,46 @@ How to read the Source column:
 - Rows marked **manual** were traced by hand to a computed value.
 - **no source** rows must be fixed or removed.
 
-Not covered yet: the CV PDF (its LaTeX source is not in this repo).
-Rows: 380. Without a source: 0.
-
+Rows: 395. Without a source: 0.
 
 | Page | Figure | Context | Source |
 |---|---|---|---|
 | /about/ | 01 | 01 Short version | faultline/benchmark/dev/inc_court_cases_dev_001/truth.json:13 |
 | /about/ | 14 | ptember 2026 I worked night shifts in operations at Picnic, 14 hours a week alongside | faultline/benchmark/dev/inc_court_cases_dev_001/truth.json:13 |
-| /about/ | 02 | 02 How I work | faultline/benchmark/dev/inc_court_cases_dev_002/truth.json:16 |
-| /about/ | 03 | 03 Background | faultline/benchmark/dev/inc_court_cases_dev_001/truth.json:40 |
+| /about/ | 02 | 02 How I build | faultline/benchmark/dev/inc_court_cases_dev_002/truth.json:16 |
+| /about/ | 188 | 188 questions came in. Rules settled 181. Only 7 needed AI. | faultline/benchmark/heldout/inc_jira_heldout_036/truth.json:21 |
+| /about/ | 181 | 188 questions came in. Rules settled 181. Only 7 needed AI. | faultline/benchmark/manifest.json:51 |
+| /about/ | 24 | Source: data/processed/results.json, run of 24 Oct 2026 | faultline/benchmark/dev/inc_court_cases_dev_003/truth.json:14 |
+| /about/ | 110 of 110 | 110 of 110 right | faultline/docs/STATUS.md:97 |
+| /about/ | 68 of 71 | 68 of 71 right | **manual** guidance-reconciliation-engine/data/processed/eval.json: by_route.rule 181 at 0.983 = 178 right; 110 high-confidence all right leaves 68 of 71 |
+| /about/ | 6 of 7 | 6 of 7 right | **manual** guidance-reconciliation-engine/data/processed/eval.json: by_route.llm n 7, accuracy 0.857 |
+| /about/ | 20 | Source: data/processed/eval.json, 188 hand labels, 20 Nov 2026 | faultline/CLAUDE.md:141 |
+| /about/ | 48 | faultline · 48 test breakdowns | faultline/benchmark/dev/inc_court_cases_dev_002/truth.json:14 |
+| /about/ | 43 of 48 | 43 of 48 · 0 wrong | faultline/docs/STATUS.md:25 |
+| /about/ | 1 of 48 | 1 of 48 | faultline/docs/STATUS.md:25 |
+| /about/ | 7 of 48 | 7 of 48 | faultline/eval/results/dev/llm_slots.md:29 |
+| /about/ | 11 of 48 | 11 of 48 (0 right) | faultline/eval/results/dev/dbt_tests.md:15 |
+| /about/ | 60 | Werkbank · 60 hand-written test orders | faultline/benchmark/dev/inc_court_cases_dev_006/truth.json:27 |
+| /about/ | 22 | 22 | faultline/benchmark/dev/inc_court_cases_dev_002/truth.json:30 |
+| /about/ | 23 of 24 | Decided alone: 23 of 24 went to the right workshop | **manual** werkbank/reports/eval.md:39, auto-routed 95.8% of 24 hand-written orders |
+| /about/ | 92% | right 92% of the time | fuelcycle/README.md:42 |
+| /about/ | 72% | right 72% of the time | fuelcycle/README.md:42 |
+| /about/ | 3.4% | It answers on 3.4% of days only. The price forecast alone does not beat "tomor | fuelcycle/README.md:41 |
+| /about/ | 1,562 | Sustainability classifier · 1,562 climate promises | faultline/build/benchmark/heldout/inc_jira_heldout_005/run_results.json:1 |
+| /about/ | 120 | Only 120 promises come with a number and a target year. | faultline/benchmark/dev/inc_stripe_dev_014/truth.json:21 |
+| /about/ | 7.7% | 7.7% | faultline/eval/results/dev/triage_llm.md:19 |
+| /about/ | 1,442 | The other 1,442 cannot be checked later. Five German companies' reports. | faultline/build/benchmark/heldout/inc_jira_heldout_004/run_results.json:1 |
+| /about/ | 21 | Source: repository README, corrected 21 Nov 2026 | faultline/benchmark/dev/inc_court_cases_dev_005/truth.json:13 |
+| /about/ | 03 | 03 How I work | faultline/benchmark/dev/inc_court_cases_dev_001/truth.json:40 |
+| /about/ | 04 | 04 Background | faultline/benchmark/dev/inc_court_cases_dev_002/truth.json:14 |
 | /about/ | 1.8 | Average 1.8 so far. Information Security 1.0, Big Data Analytics 1.3, B | faultline/build/benchmark/heldout/inc_jira_heldout_004/run_results.json:1 |
 | /about/ | 1.0 | Average 1.8 so far. Information Security 1.0, Big Data Analytics 1.3, Business Analytics 1.3. | faultline/build/benchmark/heldout/inc_jira_heldout_001/catalog.json:1 |
 | /about/ | 1.3 | ge 1.8 so far. Information Security 1.0, Big Data Analytics 1.3, Business Analytics 1.3. | faultline/build/benchmark/heldout/inc_jira_heldout_003/profile.json:3131 |
+| /about/ | 25 | He is a panel lawyer for about 25 banks. I built document extraction, scrapers for 7/12 land  | faultline/benchmark/dev/inc_court_cases_dev_001/truth.json:13 |
+| /about/ | 12 | about 25 banks. I built document extraction, scrapers for 7/12 land records and other government documents, and a bot that | faultline/CLAUDE.md:50 |
 | /about/ | 8.29 | CGPI 8.29, minor in Information Technology. | faultline/build/benchmark/heldout/inc_jira_heldout_007/run_results.json:1 |
-| /about/ | 04 | 04 Elsewhere | faultline/benchmark/dev/inc_court_cases_dev_002/truth.json:14 |
-| /about/ | 20 | Seeking a 20-hour/week Werkstudent role in applied AI and data. | faultline/CLAUDE.md:141 |
-| /about/ | 22 | Last updated 22 November 2026 | faultline/benchmark/dev/inc_court_cases_dev_002/truth.json:30 |
+| /about/ | 05 | 05 Tools, and what I used them for | faultline/benchmark/dev/inc_court_cases_dev_005/truth.json:15 |
+| /about/ | 40 | fuelcycle and the DAX 40 study | faultline/benchmark/dev/inc_court_cases_dev_004/truth.json:15 |
 | /datenschutz/ | 49 | E-Mail: omkarkhadilkar8@gmail.com Telefon: +49 155 65924087 | faultline/benchmark/dev/inc_court_cases_dev_006/truth.json:13 |
 | /datenschutz/ | 155 | E-Mail: omkarkhadilkar8@gmail.com Telefon: +49 155 65924087 | faultline/benchmark/dev/inc_court_cases_dev_015/truth.json:15 |
 | /datenschutz/ | 45 | (Art. 45 DSGVO). Mit Vercel besteht ein Vertrag zur Auftragsverarbei | faultline/benchmark/dev/inc_court_cases_dev_001/truth.json:13 |
@@ -52,6 +75,7 @@ Rows: 380. Without a source: 0.
 | /hiring/ | 188 | of 188 guidance items right against blind hand labels; 4% needed t | faultline/benchmark/heldout/inc_jira_heldout_036/truth.json:21 |
 | /hiring/ | 4% | of 188 guidance items right against blind hand labels; 4% needed the LLM | faultline/eval/results/train/monitors.md:15 |
 | /hiring/ | 02 | 02 Practicalities | faultline/benchmark/dev/inc_court_cases_dev_002/truth.json:16 |
+| /hiring/ | 21 | Student visa, valid until 21 October 2027. Allowed to work 20 hours a week. | faultline/benchmark/dev/inc_court_cases_dev_005/truth.json:13 |
 | /hiring/ | 1.8 | Average 1.8 so far · Information Security 1.0 · Big Data Analytics 1.3  | faultline/build/benchmark/heldout/inc_jira_heldout_004/run_results.json:1 |
 | /hiring/ | 1.0 | Average 1.8 so far · Information Security 1.0 · Big Data Analytics 1.3 · Business Analytics 1.3 | faultline/build/benchmark/heldout/inc_jira_heldout_001/catalog.json:1 |
 | /hiring/ | 1.3 |  1.8 so far · Information Security 1.0 · Big Data Analytics 1.3 · Business Analytics 1.3 | faultline/build/benchmark/heldout/inc_jira_heldout_003/profile.json:3131 |
@@ -61,39 +85,24 @@ Rows: 380. Without a source: 0.
 | /hiring/ | 22 | Last updated 22 November 2026 | faultline/benchmark/dev/inc_court_cases_dev_002/truth.json:30 |
 | / | 20 | Seeking a 20-hour/week Werkstudent role in applied AI and data · Essen,  | faultline/CLAUDE.md:141 |
 | / | 184 of 188 | 184 of 188 | **manual** guidance-reconciliation-engine/data/processed/eval.json: confusion, 171+2+11 = 184 of n_labelled 188 |
+| / | 172 | Always guessing "kept" gets 172. | faultline/benchmark/dev/inc_jaffle_shop_dev_023/truth.json:7 |
 | / | 43 of 48 | 43 of 48 | faultline/docs/STATUS.md:25 |
 | / | 23 of 24 | 23 of 24 | **manual** werkbank/reports/eval.md:39, auto-routed 95.8% of 24 hand-written orders |
-| / | 7.5 | Languages English C1 (IELTS 7.5) · German A1, learning · Marathi native | faultline/build/benchmark/heldout/inc_jira_heldout_001/profile.json:322 |
-| / | 01 | 01 How I build | faultline/benchmark/dev/inc_court_cases_dev_001/truth.json:13 |
-| / | 188 | 188 questions came in. Rules settled 181. Only 7 needed AI. | faultline/benchmark/heldout/inc_jira_heldout_036/truth.json:21 |
-| / | 181 | 188 questions came in. Rules settled 181. Only 7 needed AI. | faultline/benchmark/manifest.json:51 |
-| / | 24 | Source: data/processed/results.json, run of 24 Oct 2026 | faultline/benchmark/dev/inc_court_cases_dev_003/truth.json:14 |
-| / | 110 of 110 | 110 of 110 right | faultline/docs/STATUS.md:97 |
-| / | 68 of 71 | 68 of 71 right | **manual** guidance-reconciliation-engine/data/processed/eval.json: by_route.rule 181 at 0.983 = 178 right; 110 high-confidence all right leaves 68 of 71 |
-| / | 6 of 7 | 6 of 7 right | **manual** guidance-reconciliation-engine/data/processed/eval.json: by_route.llm n 7, accuracy 0.857 |
-| / | 48 | faultline · 48 test breakdowns | faultline/benchmark/dev/inc_court_cases_dev_002/truth.json:14 |
-| / | 1 of 48 | 1 of 48 | faultline/docs/STATUS.md:25 |
-| / | 7 of 48 | 7 of 48 | faultline/eval/results/dev/llm_slots.md:29 |
-| / | 11 of 48 | 11 of 48 (0 right) | faultline/eval/results/dev/dbt_tests.md:15 |
-| / | 60 | Werkbank · 60 hand-written test orders | faultline/benchmark/dev/inc_court_cases_dev_006/truth.json:27 |
-| / | 22 | 22 | faultline/benchmark/dev/inc_court_cases_dev_002/truth.json:30 |
-| / | 14 | 14 | faultline/benchmark/dev/inc_court_cases_dev_001/truth.json:13 |
-| / | 92% | right 92% of the time | fuelcycle/README.md:42 |
-| / | 72% | right 72% of the time | fuelcycle/README.md:42 |
-| / | 3.4% | It answers on 3.4% of days only. The price forecast alone does not beat "tomor | fuelcycle/README.md:41 |
-| / | 1,562 | Sustainability classifier · 1,562 climate promises | faultline/build/benchmark/heldout/inc_jira_heldout_005/run_results.json:1 |
-| / | 120 | Only 120 promises come with a number and a target year. | faultline/benchmark/dev/inc_stripe_dev_014/truth.json:21 |
-| / | 7.7% | 7.7% | faultline/eval/results/dev/triage_llm.md:19 |
-| / | 1,442 | The other 1,442 cannot be checked later. Five German companies' reports. | faultline/build/benchmark/heldout/inc_jira_heldout_004/run_results.json:1 |
-| / | 21 | Source: repository README, corrected 21 Nov 2026 | faultline/benchmark/dev/inc_court_cases_dev_005/truth.json:13 |
-| / | 02 | 02 What I built | faultline/benchmark/dev/inc_court_cases_dev_002/truth.json:16 |
+| / | 53 of 60 | Without the confidence check: 53 of 60. | **manual** werkbank/reports/eval.md:37, top-1 88.3% ignoring the gate on 60 hand-written orders |
+| / | 01 | 01 What I built | faultline/benchmark/dev/inc_court_cases_dev_001/truth.json:13 |
+| / | 02 | 02 | faultline/benchmark/dev/inc_court_cases_dev_002/truth.json:16 |
 | / | 03 | 03 | faultline/benchmark/dev/inc_court_cases_dev_001/truth.json:40 |
 | / | 04 | 04 | faultline/benchmark/dev/inc_court_cases_dev_002/truth.json:14 |
 | / | 05 | 05 | faultline/benchmark/dev/inc_court_cases_dev_005/truth.json:15 |
+| / | 60 | Of 60 orders I wrote by hand, it decided 24 alone, flagged 22 for | faultline/benchmark/dev/inc_court_cases_dev_006/truth.json:27 |
+| / | 24 | Of 60 orders I wrote by hand, it decided 24 alone, flagged 22 for a check and sent 14 to a person. Not  | faultline/benchmark/dev/inc_court_cases_dev_003/truth.json:14 |
+| / | 22 | Of 60 orders I wrote by hand, it decided 24 alone, flagged 22 for a check and sent 14 to a person. Not yet tried on a rea | faultline/benchmark/dev/inc_court_cases_dev_002/truth.json:30 |
+| / | 14 |  hand, it decided 24 alone, flagged 22 for a check and sent 14 to a person. Not yet tried on a real shop. | faultline/benchmark/dev/inc_court_cases_dev_001/truth.json:13 |
 | / | 584 of 586 | 584 of 586 | **manual** fuelcycle/README.md:28, 586 injected, 99.7% caught; results/dq_eval.json |
 | / | 119,000 | planted errors caught, with 2 false alarms in almost 119,000 clean records | faultline/build/eval/dev/inc_court_cases_dev_021/run_results.json:1 |
 | / | 586 | I hid 586 mistakes in 14 real days of data on purpose to test the che | faultline/benchmark/dev/inc_court_cases_dev_007/truth.json:14 |
 | / | 120 of 1,562 | 120 of 1,562 | **manual** sustainability-commitment-classifier README (repo not public, not checked here) |
+| / | 7.7% | 7.7% | faultline/eval/results/dev/triage_llm.md:19 |
 | / | 92 | So about 92 in 100 promises cannot be checked later. A first version co | faultline/README.md:7 |
 | / | 100 | So about 92 in 100 promises cannot be checked later. A first version counted t | faultline/benchmark/dev/inc_court_cases_dev_009/truth.json:5 |
 | / | 12.3% |  first version counted the year itself as a number and said 12.3%; I found and fixed that. | **manual** sustainability-commitment-classifier README: the old, wrong value, shown as such (repo not public) |
@@ -108,17 +117,16 @@ Rows: 380. Without a source: 0.
 | / | 08 | 08 · Tool | faultline/benchmark/dev/inc_court_cases_dev_003/truth.json:14 |
 | / | 25 | Chrome extension in English and German, 25 automated tests | faultline/benchmark/dev/inc_court_cases_dev_001/truth.json:13 |
 | / | 09 | 09 · Product | faultline/benchmark/dev/inc_court_cases_dev_003/truth.json:39 |
-| / | 156 | Profile cards built from real project data · 156+ tests | faultline/benchmark/dev/inc_jaffle_shop_dev_015/truth.json:15 |
 | / | 192 |  free tool that finds why a company's data broke, tested on 192 breakdowns I created on purpose | faultline/README.md:7 |
 | /notes/ | 20 | Seeking a 20-hour/week Werkstudent role in applied AI and data. | faultline/CLAUDE.md:141 |
 | /notes/ | 22 | Last updated 22 November 2026 | faultline/benchmark/dev/inc_court_cases_dev_002/truth.json:30 |
 | /work/faultline/ | 02 | Work · Open source · 02 | faultline/benchmark/dev/inc_court_cases_dev_002/truth.json:16 |
 | /work/faultline/ | 30 | In 30 seconds | faultline/CLAUDE.md:140 |
-| /work/faultline/ | 43 of 48 | Named the exact root cause in 43 of 48 dev incidents (89.6%), with 0 confidently wrong answers and | faultline/docs/STATUS.md:25 |
-| /work/faultline/ | 89.6% | Named the exact root cause in 43 of 48 dev incidents (89.6%), with 0 confidently wrong answers and 0 false alarms on 30 | faultline/docs/STATUS.md:25 |
-| /work/faultline/ | 192 | My project: fault injector, 192-incident benchmark, eval harness, monitors and triage. I re | faultline/README.md:7 |
+| /work/faultline/ | 43 of 48 | Found the exact cause in 43 of 48 test breakdowns (89.6%), never named a wrong cause and rais | faultline/docs/STATUS.md:25 |
+| /work/faultline/ | 89.6% | Found the exact cause in 43 of 48 test breakdowns (89.6%), never named a wrong cause and raised no false alarms. The | faultline/docs/STATUS.md:25 |
 | /work/faultline/ | 0 of 48 | 0 of 48 | faultline/docs/STATUS.md:25 |
 | /work/faultline/ | 0 of 30 | confidently wrong answers on dev; 0 of 30 false alarms on clean runs | faultline/docs/DECISIONS.md:136 |
+| /work/faultline/ | 192 | 192 | faultline/README.md:7 |
 | /work/faultline/ | 70 | injected incidents across 8 fault types, plus 70 clean runs | faultline/benchmark/dev/inc_court_cases_dev_003/truth.json:14 |
 | /work/faultline/ | 193 | 4 dbt projects · 193 tests · 5 methods scored | faultline/benchmark/dev/inc_jaffle_shop_dev_025/truth.json:7 |
 | /work/faultline/ | 01 | 01 In plain language | faultline/benchmark/dev/inc_court_cases_dev_001/truth.json:13 |
@@ -159,12 +167,13 @@ Rows: 380. Without a source: 0.
 | /work/faultline/ | 22 | Last updated 22 November 2026 | faultline/benchmark/dev/inc_court_cases_dev_002/truth.json:30 |
 | /work/fuelcycle/ | 04 | Work · Open source · 04 | fuelcycle/data/bronze/_manifest.json:17 |
 | /work/fuelcycle/ | 30 | In 30 seconds | fuelcycle/README.md:35 |
-| /work/fuelcycle/ | 3.3 | A year of station-level fuel prices is 3.3 million events. Most pipelines drop bad rows silently, so n | fuelcycle/site/data/fuelcycle.json:1 |
-| /work/fuelcycle/ | 99.7% | Every event gets a verdict and a reason; the gate caught 99.7% of 586 planted errors with 2 false alarms. A next-day forec | fuelcycle/README.md:28 |
-| /work/fuelcycle/ | 586 | event gets a verdict and a reason; the gate caught 99.7% of 586 planted errors with 2 false alarms. A next-day forecast ans | fuelcycle/README.md:16 |
-| /work/fuelcycle/ | 3.4% |  errors with 2 false alarms. A next-day forecast answers on 3.4% of days, and its "fill now" call is right 92% of the time.  | fuelcycle/README.md:41 |
-| /work/fuelcycle/ | 92% | t answers on 3.4% of days, and its "fill now" call is right 92% of the time. The price forecast itself does not beat "tomor | fuelcycle/README.md:42 |
+| /work/fuelcycle/ | 3.3 | A year of French petrol station prices is 3.3 million price changes. Most data setups quietly drop bad re | fuelcycle/site/data/fuelcycle.json:1 |
+| /work/fuelcycle/ | 584 of 586 | Every price change gets a verdict and a reason. It caught 584 of 586 errors I planted on purpose, with 2 false alarms. Its "fill | **manual** fuelcycle/README.md:28, 586 injected, 99.7% caught; results/dq_eval.json |
+| /work/fuelcycle/ | 3.4% | ith 2 false alarms. Its "fill up now?" call answers on only 3.4% of days and is right 92% of the time when it does; the pric | fuelcycle/README.md:41 |
+| /work/fuelcycle/ | 92% | ill up now?" call answers on only 3.4% of days and is right 92% of the time when it does; the price forecast on its own doe | fuelcycle/README.md:42 |
 | /work/fuelcycle/ | 3,297,846 | 3,297,846 | fuelcycle/README.md:11 |
+| /work/fuelcycle/ | 99.7% | 99.7% | fuelcycle/README.md:28 |
+| /work/fuelcycle/ | 586 | of 586 planted errors caught, 2 false alarms in 118,795 clean even | fuelcycle/README.md:16 |
 | /work/fuelcycle/ | 118,795 | of 586 planted errors caught, 2 false alarms in 118,795 clean events | fuelcycle/README.md:30 |
 | /work/fuelcycle/ | 72% | "fill now" calls right, against 72% for always filling now | fuelcycle/README.md:42 |
 | /work/fuelcycle/ | 7,050 | precision on the 7,050 real anomalies it flags: needs hand labels | fuelcycle/README.md:14 |
@@ -218,13 +227,12 @@ Rows: 380. Without a source: 0.
 | /work/fuelcycle/ | 22 | Last updated 22 November 2026 | fuelcycle/README.md:57 |
 | /work/guidance-reconciliation-engine/ | 01 | Work · Product · 01 | guidance-reconciliation-engine/data/cache/llm/0d17dcdf898fb5cc2bf0.json:8 |
 | /work/guidance-reconciliation-engine/ | 30 | In 30 seconds | guidance-reconciliation-engine/data/cache/llm/0d17dcdf898fb5cc2bf0.json:4 |
-| /work/guidance-reconciliation-engine/ | 184 of 188 | 184 of 188 guidance items right against blind hand labels (97.9%); onl | **manual** guidance-reconciliation-engine/data/processed/eval.json: confusion, 171+2+11 = 184 of n_labelled 188 |
-| /work/guidance-reconciliation-engine/ | 97.9% | 184 of 188 guidance items right against blind hand labels (97.9%); only 7 (3.7%) needed the LLM. All 110 high-confidence rul | **manual** guidance-reconciliation-engine/data/processed/eval.json: "accuracy": 0.979 |
-| /work/guidance-reconciliation-engine/ | 3.7% | ance items right against blind hand labels (97.9%); only 7 (3.7%) needed the LLM. All 110 high-confidence rule decisions wer | guidance-reconciliation-engine/data/processed/results.json:6163 |
-| /work/guidance-reconciliation-engine/ | 110 | lind hand labels (97.9%); only 7 (3.7%) needed the LLM. All 110 high-confidence rule decisions were right. | guidance-reconciliation-engine/data/processed/results.json:957 |
+| /work/guidance-reconciliation-engine/ | 184 of 188 | 184 of 188 promises checked correctly against my own check by hand (97 | **manual** guidance-reconciliation-engine/data/processed/eval.json: confusion, 171+2+11 = 184 of n_labelled 188 |
+| /work/guidance-reconciliation-engine/ | 97.9% | 88 promises checked correctly against my own check by hand (97.9%). Simple rules settled all but 7; AI looked only at those 7 | **manual** guidance-reconciliation-engine/data/processed/eval.json: "accuracy": 0.979 |
 | /work/guidance-reconciliation-engine/ | 185 | 185 | guidance-reconciliation-engine/data/processed/results.json:536 |
 | /work/guidance-reconciliation-engine/ | 11 | earnings releases read, 11 companies, Jan 2022 to Oct 2026 | guidance-reconciliation-engine/README.md:47 |
 | /work/guidance-reconciliation-engine/ | 7 of 188 | 7 of 188 | **manual** guidance-reconciliation-engine/data/processed/eval.json: by_route.llm.n = 7 |
+| /work/guidance-reconciliation-engine/ | 3.7% | items sent to the LLM (3.7%); the rest decided by rules | guidance-reconciliation-engine/data/processed/results.json:6163 |
 | /work/guidance-reconciliation-engine/ | 23 | 23 | guidance-reconciliation-engine/data/cache/llm/46dc0b42c1716d8d13bc.json:12 |
 | /work/guidance-reconciliation-engine/ | 188 | accuracy on all 188 items, hand-labelled blind (always-MET baseline: 91.5%) | guidance-reconciliation-engine/data/processed/results.json:4094 |
 | /work/guidance-reconciliation-engine/ | 91.5% | on all 188 items, hand-labelled blind (always-MET baseline: 91.5%) | **manual** guidance-reconciliation-engine/data/processed/eval.json: gold_distribution MET 172 of 188 |
@@ -260,6 +268,7 @@ Rows: 380. Without a source: 0.
 | /work/guidance-reconciliation-engine/ | 184 | 184 | guidance-reconciliation-engine/data/processed/results.json:2365 |
 | /work/guidance-reconciliation-engine/ | 172 | 172 | guidance-reconciliation-engine/data/processed/results.json:3411 |
 | /work/guidance-reconciliation-engine/ | 0.95 | Rules, confidence ≥ 0.95 | faultline/build/benchmark/heldout/inc_jira_heldout_037/run_results.json:1 |
+| /work/guidance-reconciliation-engine/ | 110 | 110 | guidance-reconciliation-engine/data/processed/results.json:957 |
 | /work/guidance-reconciliation-engine/ | 100% | 100% | faultline/docs/DECISIONS.md:62 |
 | /work/guidance-reconciliation-engine/ | 71 | 71 | guidance-reconciliation-engine/data/cache/llm/a36b73cc1566b6ad1bc3.json:16 |
 | /work/guidance-reconciliation-engine/ | 68 | 68 | guidance-reconciliation-engine/data/cache/llm/0d17dcdf898fb5cc2bf0.json:12 |
@@ -281,8 +290,10 @@ Rows: 380. Without a source: 0.
 | /work/ | 97.9% | Live · 97.9% on hand labels | **manual** guidance-reconciliation-engine/data/processed/eval.json: "accuracy": 0.979 |
 | /work/ | 02 | 02 | faultline/benchmark/dev/inc_court_cases_dev_002/truth.json:16 |
 | /work/ | 89.6% | 89.6% | faultline/docs/STATUS.md:25 |
+| /work/ | 48 | of 48 test breakdowns traced to the exact cause, none wrong (fina | faultline/benchmark/dev/inc_court_cases_dev_002/truth.json:14 |
 | /work/ | 03 | 03 | faultline/benchmark/dev/inc_court_cases_dev_001/truth.json:40 |
 | /work/ | 95.8% | 95.8% | werkbank/CLAUDE.md:36 |
+| /work/ | 60 | right on the orders it handled alone (60 written by hand) | faultline/benchmark/dev/inc_court_cases_dev_006/truth.json:27 |
 | /work/ | 04 | 04 | faultline/benchmark/dev/inc_court_cases_dev_002/truth.json:14 |
 | /work/ | 99.7% | 99.7% | fuelcycle/README.md:28 |
 | /work/ | 586 | of 586 planted errors caught | faultline/benchmark/dev/inc_court_cases_dev_007/truth.json:14 |
@@ -291,15 +302,14 @@ Rows: 380. Without a source: 0.
 | /work/ | 0.844 | accuracy (FinBERT alone 0.844) | faultline/build/benchmark/heldout/inc_jira_heldout_054/run_results.json:1 |
 | /work/ | 06 | 06 | faultline/benchmark/dev/inc_court_cases_dev_001/truth.json:13 |
 | /work/ | 7.7% | 7.7% | faultline/eval/results/dev/triage_llm.md:19 |
-| /work/ | 1,562 | of 1,562 commitments quantified | faultline/build/benchmark/heldout/inc_jira_heldout_005/run_results.json:1 |
+| /work/ | 1,562 | of 1,562 climate promises come with a number and a target year | faultline/build/benchmark/heldout/inc_jira_heldout_005/run_results.json:1 |
 | /work/ | 07 | 07 | faultline/benchmark/dev/inc_court_cases_dev_005/truth.json:13 |
 | /work/ | 40 | DAX 40 capital structure | faultline/benchmark/dev/inc_court_cases_dev_004/truth.json:15 |
 | /work/ | 127 | 127 | faultline/benchmark/dev/inc_jaffle_shop_dev_020/truth.json:7 |
-| /work/ | 32 | firm-years, 32 firms · graded 1.3 | faultline/benchmark/dev/inc_court_cases_dev_003/truth.json:14 |
-| /work/ | 1.3 | firm-years, 32 firms · graded 1.3 | faultline/build/benchmark/heldout/inc_jira_heldout_003/profile.json:3131 |
+| /work/ | 32 | company-years from 32 firms · graded 1.3 | faultline/benchmark/dev/inc_court_cases_dev_003/truth.json:14 |
+| /work/ | 1.3 | company-years from 32 firms · graded 1.3 | faultline/build/benchmark/heldout/inc_jira_heldout_003/profile.json:3131 |
 | /work/ | 08 | 08 | faultline/benchmark/dev/inc_court_cases_dev_003/truth.json:14 |
-| /work/ | 0.53 | significant effect (p 0.53–0.97) | faultline/build/benchmark/heldout/inc_jira_heldout_008/catalog.json:1 |
-| /work/ | 0.97 | significant effect (p 0.53–0.97) | faultline/build/benchmark/heldout/inc_jira_heldout_002/profile.json:2505 |
+| /work/ | 56 | measurable effect in 56 observations | faultline/benchmark/dev/inc_court_cases_dev_001/truth.json:13 |
 | /work/ | 09 | 09 | faultline/benchmark/dev/inc_court_cases_dev_003/truth.json:39 |
 | /work/ | 10 | 10 | faultline/benchmark/dev/inc_court_cases_dev_005/truth.json:13 |
 | /work/ | 25 | English and German · 25 unit tests + browser tests | faultline/benchmark/dev/inc_court_cases_dev_001/truth.json:13 |
@@ -310,7 +320,7 @@ Rows: 380. Without a source: 0.
 | /work/ | 22 | Last updated 22 November 2026 | faultline/benchmark/dev/inc_court_cases_dev_002/truth.json:30 |
 | /work/portfolio/ | 12 | Work · Open source · 12 | faultline/CLAUDE.md:50 |
 | /work/portfolio/ | 30 | In 30 seconds | faultline/CLAUDE.md:140 |
-| /work/portfolio/ | 100 | ery number carries an evidence tag and a source; Lighthouse 100 on accessibility, performance and SEO. | faultline/benchmark/dev/inc_court_cases_dev_009/truth.json:5 |
+| /work/portfolio/ | 100 |  or pending) and a link to its source. The home page scores 100 on Google's Lighthouse checks for speed, accessibility and  | faultline/benchmark/dev/inc_court_cases_dev_009/truth.json:5 |
 | /work/portfolio/ | 4 of 4 | Live · milestone 4 of 4 | faultline/docs/STATUS.md:35 |
 | /work/portfolio/ | 01 | 01 In plain language | faultline/benchmark/dev/inc_court_cases_dev_001/truth.json:13 |
 | /work/portfolio/ | 02 | 02 The question | faultline/benchmark/dev/inc_court_cases_dev_002/truth.json:16 |
@@ -328,10 +338,13 @@ Rows: 380. Without a source: 0.
 | /work/portfolio/ | 22 | Last updated 22 November 2026 | faultline/benchmark/dev/inc_court_cases_dev_002/truth.json:30 |
 | /work/werkbank/ | 03 | Work · Product · 03 | werkbank/package-lock.json:113 |
 | /work/werkbank/ | 30 | In 30 seconds | werkbank/README.md:120 |
-| /work/werkbank/ | 60 | On 60 hand-written requests it routed 40% on its own at 95.8% acc | werkbank/CLAUDE.md:35 |
-| /work/werkbank/ | 40% | On 60 hand-written requests it routed 40% on its own at 95.8% accuracy and sent 23.3% to a review que | werkbank/CLAUDE.md:36 |
-| /work/werkbank/ | 95.8% | On 60 hand-written requests it routed 40% on its own at 95.8% accuracy and sent 23.3% to a review queue instead of guessi | werkbank/CLAUDE.md:36 |
-| /work/werkbank/ | 23.3% | equests it routed 40% on its own at 95.8% accuracy and sent 23.3% to a review queue instead of guessing. Real-shop accuracy:  | werkbank/README.md:86 |
+| /work/werkbank/ | 60 | Of 60 orders I wrote by hand, it handled 24 alone and got 23 of t | werkbank/CLAUDE.md:35 |
+| /work/werkbank/ | 24 | Of 60 orders I wrote by hand, it handled 24 alone and got 23 of those right; 14 it sent to a person ins | werkbank/package-lock.json:1272 |
+| /work/werkbank/ | 23 | Of 60 orders I wrote by hand, it handled 24 alone and got 23 of those right; 14 it sent to a person instead of guessing. | werkbank/CLAUDE.md:40 |
+| /work/werkbank/ | 14 | ote by hand, it handled 24 alone and got 23 of those right; 14 it sent to a person instead of guessing. Not tested on a re | werkbank/package-lock.json:545 |
+| /work/werkbank/ | 95.8% | 95.8% | werkbank/CLAUDE.md:36 |
+| /work/werkbank/ | 40% | accuracy on the 40% of hand-written requests it routed on its own | werkbank/CLAUDE.md:36 |
+| /work/werkbank/ | 23.3% | 23.3% | werkbank/README.md:86 |
 | /work/werkbank/ | 96.8% | 96.8% | werkbank/README.md:95 |
 | /work/werkbank/ | 100 | top-1 accuracy after a new shop corrects 100 orders (from 75.5%) | werkbank/CLAUDE.md:36 |
 | /work/werkbank/ | 75.5% | top-1 accuracy after a new shop corrects 100 orders (from 75.5%) | werkbank/README.md:93 |

@@ -17,7 +17,7 @@ interface Props {
   prev?: { href: string; label: string };
   next?: { href: string; label: string };
   // Three lines that answer what, how well, and my role before any prose.
-  tldr: { problem: string; result: string; role: string };
+  tldr: { why?: string; problem: string; result: string; role: string };
   // Exact commands to rerun the numbers on this page. Rendered as the last section.
   reproduce?: { repo: string; commands: string; files: { path: string; what: string }[]; note?: string };
 }
@@ -41,6 +41,7 @@ const fullToc = reproduce ? [...toc, { id: 'reproduce', label: 'Reproduce it' }]
       <div class="tldr">
         <p class="label tldr-h">In 30 seconds</p>
         <dl>
+          {tldr.why && <div><dt class="label">Why a company cares</dt><dd>{tldr.why}</dd></div>}
           <div><dt class="label">Problem</dt><dd>{tldr.problem}</dd></div>
           <div><dt class="label">Result</dt><dd>{tldr.result}</dd></div>
           <div><dt class="label">My role</dt><dd>{tldr.role}</dd></div>

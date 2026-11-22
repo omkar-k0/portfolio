@@ -1,0 +1,48 @@
+---
+import ResultsCarousel from './visual/ResultsCarousel.astro';
+interface Props { num?: string }
+const { num = '02' } = Astro.props;
+---
+<section class="section how" aria-labelledby="how-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="how-h" class="label"><span class="num">{num}</span> How I build</h2>
+        <p class="label">The same design in every project</p>
+      </div>
+      <ol class="flow" aria-label="How a question moves through one of my systems">
+        <li class="step"><span class="label">1</span><span class="st">A question comes in</span><span class="sd">An order, a filing, a broken data run</span></li>
+        <li class="step"><span class="label">2</span><span class="st">Simple rules try first</span><span class="sd">Fast, cheap, and easy to check</span></li>
+        <li class="step fork"><span class="label">3</span><span class="st">Sure of the answer?</span><span class="sd"><b>Yes:</b> answer now. <b>No:</b> pass it on</span></li>
+        <li class="step ai"><span class="label">4</span><span class="st">AI looks at the hard ones</span><span class="sd">Only the few cases rules can't settle</span></li>
+        <li class="step out"><span class="label">5</span><span class="st">Answer with its source</span><span class="sd">Or a plain “I can't tell”, never a guess</span></li>
+      </ol>
+      <ResultsCarousel />
+      <ul class="why">
+        <li><b>Rules first,</b> because most cases are routine and rules are cheap and explainable.</li>
+        <li><b>AI only where needed,</b> because it costs more and can be wrong with confidence.</li>
+        <li><b>No answer without a source,</b> so a person can always check the result.</li>
+      </ul>
+    </div>
+  </section>
+
+<style>
+  .flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; counter-reset: s; }
+  .step { position: relative; display: flex; flex-direction: column; gap: 6px; padding: 18px 28px 20px 18px; border: 1px solid var(--rule); background: var(--bg); }
+  .step + .step { border-left: none; }
+  .step:not(:last-child)::after { content: '→'; position: absolute; right: -9px; top: 50%; transform: translateY(-50%); z-index: 1; background: var(--bg); color: var(--accent); font-family: var(--mono); font-size: 14px; line-height: 1; padding: 2px 0; }
+  .st { font-size: 17px; line-height: 1.3; letter-spacing: -0.01em; }
+  .sd { font-size: 14px; color: var(--muted); line-height: 1.45; }
+  .sd b { font-weight: 500; color: var(--ink); }
+  .fork { background: var(--surface); }
+  .ai { border-top: 2px solid var(--accent); }
+  .out .st { color: var(--accent); }
+  .why { list-style: none; margin: 18px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .why li { font-size: 15px; line-height: 1.5; color: var(--muted); }
+  .why b { color: var(--ink); font-weight: 500; }
+  @media (max-width: 1000px) {
+    .flow { grid-template-columns: 1fr; }
+    .step + .step { border-left: 1px solid var(--rule); border-top: none; }
+    .step:not(:last-child)::after { content: '↓'; right: auto; left: 18px; top: auto; bottom: -9px; transform: none; padding: 0 2px; }
+    .why { grid-template-columns: 1fr; gap: 12px; }
+  }
+</style>
