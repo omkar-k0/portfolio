@@ -30,7 +30,7 @@ export interface Flagship {
   facts: string[]; // short real facts under the pipeline card
   links: { label: string; href: string }[];
   // Home page copy for a reader with no technical background. Technical detail lives in the case study.
-  plain?: { problem: string; count: string; countLabel: string; detail: string; stages: Stage[]; dots: { total: number; hit: number; cols: number }; slots: Slots };
+  plain?: { problem: string; count: string; countLabel: string; compare: string; detail: string; stages: Stage[]; dots: { total: number; hit: number; cols: number }; slots: Slots };
 }
 
 export const proof: (Metric & { project: string; slug: string })[] = [
@@ -92,6 +92,7 @@ export const flagships: Flagship[] = [
       slots: { how: { href: '/work/guidance-reconciliation-engine/' }, try: { href: 'https://guidance-reconciliation-engine.vercel.app' }, code: { href: 'https://github.com/omkar-k0/guidance-reconciliation-engine' } },
       dots: { total: 188, hit: 184, cols: 24 },
       countLabel: 'promises checked correctly, compared with my own check by hand',
+      compare: 'Always guessing "kept" gets 172.',
       detail: 'Simple rules settle almost all of them. AI looks only at the 7 unclear cases and has to quote the filing. When it cannot be sure, it says so.',
       stages: [
         { label: 'Read the filings', detail: 'Official company reports to the US regulator' },
@@ -128,6 +129,7 @@ export const flagships: Flagship[] = [
       slots: { how: { href: '/work/faultline/' }, try: { href: 'https://github.com/omkar-k0/faultline#develop', note: 'runs on your machine' }, code: { href: 'https://github.com/omkar-k0/faultline' } },
       dots: { total: 48, hit: 43, cols: 16 },
       countLabel: 'test breakdowns traced to the exact cause',
+      compare: 'Pasting the logs into a local AI found 1.',
       detail: 'It missed 5 and never blamed the wrong thing. A final test on cases it has never seen is still to come.',
       stages: [
         { label: 'Spot the problem', detail: 'Checks that watch the data on every run' },
@@ -164,6 +166,7 @@ export const flagships: Flagship[] = [
       slots: { how: { href: '/work/werkbank/' }, try: { href: 'https://werkbank-gamma.vercel.app' }, code: { href: 'https://github.com/omkar-k0/werkbank' } },
       dots: { total: 24, hit: 23, cols: 12 },
       countLabel: 'orders it handled alone went to the right workshop',
+      compare: 'Without the confidence check: 53 of 60.',
       detail: 'Of 60 orders I wrote by hand, it decided 24 alone, flagged 22 for a check and sent 14 to a person. Not yet tried on a real shop.',
       stages: [
         { label: 'Order arrives', detail: 'A message, in English or German' },

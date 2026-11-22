@@ -43,9 +43,18 @@ export const mailto = (subject = 'Werkstudent role – hello from your website')
 export const CV = { href: '/cv/Omkar_Khadilkar_CV.pdf', label: 'CV (PDF)' };
 
 // Keywords for recruiters, taken from the CV skills section.
-export const SKILLS = [
-  'Python', 'SQL', 'TypeScript', 'pandas', 'scikit-learn', 'statsmodels',
-  'dbt Core', 'DuckDB', 'PostgreSQL', 'LLM pipelines (Claude)', 'FinBERT',
-  'GitHub Actions', 'Next.js', 'Vercel',
+// Each tool with what I used it for and where. Only tools a project actually uses.
+export const TOOLS: { tool: string; use: string; href: string }[] = [
+  { tool: 'Python', use: 'the pipelines and evaluations in faultline, fuelcycle and the Guidance Reconciliation Engine', href: '/work/faultline/' },
+  { tool: 'dbt and SQL', use: "fuelcycle's data models; faultline's benchmark is four dbt projects", href: '/work/fuelcycle/' },
+  { tool: 'DuckDB', use: "fuelcycle's storage and faultline's incident store", href: '/work/fuelcycle/' },
+  { tool: 'pandas', use: 'fuelcycle and the DAX 40 study', href: '/work/fuelcycle/' },
+  { tool: 'LightGBM', use: "fuelcycle's next-day price forecast", href: '/work/fuelcycle/' },
+  { tool: 'statsmodels, linearmodels', use: 'the regressions in the DAX 40 and ESG studies', href: '/work/' },
+  { tool: 'Claude API', use: 'the step that reads the hard cases in the Guidance Reconciliation Engine', href: '/work/guidance-reconciliation-engine/' },
+  { tool: 'Local LLMs (Ollama, MLX)', use: "testing faultline's optional re-ranker on my own laptop", href: '/work/faultline/' },
+  { tool: 'TypeScript, Next.js, PostgreSQL', use: 'the Werkbank app', href: '/work/werkbank/' },
+  { tool: 'GitHub Actions', use: 'automatic tests in faultline and fuelcycle', href: '/work/faultline/' },
+  { tool: 'Vercel', use: 'hosting Werkbank, the reconciliation engine demo and this site', href: '/work/portfolio/' },
 ];
 export const LANGUAGES = 'English C1 (IELTS 7.5) · German A1, learning · Marathi native';
