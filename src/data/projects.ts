@@ -210,6 +210,7 @@ export interface ExtraCard {
   slug: string; name: string; kind: string; batch: 2 | 3;
   problem: string; count: string; countLabel: string; detail: string; chart: Chart;
   slots: Slots;
+  stages: Stage[]; keyLabel: string; // "How it works" strip, same as the flagship cards
 }
 export const extras: ExtraCard[] = [
   {
@@ -218,6 +219,13 @@ export const extras: ExtraCard[] = [
     count: '584 of 586', countLabel: 'planted errors caught, with 2 false alarms in almost 119,000 clean records',
     detail: 'I hid 586 mistakes in 14 real days of data on purpose to test the checks. How well it handles the real oddities it finds still needs a check by hand.',
     chart: { type: 'dots', total: 586, hit: 584, cols: 40 },
+    keyLabel: 'nothing is dropped without a reason',
+    stages: [
+      { label: 'Read the files', detail: 'Every French price change, a year of it' },
+      { label: 'Check each one', detail: 'Rules flag bad prices, with a reason', escalation: true },
+      { label: 'Daily prices', detail: 'France, regions and cities' },
+      { label: 'Fill or wait?', detail: 'Answers only when it is sure' },
+    ],
     slots: { how: { href: '/work/fuelcycle/' }, try: { href: 'https://fuelcycle-seven.vercel.app' }, code: { href: 'https://github.com/omkar-k0/fuelcycle' } },
   },
   {
@@ -226,6 +234,13 @@ export const extras: ExtraCard[] = [
     count: '120 of 1,562', countLabel: 'climate promises from five German companies come with a number and a target year',
     detail: 'So about 92 in 100 promises cannot be checked later. A first version counted the year itself as a number and said 12.3%; I found and fixed that.',
     chart: { type: 'bar', pct: 7.7 },
+    keyLabel: 'fixed rules, no AI, decide this',
+    stages: [
+      { label: 'Read reports', detail: 'Sustainability PDFs from five companies' },
+      { label: 'Find promises', detail: 'Sentences that commit to a climate goal' },
+      { label: 'Number and year?', detail: 'Does the promise say how much and by when', escalation: true },
+      { label: 'Count', detail: 'Checkable or vague, per company' },
+    ],
     slots: { how: { href: 'https://github.com/omkar-k0/sustainability-commitment-classifier#readme', note: 'README' }, try: { note: 'no live demo yet' }, code: { href: 'https://github.com/omkar-k0/sustainability-commitment-classifier' } },
   },
   {
@@ -234,6 +249,13 @@ export const extras: ExtraCard[] = [
     count: '127', countLabel: 'company-years from 32 firms, analysed in Python',
     detail: 'Main finding: more profitable firms tend to borrow less. Graded 1.3.',
     chart: { type: 'none' },
+    keyLabel: 'the test that gives the answer',
+    stages: [
+      { label: 'Collect', detail: 'Annual reports, 32 firms, 2022 to 2025' },
+      { label: 'Measure', detail: 'Share of debt, profitability, size' },
+      { label: 'Compare', detail: 'Regression across firms and years', escalation: true },
+      { label: 'Check', detail: 'Same test with other debt measures' },
+    ],
     slots: { how: { note: 'FOM paper, not public' }, try: { note: 'research, nothing to run' }, code: { note: 'being published' } },
   },
   {
@@ -242,6 +264,13 @@ export const extras: ExtraCard[] = [
     count: 'No', countLabel: 'measurable effect in 56 observations',
     detail: 'The honest answer was no: none of the tests came close to a real effect. Reporting a result that found nothing is part of the work.',
     chart: { type: 'none' },
+    keyLabel: 'the test that gives the answer',
+    stages: [
+      { label: 'Collect', detail: 'Green ratings and bond prices, 10 firms' },
+      { label: 'Line up', detail: 'Rating changes next to borrowing costs' },
+      { label: 'Test', detail: 'Regression, each firm over time', escalation: true },
+      { label: 'Report', detail: 'No effect found, said plainly' },
+    ],
     slots: { how: { note: 'write-up in progress' }, try: { note: 'research, nothing to run' }, code: { href: 'https://github.com/krakmo1/esg-bond-spreads' } },
   },
   {
@@ -250,6 +279,13 @@ export const extras: ExtraCard[] = [
     count: 'v1.0', countLabel: 'Chrome extension in English and German, 25 automated tests',
     detail: 'Not measured with real students yet.',
     chart: { type: 'none' },
+    keyLabel: 'the step that does the maths',
+    stages: [
+      { label: 'Read', detail: 'Grades the FOM portal already shows' },
+      { label: 'Weight', detail: 'Average by credit points' },
+      { label: 'Try each grade', detail: 'Which exam grade reaches the target', escalation: true },
+      { label: 'Show', detail: 'The grade each open exam needs' },
+    ],
     slots: { how: { href: 'https://github.com/omkar-k0/gradelens#how-it-works', note: 'README' }, try: { href: 'https://github.com/omkar-k0/gradelens#install', note: 'install from GitHub' }, code: { href: 'https://github.com/omkar-k0/gradelens' } },
   },
   {
@@ -258,6 +294,13 @@ export const extras: ExtraCard[] = [
     count: 'Not tested yet', countLabel: 'on real legal questions',
     detail: 'So far only a practice run with made-up questions. No accuracy number until real cases are checked.',
     chart: { type: 'none' },
+    keyLabel: 'a person takes over here',
+    stages: [
+      { label: 'Ask', detail: 'A legal problem in plain words' },
+      { label: 'Sort', detail: 'Which area of law it belongs to' },
+      { label: 'Find the law', detail: 'Sources from India Code, cited in the answer' },
+      { label: 'Lawyer if needed', detail: 'Says when to see an advocate', escalation: true },
+    ],
     slots: { how: { href: 'https://github.com/omkar-k0/cuddly-octo-palm-tree#readme', note: 'README' }, try: { note: 'no public demo yet' }, code: { href: 'https://github.com/omkar-k0/cuddly-octo-palm-tree' } },
   },
 ];

@@ -123,6 +123,7 @@ const doors = [
             </div>
             <Cover slug={x.slug} index={live.length + j + 1} kind={x.kind} chart={x.chart}
               count={x.count} countLabel={x.countLabel} detail={x.detail} />
+            <div class="fpipe"><Pipeline stages={x.stages} title="How it works" keyLabel={x.keyLabel} /></div>
           </article>
         ))}
       </div>
