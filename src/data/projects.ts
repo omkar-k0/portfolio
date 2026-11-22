@@ -34,13 +34,14 @@ export interface Flagship {
 }
 
 export const proof: (Metric & { project: string; slug: string })[] = [
+  // FinBERT fusion (0.878) comes back here once its repo and result file are public.
   {
-    value: '0.878',
-    label: 'accuracy with confidence-gated fusion (FinBERT alone: 0.844)',
+    value: '584 of 586',
+    label: 'planted data errors caught, 2 false alarms in 118,795 clean records',
     evidence: 'measured',
-    source: 'FinBERT fusion results, test n = 147',
-    project: 'FinBERT fusion',
-    slug: 'finbert-fusion',
+    source: 'fuelcycle results/dq_eval.json, 586 injected faults on 14 real days',
+    project: 'fuelcycle',
+    slug: 'fuelcycle',
   },
   {
     value: '95.8%',
@@ -356,8 +357,8 @@ export const work: WorkItem[] = [
   {
     name: 'FinBERT fusion', kind: 'Research',
     answers: 'When should a small model hand a sentence to an LLM?',
-    metric: { value: '0.878', label: 'accuracy (FinBERT alone 0.844)', evidence: 'measured', source: 'test n = 147' },
-    status: 'Case study coming', href: '', external: false,
+    metric: { value: '0.878', label: 'accuracy (FinBERT alone 0.844)', evidence: 'pending', source: 'test n = 147; result file not public yet' },
+    status: 'Pending · code and result file being published', href: '', external: false,
   },
   {
     name: 'Sustainability commitment classifier', kind: 'Tool',
