@@ -48,9 +48,10 @@ const toc = [
   facts={facts}
   toc={toc}
   tldr={{
-    problem: 'A year of station-level fuel prices is 3.3 million events. Most pipelines drop bad rows silently, so nobody can say how clean the result is.',
-    result: 'Every event gets a verdict and a reason; the gate caught 99.7% of 586 planted errors with 2 false alarms. A next-day forecast answers on 3.4% of days, and its "fill now" call is right 92% of the time. The price forecast itself does not beat "tomorrow = today".',
-    role: 'My project: source adapter, bronze/silver/gold pipeline, quality gate, fault injection, forecast and demo. I researched and designed it and made the decisions, after talking options through with Claude for efficiency. Claude wrote the code; we debugged it together.',
+    why: 'Anyone who decides on price needs to trust their price data. This shows which records are clean and says why it rejected the rest, instead of dropping them quietly.',
+    problem: 'A year of French petrol station prices is 3.3 million price changes. Most data setups quietly drop bad records, so nobody can say how clean the result is.',
+    result: 'Every price change gets a verdict and a reason. It caught 584 of 586 errors I planted on purpose, with 2 false alarms. Its "fill up now?" call answers on only 3.4% of days and is right 92% of the time when it does; the price forecast on its own does not beat "tomorrow\'s price = today\'s".',
+    role: 'I researched and designed it and made the decisions, after talking options through with Claude for efficiency. Claude wrote the code; we debugged it together.',
   }}
   reproduce={{
     repo,

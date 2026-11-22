@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/glossary.mjs dist",
     "preview": "astro preview"
   },
   "dependencies": {

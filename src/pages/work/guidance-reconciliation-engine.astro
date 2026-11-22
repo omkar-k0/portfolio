@@ -38,7 +38,7 @@ const toc = [
 ---
 <CaseStudy
   title="Guidance Reconciliation Engine"
-  question="Did the company hit the revenue guidance it gave last quarter?"
+  question="Did the company hit the revenue forecast it gave investors last quarter?"
   description="A confidence-gated engine that checks US tech companies' quarterly revenue guidance against what they later reported, with rules first, an LLM only for the unclear rest, and exact citations."
   crumb="Product · 01"
   links={[
@@ -49,9 +49,10 @@ const toc = [
   facts={facts}
   toc={toc}
   tldr={{
-    problem: 'Companies give revenue guidance every quarter. Checking it against what they later reported means reading hundreds of filings by hand.',
-    result: '184 of 188 guidance items right against blind hand labels (97.9%); only 7 (3.7%) needed the LLM. All 110 high-confidence rule decisions were right.',
-    role: 'My project: SEC data pipeline, rules, confidence gate, Claude layer and the live site. I researched and designed it and made the decisions, after talking options through with Claude for efficiency. Claude wrote the code; we debugged it together.',
+    why: 'Investors and analysts want to know whether a company kept its revenue promise. Doing that by hand means reading hundreds of reports. This does the routine checks and points a person at the few unclear ones.',
+    problem: 'Every quarter, companies tell investors how much revenue to expect. Checking that against what they later report means reading hundreds of reports by hand.',
+    result: '184 of 188 promises checked correctly against my own check by hand (97.9%). Simple rules settled all but 7; AI looked only at those 7.',
+    role: 'I researched and designed it and made the decisions, after talking options through with Claude for efficiency. Claude wrote the code; we debugged it together.',
   }}
   reproduce={{
     repo,

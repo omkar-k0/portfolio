@@ -48,9 +48,10 @@ const toc = [
   facts={facts}
   toc={toc}
   tldr={{
-    problem: 'A furniture shop with three workshops routes every incoming order by hand, and misrouted jobs cost days.',
-    result: 'On 60 hand-written requests it routed 40% on its own at 95.8% accuracy and sent 23.3% to a review queue instead of guessing. Real-shop accuracy: pending.',
-    role: 'My project: classifier, calibrated gate, review queue, app, auth and eval. I researched and designed it and made the decisions, after talking options through with Claude for efficiency. Claude wrote the code; we debugged it together.',
+    why: 'A job sent to the wrong workshop costs a shop days. This handles the clear orders and sends the unclear ones to a person instead of guessing.',
+    problem: 'A furniture shop with three workshops sorts every incoming order by hand, and a job sent to the wrong workshop costs days.',
+    result: 'Of 60 orders I wrote by hand, it handled 24 alone and got 23 of those right; 14 it sent to a person instead of guessing. Not tested on a real shop yet.',
+    role: 'I researched and designed it and made the decisions, after talking options through with Claude for efficiency. Claude wrote the code; we debugged it together.',
   }}
   reproduce={{
     repo,

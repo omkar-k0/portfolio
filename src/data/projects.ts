@@ -335,20 +335,20 @@ const caseStudy = (slug: string) => `/work/${slug}/`;
 export const work: WorkItem[] = [
   {
     name: 'Guidance Reconciliation Engine', kind: 'Product',
-    answers: 'Did the company hit the revenue guidance it gave last quarter?',
-    metric: { value: '7 of 188', label: 'sent to the LLM', evidence: 'measured', source: 'results.json' },
+    answers: 'Did the company hit the revenue forecast it gave investors last quarter?',
+    metric: { value: '7 of 188', label: 'needed AI; simple rules settled the rest', evidence: 'measured', source: 'results.json' },
     status: 'Live · 97.9% on hand labels', href: caseStudy('guidance-reconciliation-engine'), external: false,
   },
   {
     name: 'faultline', kind: 'Open source',
-    answers: 'Why did the dbt pipeline break, and where is the evidence?',
-    metric: { value: '89.6%', label: 'top-1, 0 wrong (dev)', evidence: 'measured', source: 'eval/results/dev/triage.md' },
+    answers: 'When company data breaks, what broke it, and where is the evidence?',
+    metric: { value: '89.6%', label: 'of 48 test breakdowns traced to the exact cause, none wrong (final test pending)', evidence: 'measured', source: 'eval/results/dev/triage.md' },
     status: 'In progress · held-out pending', href: caseStudy('faultline'), external: false,
   },
   {
     name: 'Werkbank', kind: 'Product',
     answers: 'Which workshop should take this furniture order?',
-    metric: { value: '95.8%', label: 'on auto-routed orders', evidence: 'measured', source: 'reports/eval.md, n = 60' },
+    metric: { value: '95.8%', label: 'right on the orders it handled alone (60 written by hand)', evidence: 'measured', source: 'reports/eval.md, n = 60' },
     status: 'Live demo · payments not connected', href: caseStudy('werkbank'), external: false,
   },
   {
@@ -366,25 +366,25 @@ export const work: WorkItem[] = [
   {
     name: 'Sustainability commitment classifier', kind: 'Tool',
     answers: 'Which climate commitments in a sustainability report come with a number?',
-    metric: { value: '7.7%', label: 'of 1,562 commitments quantified', evidence: 'measured', source: 'repo README, corrected 21 Nov 2026 (was 12.3%: the year itself counted as a figure)' },
+    metric: { value: '7.7%', label: 'of 1,562 climate promises come with a number and a target year', evidence: 'measured', source: 'repo README, corrected 21 Nov 2026 (was 12.3%: the year itself counted as a figure)' },
     status: 'Done · rule-based', href: 'https://github.com/omkar-k0/sustainability-commitment-classifier', external: true,
   },
   {
     name: 'DAX 40 capital structure', kind: 'Research',
-    answers: 'What drives leverage in large German companies?',
-    metric: { value: '127', label: 'firm-years, 32 firms · graded 1.3', evidence: 'measured', source: 'FOM paper, verified 16 Oct 2026' },
+    answers: 'Why do some big German companies borrow more than others?',
+    metric: { value: '127', label: 'company-years from 32 firms · graded 1.3', evidence: 'measured', source: 'FOM paper, verified 16 Oct 2026' },
     status: 'Paper · code being published', href: '', external: false,
   },
   {
     name: 'ESG and bond spreads', kind: 'Research',
-    answers: 'Do ESG rating changes move corporate bond spreads?',
-    metric: { value: 'No', label: 'significant effect (p 0.53–0.97)', evidence: 'measured', source: 'panel regression, 56 obs' },
+    answers: 'Does a better green rating make company borrowing cheaper?',
+    metric: { value: 'No', label: 'measurable effect in 56 observations', evidence: 'measured', source: 'panel regression, 56 obs' },
     status: 'Done · honest null result', href: '', external: false,
   },
   {
     name: 'Dem Fragen', kind: 'Product',
     answers: 'What does Indian law say about my problem, and when do I need a lawyer?',
-    metric: { value: '—', label: 'real eval not run yet', evidence: 'pending', source: 'mock baseline only' },
+    metric: { value: '—', label: 'not yet tested on real legal questions', evidence: 'pending', source: 'mock baseline only' },
     status: 'Live · in progress', href: 'https://github.com/omkar-k0/cuddly-octo-palm-tree', external: true,
   },
   {
@@ -396,13 +396,13 @@ export const work: WorkItem[] = [
   {
     name: 'profile-hud', kind: 'Tool',
     answers: 'Can a GitHub profile show real project data instead of badges?',
-    metric: { value: '156+', label: 'tests, CI green', evidence: 'measured', source: 'repo, v1.0.0' },
+    metric: { value: '156+', label: 'automated tests, all passing', evidence: 'measured', source: 'repo, v1.0.0' },
     status: 'GitHub Action · MIT', href: 'https://github.com/omkar-k0/profile-hud', external: true,
   },
   {
     name: 'This website', kind: 'Open source',
     answers: 'Can a portfolio prove its claims instead of asking you to trust them?',
-    metric: { value: '100', label: 'Lighthouse accessibility, home page', evidence: 'measured', source: 'Lighthouse 12, 19 Nov 2026' },
+    metric: { value: '100', label: 'Google Lighthouse accessibility score, home page', evidence: 'measured', source: 'Lighthouse 12, 19 Nov 2026' },
     status: 'Live · case study', href: caseStudy('portfolio'), external: false,
   },
 ];
