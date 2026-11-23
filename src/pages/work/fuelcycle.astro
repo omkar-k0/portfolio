@@ -16,7 +16,7 @@ const metrics: Metric[] = [
 const facts = [
   { label: 'Type', value: 'Data engineering + analysis' },
   { label: 'When', value: 'November 2026' },
-  { label: 'Role', value: 'Designed by me, code written with Claude' },
+  { label: 'Role', value: 'Designed, tested and reviewed by me; Claude Code as pair programmer' },
   { label: 'Scale', value: '3.3M events · 10,150 stations · 12 months · 54 s rebuild on 3 GB RAM' },
   { label: 'Status', value: 'Done for France · Germany adapter next' },
 ];
@@ -51,7 +51,7 @@ const toc = [
     why: 'Anyone who decides on price needs to trust their price data. This shows which records are clean and says why it rejected the rest, instead of dropping them quietly.',
     problem: 'A year of French petrol station prices is 3.3 million price changes. Most data setups quietly drop bad records, so nobody can say how clean the result is.',
     result: 'Every price change gets a verdict and a reason. It caught 584 of 586 errors I planted on purpose, with 2 false alarms. Its "fill up now?" call answers on only 3.4% of days and is right 92% of the time when it does; the price forecast on its own does not beat "tomorrow\'s price = today\'s".',
-    role: 'I researched and designed it and made the decisions, after talking options through with Claude for efficiency. Claude wrote the code; we debugged it together.',
+    role: 'I designed, tested and reviewed all the code. Claude Code was my pair programmer.',
   }}
   reproduce={{
     repo,
