@@ -166,7 +166,7 @@ export const flagships: Flagship[] = [
       slots: { how: { href: '/work/werkbank/' }, try: { href: 'https://werkbank-gamma.vercel.app' }, code: { href: 'https://github.com/omkar-k0/werkbank' } },
       dots: { total: 24, hit: 23, cols: 12 },
       countLabel: 'orders it handled alone went to the right workshop',
-      compare: 'Without the confidence check: 53 of 60.',
+      compare: 'Deciding all 60 itself, it would get 53 right.',
       detail: 'Of 60 orders I wrote by hand, it decided 24 alone, flagged 22 for a check and sent 14 to a person. Not yet tried on a real shop.',
       stages: [
         { label: 'Order arrives', detail: 'A message, in English or German' },
