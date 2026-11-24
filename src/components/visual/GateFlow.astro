@@ -1,0 +1,68 @@
+---
+// Hero illustration: the confidence gate on one real run. One dot per question.
+// Numbers come from the flagship's `gate` field in data/projects.ts, never literals.
+interface Props { total: number; rules: number; ai: number; source: string }
+const { total, rules, ai, source } = Astro.props;
+
+const P = 11;              // dot pitch
+const R = 3.6;             // dot radius
+const grid = (n: number, cols: number, x0: number, y0: number) =>
+  Array.from({ length: n }, (_, i) => ({ x: x0 + (i % cols) * P + R, y: y0 + Math.floor(i / cols) * P + R }));
+
+const inCols = 12;
+const inDots = grid(total, inCols, 0, 40);
+const inH = Math.ceil(total / inCols) * P;
+const ruleCols = 14;
+const ruleDots = grid(rules, ruleCols, 262, 40);
+const ruleH = Math.ceil(rules / ruleCols) * P;
+const aiY = 40 + ruleH + 34;
+const aiDots = grid(ai, ruleCols, 262, aiY);
+const gateX = 196;
+const midY = 40 + inH / 2;
+const ruleMid = 40 + ruleH / 2;
+const aiMid = aiY + R;
+const H = aiY + 56;
+const title = `Confidence gate: ${total} questions, ${rules} settled by simple rules, ${ai} sent to AI`;
+---
+<figure class="gateflow">
+  <svg viewBox={`0 0 440 ${H}`} role="img" aria-labelledby="gf-t gf-d">
+    <title id="gf-t">{title}</title>
+    <desc id="gf-d">One dot per question from company filings, in one real run. A rules check scores how sure it is. {rules} clear cases are settled by rules; the {ai} unclear ones go to an AI model, which must quote the filing. Every answer shows its source.</desc>
+
+    <text x="0" y="14" class="t-h">{total} questions</text>
+    <text x="0" y="29" class="t-s">from company filings</text>
+    {inDots.map((d) => <circle cx={d.x} cy={d.y} r={R} class="d-in" />)}
+
+    <path d={`M ${inCols * P + 6} ${midY} H ${gateX - 8}`} class="ln" />
+    <rect x={gateX - 7} y={midY - 34} width="14" height="68" rx="7" class="gate" />
+    <text x={gateX} y={midY - 55} class="t-s" text-anchor="middle">rules check</text>
+    <text x={gateX} y={midY - 42} class="t-s" text-anchor="middle">how sure?</text>
+    <path d={`M ${gateX + 8} ${midY - 10} C ${gateX + 34} ${midY - 10}, ${gateX + 30} ${ruleMid}, 254 ${ruleMid}`} class="ln ln-p" />
+    <path d={`M ${gateX + 8} ${midY + 10} C ${gateX + 34} ${midY + 10}, ${gateX + 30} ${aiMid}, 254 ${aiMid}`} class="ln ln-r" />
+
+    <text x="262" y="14" class="t-h">{rules} clear</text>
+    <text x="262" y="29" class="t-s">settled by simple rules</text>
+    {ruleDots.map((d) => <circle cx={d.x} cy={d.y} r={R} class="d-p" />)}
+
+    {aiDots.map((d) => <circle cx={d.x} cy={d.y} r={R} class="d-r" />)}
+    <text x={262 + ai * P + 6} y={aiY + 7} class="t-h">{ai} unclear → AI</text>
+    <text x="262" y={aiY + 26} class="t-s">must quote the filing, or say</text>
+    <text x="262" y={aiY + 39} class="t-s">it cannot tell</text>
+  </svg>
+  <figcaption class="label" title={`Source: ${source}`}>One real run · every answer shows its source</figcaption>
+</figure>
+
+<style>
+  .gateflow { margin: 0; width: 100%; max-width: 460px; }
+  svg { width: 100%; height: auto; overflow: visible; }
+  .t-h { font-family: var(--sans); font-size: 14px; font-weight: 500; fill: var(--ink); }
+  .t-s { font-family: var(--mono); font-size: 10px; fill: var(--muted); }
+  .d-in { fill: color-mix(in srgb, var(--ink) 28%, transparent); }
+  .d-p { fill: var(--product); }
+  .d-r { fill: var(--research); }
+  .ln { fill: none; stroke: color-mix(in srgb, var(--ink) 40%, transparent); stroke-width: 1.5; }
+  .ln-p { stroke: var(--product); }
+  .ln-r { stroke: var(--research); }
+  .gate { fill: var(--bg); stroke: var(--ink); stroke-width: 1.5; }
+  figcaption { margin-top: 14px; }
+</style>

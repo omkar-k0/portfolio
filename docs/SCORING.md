@@ -1,6 +1,6 @@
 # Portfolio scoring sheet
 
-Seven criteria, each scored 0 to 10 by checking the live site, not by impression. Each criterion has five checks worth 2 points each. A check passes only if it is true on the live site at the stated viewport.
+Nine criteria, each scored 0 to 10 by checking the live site, not by impression. Each criterion has five checks worth 2 points each. A check passes only if it is true on the live site at the stated viewport.
 
 Target: every criterion at 9 or above, none below 8.
 
@@ -89,3 +89,24 @@ Reader: someone with no technical background (recruiter, investor). The case stu
 3. Home page prose scores 60 or higher on Flesch reading ease.
 4. The "How I build" flow is visible on the home page.
 5. Three non-technical people look at the home page for 30 seconds and can answer: What does Omkar build? Does it work? How do I contact him? Passes if all three answer all three.
+
+## 9. First visual impression (added 25 Nov 2026)
+
+Reader: a Screener (see GLOSSARY.md), who judges the site in seconds by Colour, Imagery and clarity. Checks 1–5 are automated in `tests/visuals.spec.ts` (`npm run build && npm test`).
+
+1. The first screen contains Imagery (a picture, not only text) at 1440 × 900 and 390 × 844.
+2. Each Project kind has one consistent colour on the home page, the work index and the case studies (Product petrol, Open source moss, Research clay, Tool grey).
+3. Every coloured text passes WCAG AA contrast (4.5:1, or 3:1 for large text) in the light and dark themes.
+4. Every flagship card on the home page shows a screenshot of the real product.
+5. The home page stays under 5,500 px at 1440 wide, and no page requests a host other than the site's own.
+
+| Check | Baseline (main, e8749df) | After (feat/visuals) |
+|---|---|---|
+| 9.1 Imagery on the first screen | fail: text only | pass: confidence-gate illustration (GRE run, 188 → 181 rules, 7 AI) |
+| 9.2 One colour per Project kind | fail: kind colours on cover panels only | pass: proof band, cards, work index, case-study headers, progress bar |
+| 9.3 WCAG AA for coloured text | pass | pass |
+| 9.4 Screenshot on every flagship card | fail: abstract glyphs | pass: GRE, faultline (sealed-test output), Werkbank |
+| 9.5 Height and third-party requests | pass: 4,140 px, none | pass: 4,238 px, none |
+| **Score** | **4** | **10** |
+
+Measured on 25 Nov 2026 on local production builds, light and dark, in Chrome. The professional photo is not counted: the slot stays empty until `SITE.photo` is set.

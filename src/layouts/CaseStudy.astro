@@ -23,11 +23,15 @@ interface Props {
 }
 const { title, question, description, crumb, links, metrics, facts, toc, stack, prev, next, tldr, reproduce } = Astro.props;
 const fullToc = reproduce ? [...toc, { id: 'reproduce', label: 'Reproduce it' }] : toc;
+// The crumb starts with the Project kind ("Open source · 02"); it sets the page's colour.
+const kind = crumb.split(' · ')[0];
 ---
 <Base title={`${title} · Case study · Omkar Khadilkar`} description={description}>
-  <article class="cs">
-    <header class="cs-head wrap">
-      <p class="label crumb"><a href="/#work">Work</a> · {crumb}</p>
+  <div class="progress" data-progress data-kind={kind} aria-hidden="true" hidden></div>
+  <article class="cs" data-kind={kind}>
+    <header class="cs-head" data-kind={kind}>
+     <div class="wrap">
+      <p class="label crumb"><i class="sw" aria-hidden="true"></i><a href="/#work">Work</a> · {crumb}</p>
       <h1>{title}</h1>
       <p class="q">{question}</p>
       <div class="cs-links">
@@ -35,6 +39,7 @@ const fullToc = reproduce ? [...toc, { id: 'reproduce', label: 'Reproduce it' }]
           <a class={l.primary ? 'btn' : 'textlink'} href={l.href} rel="noopener">{l.label}{l.primary ? '' : ' ↗'}</a>
         ))}
       </div>
+     </div>
     </header>
 
     <div class="wrap">
@@ -111,22 +116,49 @@ const fullToc = reproduce ? [...toc, { id: 'reproduce', label: 'Reproduce it' }]
   </article>
 </Base>
 
+<script>
+  // Reading progress: 0 at the top, 1 once the contact block starts to come into view.
+  const bar = document.querySelector<HTMLElement>('[data-progress]');
+  const end = document.querySelector<HTMLElement>('.cs-contact');
+  if (bar && end) {
+    bar.hidden = false;
+    let queued = false;
+    const update = () => {
+      queued = false;
+      const stop = end.getBoundingClientRect().top + window.scrollY - window.innerHeight;
+      const p = stop <= 0 ? 1 : Math.min(1, Math.max(0, window.scrollY / stop));
+      bar.style.transform = `scaleX(${p})`;
+    };
+    const queue = () => { if (!queued) { queued = true; requestAnimationFrame(update); } };
+    addEventListener('scroll', queue, { passive: true });
+    addEventListener('resize', queue);
+    // Images that load late change the page height without a scroll event.
+    new ResizeObserver(queue).observe(document.body);
+    update();
+  }
+</script>
+
 <style>
-  .cs-head { padding-top: 80px; padding-bottom: 40px; }
+  .progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 60; background: var(--tone); transform-origin: 0 50%; transform: scaleX(0); pointer-events: none; }
+  .progress[hidden] { display: none; }
+  @media (prefers-reduced-motion: no-preference) { .progress { transition: transform 0.08s linear; } }
+  .cs-head { background: color-mix(in srgb, var(--tone) 7%, var(--bg)); border-bottom: 1px solid color-mix(in srgb, var(--tone) 25%, transparent); margin-bottom: 40px; }
+  .sw { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--tone); margin-right: 8px; }
+  .cs-head > .wrap { padding-top: 80px; padding-bottom: 40px; }
   .crumb a { text-decoration: none; }
   .crumb a:hover { color: var(--accent); }
   h1 { font-size: clamp(40px, 6vw, 80px); letter-spacing: -0.035em; line-height: 1.02; margin: 18px 0 16px; max-width: 14em; }
   .q { font-size: clamp(19px, 2vw, 24px); color: var(--muted); font-style: italic; max-width: 32em; }
   .cs-links { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; margin-top: 32px; }
 
-  .tldr { margin: 0 0 28px; padding: 18px 20px; background: var(--surface); border: 1px solid var(--rule); border-left: 2px solid var(--accent); }
-  .tldr-h { color: var(--accent); margin: 0 0 12px; }
+  .tldr { margin: 0 0 28px; padding: 18px 20px; background: var(--surface); border: 1px solid var(--rule); border-left: 3px solid var(--tone); }
+  .tldr-h { color: var(--tone); margin: 0 0 12px; }
   .tldr dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px 24px; margin: 0; align-items: start; }
   .tldr dl > div { min-width: 0; }
   .tldr dd { margin: 6px 0 0; font-size: 15px; line-height: 1.45; }
   .repro { background: var(--surface); border: 1px solid var(--rule); padding: 16px 18px; overflow-x: auto; font-family: var(--mono); font-size: 13px; line-height: 1.6; margin: 0 0 20px; max-width: 100%; }
   .repro code { background: none; border: none; padding: 0; font-size: inherit; }
-  .cs-contact { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; border: 1px solid var(--rule); border-left: 2px solid var(--accent); padding: 22px 24px; margin-bottom: 40px; }
+  .cs-contact { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; border: 1px solid var(--rule); border-left: 3px solid var(--tone); padding: 22px 24px; margin-bottom: 40px; background: color-mix(in srgb, var(--tone) 5%, var(--bg)); }
   .cc-line { font-size: 18px; margin-top: 8px; max-width: 34em; }
   .cc-btns { display: flex; gap: 14px; flex-wrap: wrap; }
   .tiles { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
@@ -203,7 +235,7 @@ const fullToc = reproduce ? [...toc, { id: 'reproduce', label: 'Reproduce it' }]
     .toc details[open] summary { margin-bottom: 12px; }
   }
   @media (max-width: 720px) {
-    .cs-head { padding-top: 48px; }
+    .cs-head > .wrap { padding-top: 48px; }
     .prose :global(.decision) { grid-template-columns: 1fr; }
     .prose :global(.decision > div + div) { border-left: none; border-top: 1px solid var(--rule); }
     .pn { grid-template-columns: 1fr; }

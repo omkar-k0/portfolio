@@ -11,6 +11,9 @@ export const SITE = {
   availability: 'Available now · 20 h/week',
   seeking: 'Seeking a 20-hour/week Werkstudent role in applied AI and data · Essen, NRW or remote · available now',
   email: 'omkarkhadilkar8@gmail.com',
+  // Professional photo: put the file in public/ (square, at least 480 px) and set its path, e.g. '/omkar.webp'.
+  // Empty = no photo anywhere; the hero, /hiring/ and /about/ render without a frame.
+  photo: '',
 };
 
 // Substack: set feed to the publication's RSS address (e.g. https://NAME.substack.com/feed).

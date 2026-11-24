@@ -3,7 +3,8 @@ import Base from '../layouts/Base.astro';
 import EvidenceTag from '../components/EvidenceTag.astro';
 import { SITE } from '../config';
 import Elsewhere from '../components/Elsewhere.astro';
-import { proof, flagships } from '../data/projects';
+import Photo from '../components/Photo.astro';
+import { proof, flagships, kindOf } from '../data/projects';
 // A proof links to its case study when one is published (any src/pages/work/*.astro not starting with _).
 const ready = new Set([
   ...flagships.filter((f) => f.ready).map((f) => f.slug),
@@ -25,19 +26,32 @@ const roles = [
 ];
 ---
 <Base title="Hiring · Omkar Khadilkar" description="Available now as a working student, 20 hours a week, in AI engineering, data engineering, data analytics or data science. Essen and NRW, on site or remote.">
-  <section class="head wrap">
-    <p class="label">For recruiters</p>
-    <h1>Available now. 20 hours a week.</h1>
-    <p class="sub">
-      Werkstudent roles in AI engineering, data engineering, data analytics and data science. Essen and NRW, on
-      site or remote. Every number on this page links to where it came from.
-    </p>
-    <div class="cta">
-      <a class="btn" href={`mailto:${SITE.email}?subject=Werkstudent%20role`}>Email me</a>
-      {cvFiles.length
-        ? cvFiles.map((f) => <a class="textlink" href={f.href} download>{f.label} ↓</a>)
-        : <span class="label">CV on request</span>}
+  <section class="head">
+   <div class="wrap head-in">
+    <div class="head-text">
+      <p class="label">For recruiters</p>
+      <h1>Available now. 20 hours a week.</h1>
+      <p class="sub">
+        Werkstudent roles in AI engineering, data engineering, data analytics and data science. Essen and NRW, on
+        site or remote. Every number on this page links to where it came from.
+      </p>
+      <div class="cta">
+        <a class="btn" href={`mailto:${SITE.email}?subject=Werkstudent%20role`}>Email me</a>
+        {cvFiles.length
+          ? cvFiles.map((f) => <a class="textlink" href={f.href} download>{f.label} ↓</a>)
+          : <span class="label">CV on request</span>}
+      </div>
     </div>
+    <aside class="avail" aria-label="At a glance">
+      <Photo size={96} class="avail-photo" />
+      <dl>
+        <div><dt class="label">Hours</dt><dd>20 a week</dd></div>
+        <div><dt class="label">Start</dt><dd>Now</dd></div>
+        <div><dt class="label">Work permit</dt><dd>Student visa to Oct 2027, 20 h/week allowed</dd></div>
+        <div><dt class="label">Location</dt><dd>Essen, NRW · on site or remote</dd></div>
+      </dl>
+    </aside>
+   </div>
   </section>
 
   <section class="section">
@@ -48,8 +62,8 @@ const roles = [
       </div>
       <ul class="proof">
         {proof.map((m) => (
-          <li>
-            <a href={href(m.slug)}>
+          <li data-kind={kindOf(m.slug)}>
+            <a href={href(m.slug)} class="lift">
               <EvidenceTag level={m.evidence} source={m.source} />
               <span class="value">{m.value}</span>
               <span class="mlabel">{m.label}</span>
@@ -115,16 +129,21 @@ const roles = [
 </Base>
 
 <style>
-  .head { padding-top: 88px; padding-bottom: 56px; }
+  .head { background: var(--hero-tint); border-bottom: 1px solid var(--rule); }
+  .head-in { padding-top: 88px; padding-bottom: 56px; display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 40px; align-items: end; }
+  .avail { background: var(--bg); border: 1px solid color-mix(in srgb, var(--product) 35%, transparent); border-top: 3px solid var(--product); padding: 20px 22px; display: flex; flex-direction: column; gap: 16px; }
+  .avail :global(.avail-photo) { width: 96px; height: 96px; }
+  .avail dl { margin: 0; display: grid; gap: 12px; }
+  .avail dd { margin: 4px 0 0; font-size: 17px; line-height: 1.35; }
   h1 { font-size: clamp(40px, 6vw, 80px); letter-spacing: -0.035em; line-height: 1.02; margin: 16px 0 18px; max-width: 12em; }
   .sub { color: var(--muted); font-size: 18px; max-width: 34em; }
   .cta { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; margin-top: 32px; }
 
   .proof { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
   .proof li + li { border-left: 1px solid var(--rule); }
-  .proof a { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 22px 20px; text-decoration: none; height: 100%; }
-  .proof a:hover { background: var(--surface); }
-  .value { font-size: clamp(36px, 3.8vw, 50px); line-height: 1; letter-spacing: -0.03em; margin-top: 12px; }
+  .proof a { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 22px 20px; text-decoration: none; height: 100%; border-top: 3px solid var(--tone); }
+  .proof a:hover { background: color-mix(in srgb, var(--tone) 6%, var(--bg)); }
+  .value { font-size: clamp(36px, 3.8vw, 50px); line-height: 1; letter-spacing: -0.03em; margin-top: 12px; color: var(--tone); }
   .mlabel { font-size: 14px; line-height: 1.45; color: var(--muted); flex: 1; }
   .proj { color: var(--ink); }
   .note { color: var(--muted); font-size: 14px; margin-top: 16px; }
@@ -148,6 +167,7 @@ const roles = [
     .proof li:nth-child(3) { border-left: none; }
     .proof li:nth-child(n + 3) { border-top: 1px solid var(--rule); }
     .two { grid-template-columns: 1fr; }
+    .head-in { grid-template-columns: 1fr; padding-top: 56px; padding-bottom: 40px; }
   }
   @media (max-width: 720px) {
     .roles { grid-template-columns: 1fr; }

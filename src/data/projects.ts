@@ -11,6 +11,9 @@ export interface Metric {
   source: string; // file or document the number comes from
 }
 
+// A real screenshot of the product, shown on its home card.
+export interface Shot { src: string; alt: string; width: number; height: number }
+
 export interface Stage {
   label: string;
   detail: string;
@@ -30,7 +33,9 @@ export interface Flagship {
   facts: string[]; // short real facts under the pipeline card
   links: { label: string; href: string }[];
   // Home page copy for a reader with no technical background. Technical detail lives in the case study.
-  plain?: { problem: string; count: string; countLabel: string; compare: string; detail: string; stages: Stage[]; dots: { total: number; hit: number; cols: number }; slots: Slots };
+  plain?: { problem: string; count: string; countLabel: string; compare: string; detail: string; stages: Stage[]; dots: { total: number; hit: number; cols: number }; slots: Slots; shot?: Shot };
+  // The confidence gate in numbers, drawn in the home page hero. Only the flagship that has it.
+  gate?: { total: number; rules: number; ai: number; source: string };
 }
 
 export const proof: (Metric & { project: string; slug: string })[] = [
@@ -86,9 +91,11 @@ export const flagships: Flagship[] = [
       { label: 'LLM', detail: 'Ambiguous rest, quote-checked', escalation: true },
     ],
     facts: ['185 releases, 11 companies', '7 of 188 sent to the LLM', '97.9% vs 91.5% baseline'],
+    gate: { total: 188, rules: 181, ai: 7, source: 'guidance-reconciliation-engine data/processed/eval.json, 188 hand labels, 20 Nov 2026' },
     plain: {
       problem: 'Every quarter, big companies tell investors how much money they expect to make. This tool reads the official filings and checks whether they kept that promise.',
       count: '184 of 188',
+      shot: { src: '/shots/gre-decisions.webp', alt: 'The live Guidance Reconciliation Engine, showing items the AI decided: one quarter marked met with its reasoning, the next marked unverifiable, each linked to its filing', width: 1380, height: 750 },
       slots: { how: { href: '/work/guidance-reconciliation-engine/' }, try: { href: 'https://guidance-reconciliation-engine.vercel.app' }, code: { href: 'https://github.com/omkar-k0/guidance-reconciliation-engine' } },
       dots: { total: 188, hit: 184, cols: 24 },
       countLabel: 'promises checked correctly, compared with my own check by hand',
@@ -126,6 +133,7 @@ export const flagships: Flagship[] = [
     plain: {
       problem: 'Companies move their data through long chains of steps every night. When one step breaks, an engineer can spend hours finding out why. This tool finds the cause and shows the evidence.',
       count: '35 of 48',
+      shot: { src: '/shots/faultline-heldout.webp', alt: 'faultline sealed-test output: right cause named for 35 of 48 breakdowns, by fault type, with 3 wrong', width: 1190, height: 686 },
       slots: { how: { href: '/work/faultline/' }, try: { href: 'https://github.com/omkar-k0/faultline#develop', note: 'runs on your machine' }, code: { href: 'https://github.com/omkar-k0/faultline' } },
       dots: { total: 48, hit: 35, cols: 16 },
       countLabel: 'breakdowns it had never seen, traced to the exact cause',
@@ -163,6 +171,7 @@ export const flagships: Flagship[] = [
     plain: {
       problem: 'A furniture shop gets orders as messages and has to send each one to the right workshop: carpentry, upholstery, paint or metal. This tool reads the order and sends it on.',
       count: '23 of 24',
+      shot: { src: '/shots/werkbank-review.webp', alt: 'The Werkbank review queue: orders the system was unsure about, each with the reason, its best guesses with percentages, and one button per workshop', width: 1380, height: 819 },
       slots: { how: { href: '/work/werkbank/' }, try: { href: 'https://werkbank-gamma.vercel.app' }, code: { href: 'https://github.com/omkar-k0/werkbank' } },
       dots: { total: 24, hit: 23, cols: 12 },
       countLabel: 'orders it handled alone went to the right workshop',
@@ -213,7 +222,7 @@ export type Chart =
 export interface ExtraCard {
   slug: string; name: string; kind: string; batch: 2 | 3;
   problem: string; count: string; countLabel: string; detail: string; chart: Chart;
-  slots: Slots;
+  slots: Slots; shot?: Shot;
   stages: Stage[]; keyLabel: string; // "How it works" strip, same as the flagship cards
 }
 export const extras: ExtraCard[] = [
@@ -223,6 +232,7 @@ export const extras: ExtraCard[] = [
     count: '584 of 586', countLabel: 'planted errors caught, with 2 false alarms in almost 119,000 clean records',
     detail: 'I hid 586 mistakes in 14 real days of data on purpose to test the checks. On real data it is noisier: of 100 prices it flagged, only 12 were real errors.',
     chart: { type: 'dots', total: 586, hit: 584, cols: 40 },
+    shot: { src: '/shots/fuelcycle-forecast.webp', alt: 'fuelcycle forecast of the national E10 price over eight weeks, with the days it said fill now or wait', width: 804, height: 313 },
     keyLabel: 'nothing is dropped without a reason',
     stages: [
       { label: 'Read the files', detail: 'Every French price change, a year of it' },
@@ -406,3 +416,7 @@ export const work: WorkItem[] = [
     status: 'Live · case study', href: caseStudy('portfolio'), external: false,
   },
 ];
+
+// The Project kind of any project on the site, by slug.
+export const kindOf = (slug: string): string | undefined =>
+  flagships.find((f) => f.slug === slug)?.kind ?? extras.find((x) => x.slug === slug)?.kind;
