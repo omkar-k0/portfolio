@@ -19,7 +19,7 @@ Source of [omkarkhadilkar.dev](https://omkarkhadilkar.dev): an Applied AI Engine
 src/
   config.ts            name, pitch, email, social links
   data/projects.ts     every project, metric and pipeline stage
-  styles/global.css    tokens (colour, type, grid), light and dark
+  styles/global.css    tokens (colour, type, grid), light and dark; Project kind → colour
   layouts/Base.astro   head, theme script, nav, footer
   components/          Nav, Footer, EvidenceTag, Pipeline
   lib/substack.ts      fetches Substack posts at build time (never fails the build)
@@ -32,7 +32,14 @@ src/
 npm install
 npm run dev      # http://localhost:4321
 npm run build    # static output in dist/
+npm test         # Playwright checks on the built site (uses your installed Chrome)
 ```
+
+`tests/visuals.spec.ts` checks scoring criterion 9 (first visual impression), the case-study reading-progress bar and the photo slot against the production build. `scripts/capture-shot.mjs` turns part of a built page into a WebP screenshot for a home card.
+
+## Photo
+
+Put a square photo (at least 480 px) in `public/` and set `SITE.photo` in `src/config.ts`. It then appears in the hero, on `/hiring/` and on `/about/`. Left empty, nothing is shown.
 
 ## Milestones
 

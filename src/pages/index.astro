@@ -3,10 +3,13 @@ import Base from '../layouts/Base.astro';
 import Pipeline from '../components/Pipeline.astro';
 import Slots from '../components/Slots.astro';
 import Cover from '../components/visual/Cover.astro';
+import GateFlow from '../components/visual/GateFlow.astro';
+import Photo from '../components/Photo.astro';
 import EvidenceTag from '../components/EvidenceTag.astro';
 import { SITE, LINKS, CV, mailto } from '../config';
 import { flagships, extras } from '../data/projects';
 const live = flagships.filter((f) => f.ready && f.plain);
+const gate = flagships.find((f) => f.gate)!.gate!;
 
 // Until a case study page exists, links point to the project's row on this page.
 const ready = new Set(flagships.filter((f) => f.ready).map((f) => f.slug));
@@ -25,10 +28,10 @@ const doors = [
   <!-- 00 Hero: name, role, availability, proof and both calls to action fit the first screen -->
   <section class="hero">
     <div class="wrap hero-in">
-      <p class="who reveal"><span class="nm">{SITE.name}</span> · {SITE.pitch}</p>
-      <p class="label eyebrow reveal">{SITE.location} · {SITE.study}</p>
-      <h1 class="reveal">{SITE.tagline}</h1>
-      <div class="hero-foot">
+      <div class="hero-text">
+        <p class="who reveal"><Photo size={44} class="hero-photo" /><span><span class="nm">{SITE.name}</span> · {SITE.pitch}</span></p>
+        <p class="label eyebrow reveal">{SITE.location} · {SITE.study}</p>
+        <h1 class="reveal">{SITE.tagline}</h1>
         <p class="lede reveal">
           I help data teams automate routine decisions and flag the ones a person must check. Simple rules
           handle the easy cases, AI only the hard ones, and every answer shows where it came from.
@@ -38,6 +41,7 @@ const doors = [
           <a class="btn btn-outline" href={CV.href}>Download CV</a>
         </div>
       </div>
+      <div class="hero-art reveal"><GateFlow {...gate} /></div>
       <p class="status"><span class="dot"></span><span>{SITE.seeking} · <a class="textlink" href={mailto()}>Email me</a></span></p>
     </div>
   </section>
@@ -51,7 +55,7 @@ const doors = [
       </div>
       <ul class="proof">
         {live.map((f) => (
-          <li>
+          <li data-kind={f.kind}>
             <a href={`/work/${f.slug}/`} class="metric">
               <span class="mtop"><span class="value">{f.plain!.count}</span><EvidenceTag level="measured" /></span>
               <span class="mlabel">{f.plain!.countLabel}</span>
@@ -73,7 +77,7 @@ const doors = [
       </div>
       <div class="flagships">
         {live.map((f, i) => (
-          <article class={`flag ${f.kind === 'Open source' ? 'oss' : ''}`} id={f.slug}>
+          <article class="flag" id={f.slug} data-kind={f.kind}>
             <div class="flag-text">
               <p class="label">{String(i + 1).padStart(2, '0')} · {f.kind}</p>
               <h3><a href={`/work/${f.slug}/`}>{f.name}</a></h3>
@@ -81,12 +85,13 @@ const doors = [
               <Slots slots={f.plain!.slots} name={f.name} />
             </div>
             <Cover slug={f.slug} index={i + 1} kind={f.kind} chart={{ type: 'dots', ...f.plain!.dots }}
-              count={f.plain!.count} countLabel={f.plain!.countLabel} detail={f.plain!.detail} />
+              count={f.plain!.count} countLabel={f.plain!.countLabel} detail={f.plain!.detail}
+              shot={f.plain!.shot} href={`/work/${f.slug}/`} />
             <div class="fpipe"><Pipeline stages={f.plain!.stages} title="How it works" keyLabel="only the hard cases reach this step" /></div>
           </article>
         ))}
         {extras.map((x, j) => (
-          <article class={`flag extra ${x.kind === 'Open source' ? 'oss' : x.kind === 'Research' ? 'research' : ''}`} id={`card-${x.slug}`} data-batch={x.batch} hidden>
+          <article class="flag extra" id={`card-${x.slug}`} data-kind={x.kind} data-batch={x.batch} hidden>
             <div class="flag-text">
               <p class="label">{String(live.length + j + 1).padStart(2, '0')} · {x.kind}</p>
               <h3>{x.slots.how.href?.startsWith('/') ? <a href={x.slots.how.href}>{x.name}</a> : x.name}</h3>
@@ -94,7 +99,8 @@ const doors = [
               <Slots slots={x.slots} name={x.name} />
             </div>
             <Cover slug={x.slug} index={live.length + j + 1} kind={x.kind} chart={x.chart}
-              count={x.count} countLabel={x.countLabel} detail={x.detail} />
+              count={x.count} countLabel={x.countLabel} detail={x.detail}
+              shot={x.shot} href={x.slots.how.href} />
             <div class="fpipe"><Pipeline stages={x.stages} title="How it works" keyLabel={x.keyLabel} /></div>
           </article>
         ))}
@@ -182,20 +188,26 @@ const doors = [
 <style>
   section[id] { scroll-margin-top: 60px; }
   /* Hero */
-  .hero { position: relative; overflow: hidden; }
-  .hero-in { position: relative; padding-top: 52px; padding-bottom: 28px; }
-  .who { font-size: clamp(18px, 1.6vw, 22px); letter-spacing: -0.01em; color: var(--muted); }
+  .hero { position: relative; overflow: hidden; background: var(--hero-tint); border-bottom: 1px solid var(--rule); }
+  .hero-in {
+    position: relative; padding-top: 48px; padding-bottom: 24px;
+    display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 16px 56px; align-items: center;
+    grid-template-areas: 'text art' 'status status';
+  }
+  .hero-text { grid-area: text; min-width: 0; }
+  .hero-art { grid-area: art; justify-self: end; width: 100%; max-width: 440px; }
+  .who { font-size: clamp(18px, 1.6vw, 22px); letter-spacing: -0.01em; color: var(--muted); display: flex; align-items: center; gap: 12px; }
+  .who :global(.hero-photo) { width: 44px; height: 44px; }
   .who .nm { color: var(--ink); font-weight: 500; }
   .eyebrow { margin: 6px 0 20px; }
   h1 {
-    font-size: clamp(36px, 5vw, 72px); line-height: 1.04; letter-spacing: -0.035em;
+    font-size: clamp(34px, 4.2vw, 60px); line-height: 1.05; letter-spacing: -0.035em;
     max-width: 15em; text-wrap: balance;
   }
-  .hero-foot { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; margin-top: 28px; flex-wrap: wrap; }
-  .lede { max-width: 34em; color: var(--muted); font-size: 18px; }
+  .lede { max-width: 34em; color: var(--muted); font-size: 18px; margin-top: 22px; }
   .lede code { font-family: var(--mono); font-size: 0.9em; color: var(--ink); border-bottom: 1px solid var(--accent); }
-  .cta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-  .status { margin-top: 28px; padding-top: 14px; border-top: 1px solid var(--rule); display: flex; align-items: flex-start; gap: 10px; font-size: 16px; }
+  .cta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 24px; }
+  .status { grid-area: status; margin-top: 12px; padding-top: 14px; border-top: 1px solid var(--rule); display: flex; align-items: flex-start; gap: 10px; font-size: 16px; }
   .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); display: inline-block; flex-shrink: 0; margin-top: 0.6em; }
 
   /* Proof */
@@ -205,13 +217,13 @@ const doors = [
   .mcompare { font-size: 14px; color: var(--muted); }
   .proof { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--rule-strong); border-bottom: 1px solid var(--rule); }
   .proof li + li { border-left: 1px solid var(--rule); }
-  .metric { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 18px 20px 18px; text-decoration: none; height: 100%; }
-  .metric:hover { background: var(--surface); }
+  .metric { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 18px 20px 18px; text-decoration: none; height: 100%; border-top: 3px solid var(--tone); }
+  .metric:hover { background: color-mix(in srgb, var(--tone) 6%, var(--bg)); }
   .mtop { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; }
-  .value { font-size: clamp(30px, 3.4vw, 48px); line-height: 1; letter-spacing: -0.03em; }
+  .value { font-size: clamp(30px, 3.4vw, 48px); line-height: 1; letter-spacing: -0.03em; color: var(--tone); }
   .mlabel { font-size: 14px; line-height: 1.45; color: var(--muted); flex: 1; }
   .mproject { color: var(--ink); }
-  .metric:hover .mproject { color: var(--accent); }
+  .metric:hover .mproject { color: var(--tone); }
 
   /* How I build */
   .run { margin: 28px 0 0; padding: 22px 24px; background: var(--surface); border: 1px solid var(--rule); display: grid; grid-template-columns: 1fr; gap: 14px; }
@@ -239,16 +251,14 @@ const doors = [
   .flag:first-child { border-top: none; padding-top: 0; }
   .flag h3 { font-size: 32px; letter-spacing: -0.02em; margin: 10px 0 8px; }
   .flag h3 a { text-decoration: none; }
-  .flag h3 a:hover { color: var(--accent); }
+  .flag h3 a:hover { color: var(--tone); }
   .problem { font-size: 18px; line-height: 1.5; max-width: 30em; margin-top: 4px; }
   .fpipe { grid-column: 1 / -1; }
   .flag[hidden] { display: none; }
-  .flag.research { --accent: var(--accent-3); }
   .more-wrap { display: flex; justify-content: center; padding-top: 28px; border-top: 1px solid var(--rule); }
   .more-btn { font: inherit; font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink); background: var(--bg); border: 1px solid var(--rule-strong); border-radius: 999px; padding: 10px 20px; cursor: pointer; display: inline-flex; gap: 8px; align-items: center; }
   .more-btn:hover { border-color: var(--accent); color: var(--accent); }
   .more-arrow { font-size: 15px; }
-  .flag.oss { --accent: var(--accent-2); }
   .result { border-left: 2px solid var(--accent); padding: 6px 0 6px 28px; }
   .rcount { font-size: clamp(44px, 5vw, 72px); line-height: 1; letter-spacing: -0.035em; margin-top: 10px; }
   .rlabel { font-size: 17px; margin-top: 10px; max-width: 26em; }
@@ -275,6 +285,8 @@ const doors = [
     .doors li:nth-child(3) { border-left: none; }
     .doors li:nth-child(n + 3) { border-top: 1px solid var(--rule); }
     .flag { grid-template-columns: 1fr; gap: 28px; }
+    .hero-in { grid-template-columns: 1fr; grid-template-areas: 'text' 'status' 'art'; gap: 8px; }
+    .hero-art { justify-self: start; max-width: 400px; margin-top: 12px; }
     .run-d { display: none; }
     .run-m { display: block; }
     .result { padding-left: 18px; }
@@ -283,8 +295,8 @@ const doors = [
     .hero-in { padding-top: 28px; padding-bottom: 16px; }
     .eyebrow { display: none; }
     h1 { margin-top: 12px; }
-    .hero-foot { margin-top: 18px; gap: 18px; }
-    .lede { font-size: 16px; }
+    .lede { font-size: 16px; margin-top: 16px; }
+    .cta { margin-top: 18px; }
     .status { margin-top: 18px; font-size: 15px; }
     .proof-head p { display: none; }
     .proof { grid-template-columns: 1fr; }

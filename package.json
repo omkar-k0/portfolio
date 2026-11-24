@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build && node scripts/glossary.mjs dist",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "test": "playwright test"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",
@@ -16,5 +17,8 @@
     "fast-xml-parser": "^4.5.7"
   },
   "private": true,
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "@playwright/test": "^1.49.1"
+  }
 }

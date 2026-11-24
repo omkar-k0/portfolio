@@ -11,10 +11,18 @@
   --muted: #5c5c5c;
   --rule: rgba(17, 17, 17, 0.12);
   --rule-strong: rgba(17, 17, 17, 0.28);
-  --accent: #0c6e70;
+  /* Palette C "Nordic". Brand = Product. Each Project kind has one colour (see [data-kind] below). */
+  --product: #1d5c7a;
+  --oss: #44702f;
+  --research: #a8481f;
+  --tool: #5c5c5c;
+  --accent: var(--product);
   --accent-ink: #ffffff;
-  --accent-2: #9a4508;
-  --accent-3: #3d5a80;
+  --accent-2: var(--oss);
+  --accent-3: var(--research);
+  --tone: var(--accent);
+  --warn: var(--research); /* "wrong" in charts; a warm colour, not a Project kind */
+  --hero-tint: color-mix(in srgb, var(--product) 7%, var(--bg));
   --wordmark: rgba(17, 17, 17, 0.06);
 
   --sans: 'IBM Plex Sans', system-ui, sans-serif;
@@ -33,10 +41,12 @@
   --muted: #9a9a96;
   --rule: rgba(236, 236, 234, 0.12);
   --rule-strong: rgba(236, 236, 234, 0.3);
-  --accent: #3fb8b9;
+  --product: #7cc4e4;
+  --oss: #9ccc7f;
+  --research: #f0956a;
+  --tool: #9a9a96;
   --accent-ink: #0f1112;
-  --accent-2: #f0a04b;
-  --accent-3: #9db8dc;
+  --hero-tint: color-mix(in srgb, var(--product) 9%, var(--bg));
   --wordmark: rgba(236, 236, 234, 0.05);
   color-scheme: dark;
 }
@@ -116,3 +126,27 @@ h1, h2, h3 { font-weight: 400; }
 
 /* Glossary: first use of a jargon word on each page carries a plain meaning (scripts/glossary.mjs). */
 abbr.gloss { text-decoration: underline dotted var(--muted); text-underline-offset: 3px; cursor: help; }
+
+/* Project kind -> colour. The one place the mapping lives; components read var(--tone). */
+[data-kind='Product'] { --tone: var(--product); }
+[data-kind='Open source'] { --tone: var(--oss); }
+[data-kind='Research'] { --tone: var(--research); }
+[data-kind='Tool'] { --tone: var(--tool); }
+/* Inside a kind-coloured block, the accent follows the kind too. */
+[data-kind] { --accent: var(--tone); }
+.tint { background: color-mix(in srgb, var(--tone) 8%, var(--bg)); }
+
+/* Links: underline grows in on hover. */
+@media (prefers-reduced-motion: no-preference) {
+  a { transition: color 0.15s, text-decoration-color 0.15s; }
+}
+.textlink { text-decoration-color: color-mix(in srgb, currentColor 45%, transparent); }
+.textlink:hover { text-decoration-color: currentColor; text-decoration-thickness: 2px; }
+
+/* Clickable cards lift on hover and focus; border takes the kind colour. */
+.lift { transition: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .lift { transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease; }
+  .lift:hover, .lift:focus-within { transform: translateY(-2px); box-shadow: 0 6px 18px -12px color-mix(in srgb, var(--tone) 60%, transparent); }
+}
+.lift:hover, .lift:focus-within { border-color: var(--tone); }

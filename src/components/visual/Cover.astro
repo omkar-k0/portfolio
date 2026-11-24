@@ -1,21 +1,23 @@
 ---
 import DotGrid from './DotGrid.astro';
 import Glyph from './Glyph.astro';
-import type { Chart } from '../../data/projects';
+import type { Chart, Shot } from '../../data/projects';
 interface Props {
   slug: string; index: number; kind: string; chart: Chart;
   count: string; countLabel: string; detail: string;
+  shot?: Shot; href?: string;
 }
-const { slug, index, kind, chart, count, countLabel, detail } = Astro.props;
-const tone = kind === 'Open source' ? 'oss' : kind === 'Research' ? 'research' : 'product';
+const { slug, index, kind, chart, count, countLabel, detail, shot, href } = Astro.props;
 const dotSize = chart.type === 'dots' ? (chart.total > 300 ? 7 : chart.total > 100 ? 9 : 13) : 0;
 ---
-<div class={`cover ${tone}`}>
+<div class="cover lift" data-kind={kind}>
   <div class="ctop">
     <span class="pill label">{kind}</span>
     <span class="big" aria-hidden="true" data-n={String(index).padStart(2, '0')}></span>
   </div>
-  <Glyph slug={slug} />
+  {shot
+    ? <a class="shot" href={href ?? shot.src} tabindex="-1"><img src={shot.src} alt={shot.alt} width={shot.width} height={shot.height} loading="lazy" decoding="async" /></a>
+    : <Glyph slug={slug} />}
   <div class="res">
     <p class="rcount">{count}</p>
     <p class="rlabel">{countLabel}</p>
@@ -30,9 +32,9 @@ const dotSize = chart.type === 'dots' ? (chart.total > 300 ? 7 : chart.total > 1
   </div>
 </div>
 <style>
-  .cover { --tone: var(--accent); position: relative; overflow: hidden; background: color-mix(in srgb, var(--tone) 9%, var(--bg)); border: 1px solid color-mix(in srgb, var(--tone) 30%, transparent); padding: 22px 26px 26px; display: grid; grid-template-columns: 200px 1fr; gap: 10px 32px; align-items: start; }
-  .cover.oss { --tone: var(--accent-2); }
-  .cover.research { --tone: var(--accent-3); }
+  .cover { position: relative; overflow: hidden; background: color-mix(in srgb, var(--tone) 9%, var(--bg)); border: 1px solid color-mix(in srgb, var(--tone) 30%, transparent); padding: 22px 26px 26px; display: grid; grid-template-columns: 220px 1fr; gap: 10px 32px; align-items: start; }
+  .shot { display: block; align-self: start; margin-top: 8px; border: 1px solid color-mix(in srgb, var(--tone) 40%, transparent); background: var(--bg); line-height: 0; }
+  .shot img { width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top left; }
   .bar { position: relative; height: 22px; background: var(--bg); border: 1px solid color-mix(in srgb, var(--tone) 45%, transparent); max-width: 420px; }
   .barfill { position: absolute; inset: 0 auto 0 0; background: var(--tone); }
   .barlab { position: absolute; top: 3px; color: var(--ink); }
@@ -48,6 +50,7 @@ const dotSize = chart.type === 'dots' ? (chart.total > 300 ? 7 : chart.total > 1
   @media (max-width: 1100px) {
     .cover { grid-template-columns: 1fr; }
     .cover :global(.glyph) { max-width: 200px; }
+    .shot { max-width: 360px; }
   }
   @media (max-width: 720px) { .cover { padding: 18px 18px 22px; } .big { font-size: 72px; } }
 </style>

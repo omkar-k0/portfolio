@@ -9,3 +9,5 @@ cv/*.aux
 cv/*.log
 cv/*.out
 cv/*.pdf
+test-results/
+playwright-report/
