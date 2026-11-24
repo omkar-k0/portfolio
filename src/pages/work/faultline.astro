@@ -8,10 +8,10 @@ const repo = 'https://github.com/omkar-k0/faultline';
 const res = (f: string) => `${repo}/blob/main/eval/results/${f}`;
 
 const metrics: Metric[] = [
-  { value: '89.6%', label: 'root cause found at top-1 on dev (43 of 48 incidents)', evidence: 'measured', source: 'eval/results/dev/triage.md' },
-  { value: '0 of 48', label: 'confidently wrong answers on dev; 0 of 30 false alarms on clean runs', evidence: 'measured', source: 'eval/results/dev/triage.md' },
+  { value: '72.9%', label: 'root cause found at top-1 on the sealed test (35 of 48 incidents it had never seen)', evidence: 'measured', source: 'eval/results/heldout/triage.md' },
+  { value: '3 of 48', label: 'wrong causes named on the sealed test; 1 of 10 false alarms on clean runs', evidence: 'measured', source: 'eval/results/heldout/triage.md' },
+  { value: '89.6%', label: 'on dev, where the method was built (43 of 48, 0 wrong, 0 of 30 false alarms)', evidence: 'measured', source: 'eval/results/dev/triage.md' },
   { value: '192', label: 'injected incidents across 8 fault types, plus 70 clean runs', evidence: 'measured', source: 'benchmark/manifest.json, release benchmark-v1' },
-  { value: '—', label: 'held-out score: the frozen test split has not been run yet', evidence: 'pending', source: 'benchmark-heldout.tar.gz is sealed until the method is final' },
 ];
 
 const facts = [
@@ -19,7 +19,7 @@ const facts = [
   { label: 'When', value: 'November 2026 · in progress' },
   { label: 'Role', value: 'Designed, tested and reviewed by me; Claude Code as pair programmer' },
   { label: 'Scale', value: '4 dbt projects · 193 tests · 5 methods scored' },
-  { label: 'Status', value: 'Milestone 5 done, 6 in progress · benchmark v1 released' },
+  { label: 'Status', value: 'Milestones 0 to 7 done, 8 in progress · sealed test scored once' },
 ];
 
 const toc = [
@@ -38,11 +38,12 @@ const toc = [
 <CaseStudy
   title="faultline"
   question="When a company's data breaks, what broke it, and where is the evidence?"
-  description="An open-source reliability assistant for dbt Core with its own fault-injection benchmark: 192 incidents, five methods scored, a sealed held-out split."
+  description="An open-source reliability assistant for dbt Core with its own fault-injection benchmark: 192 incidents, five methods scored, and a sealed held-out split scored once."
   crumb="Open source · 02"
   links={[
     { label: 'Source on GitHub', href: repo, primary: true },
     { label: 'Benchmark v1', href: `${repo}/releases/tag/benchmark-v1` },
+    { label: 'Sealed test results', href: `${repo}/tree/main/eval/results/heldout` },
     { label: 'Results on dev', href: `${repo}/tree/main/eval/results/dev` },
   ]}
   metrics={metrics}
@@ -51,7 +52,7 @@ const toc = [
   tldr={{
     why: 'When company data breaks, reports and dashboards are wrong until someone finds the cause, and that can take hours of digging. This points straight at the cause and shows the evidence.',
     problem: 'When the automated steps that prepare a company\'s data break, an engineer digs through checks, logs and recent code changes for hours to find out why.',
-    result: 'Found the exact cause in 43 of 48 test breakdowns (89.6%), never named a wrong cause and raised no false alarms. The final test, on breakdowns it has never seen, is still to come.',
+    result: 'On 48 breakdowns it had never seen, it found the exact cause for 35 (72.9%), named a wrong cause 3 times and raised 1 false alarm in 10 healthy runs. On the practice set it found 43 of 48 with none wrong.',
     role: 'I designed, tested and reviewed all the code. Claude Code was my pair programmer.',
   }}
   reproduce={{
@@ -60,14 +61,16 @@ const toc = [
 make setup            # uv env, install, build the 4 dbt test projects
 make check            # ruff, mypy --strict, dbt build, pytest
 make fetch-benchmark  # loads the train and dev incidents
-make eval-dev         # scores every method on dev, writes eval/results/dev/`,
+make eval-dev         # scores every method on dev, writes eval/results/dev/
+# the sealed split was scored once; its results are committed in eval/results/heldout/`,
     files: [
-      { path: 'eval/results/dev/triage.md', what: 'The 89.6% table, per fault type, with config hash' },
+      { path: 'eval/results/heldout/triage.md', what: 'The 72.9% sealed-test table, per fault type, with config hash' },
+      { path: 'eval/results/dev/triage.md', what: 'The 89.6% dev table, per fault type, with config hash' },
       { path: 'eval/results/dev/ablations.md', what: 'Triage without tests and without lineage' },
       { path: 'benchmark/manifest.json', what: 'The 192 incidents and 70 clean runs in release benchmark-v1' },
       { path: 'docs/EVAL.md', what: 'How top-1, top-3 and "not confirmed" are counted' },
     ],
-    note: 'The held-out split ships sealed and stays unopened until the method is frozen.',
+    note: 'The held-out split shipped sealed and was opened once, on 23 Nov 2026, after the method was frozen. Nothing was tuned after that.',
   }}
   stack={['Python 3.12', 'dbt Core', 'DuckDB', 'sqlglot', 'networkx', 'hypothesis', 'Ollama (qwen2.5 7B)', 'GitHub Actions']}
   prev={{ href: '/work/guidance-reconciliation-engine/', label: 'Guidance Reconciliation Engine' }}
@@ -147,7 +150,7 @@ make eval-dev         # scores every method on dev, writes eval/results/dev/`,
         { title: 'Group', points: ['Symptoms joined by table lineage', 'One incident, not ten alerts', 'Stored in DuckDB'], takeaway: 'One problem, one report.' },
         { title: 'Propose', points: ['Data causes at seeds and sources', 'Code causes at changed models', 'With the commit that changed them'], takeaway: 'Every place it could have started.' },
         { title: 'Test', points: ['One check per cause', 'On aggregates, lineage, SQL, history', 'Failing causes are dropped'], takeaway: 'Guesses must survive the data.' },
-        { title: 'Rank and report', points: ['Survivors only', '"Not confirmed" if none survive', 'LLM re-ranker: optional, no gain on dev'], takeaway: 'Never a confident wrong answer.', model: true },
+        { title: 'Rank and report', points: ['Survivors only', '"Not confirmed" if none survive', 'LLM re-ranker: optional, no gain on dev'], takeaway: 'Only causes that passed a test.', model: true },
       ]}
       note="The highlighted card is where the optional local model sits. It only ever sees causes that already passed a test, never the data itself."
     />
@@ -191,6 +194,48 @@ make eval-dev         # scores every method on dev, writes eval/results/dev/`,
 
   <section id="results">
     <h2><span class="num">07</span>What came out</h2>
+    <h3>The sealed test</h3>
+    <p>
+      The jira split, 48 breakdowns and 10 clean runs, stayed sealed while I built the method. I opened it once,
+      on 23 Nov 2026, and scored every method on it. Nothing was changed after that.
+    </p>
+    <figure class="shot term">
+      <p class="term-bar label">$ faultline eval --split heldout --baseline triage</p>
+      <pre><code>| Fault type          | n  | Top-1          | Wrong top-1 |
+|---------------------|----|----------------|-------------|
+| schema_change       | 6  | 100.0% (6/6)   | 0.0% (0/6)  |
+| late_or_missing     | 6  |  50.0% (3/6)   | 50.0% (3/6) |
+| duplicate_keys      | 6  | 100.0% (6/6)   | 0.0% (0/6)  |
+| null_spike          | 6  | 100.0% (6/6)   | 0.0% (0/6)  |
+| distribution_shift  | 6  |  16.7% (1/6)   | 0.0% (0/6)  |
+| model_logic_bug     | 6  |  50.0% (3/6)   | 0.0% (0/6)  |
+| broken_join         | 6  |  66.7% (4/6)   | 0.0% (0/6)  |
+| timezone_error      | 6  | 100.0% (6/6)   | 0.0% (0/6)  |
+| all faulted         | 48 |  72.9% (35/48) | 6.2% (3/48) |
+
+Without the tests (every proposed cause ranked) top-1 would be 20.8% (10/48).
+False alarms on clean runs: 10.0% (1/10).</code></pre>
+      <figcaption class="caption">Output of the tool, trimmed to three columns. Full table: <a href="https://github.com/omkar-k0/faultline/blob/main/eval/results/heldout/triage.md" rel="noopener">eval/results/heldout/triage.md</a> (config hash a6ddc7a74073).</figcaption>
+    </figure>
+    <MethodBars
+      rightLabel="right cause at top-1"
+      wrongLabel="wrong cause at top-1"
+      rows={[
+        { name: 'dbt tests', note: 'alert only: fired on 5 of 48, names no cause', right: [0, 48], wrong: [0, 48] },
+        { name: 'dbt tests + guess', note: 'alert plus naive cause', right: [0, 48], wrong: [5, 48] },
+        { name: 'Raw logs → LLM', note: 'local model, base', right: [0, 48], wrong: [5, 48] },
+        { name: 'faultline monitors', note: 'anomalies, ranked upstream-first', right: [26, 48], wrong: [12, 48] },
+        { name: 'faultline triage', note: 'monitors + tested causes', right: [35, 48], wrong: [3, 48], ours: true },
+      ]}
+      caption="Sealed split, 48 faulted incidents and 10 clean runs. Files: eval/results/heldout/*.md."
+    />
+    <p>
+      The score dropped from 89.6% on dev to 72.9%. Two fault types did most of the damage. Distribution
+      shifts were noticed only once in six, so there was nothing to trace. Late or missing data was always
+      noticed, but in three of six cases triage named the wrong cause. Testing the causes still mattered: without the tests, top-1 falls to
+      20.8% and 28 of 48 answers are wrong.
+    </p>
+    <h3>On dev, where it was built</h3>
     <figure class="shot term">
       <p class="term-bar label">$ faultline eval --split dev --baseline triage</p>
       <pre><code>| Fault type          | n  | Top-1          | Wrong top-1 |
@@ -236,24 +281,25 @@ False alarms on clean runs: 0.0% (0/30).</code></pre>
       85 of 96.)
       Both results reproduce byte for byte, and a test checks that they still do.
     </p>
-    <p class="caption">Sources: <a href={res('dev/triage.md')}>triage</a>, <a href={res('dev/monitors.md')}>monitors</a>, <a href={res('dev/raw_log_llm.md')}>raw_log_llm</a>, <a href={res('dev/dbt_tests.md')}>dbt_tests</a>, <a href={res('dev/dbt_tests_guess.md')}>dbt_tests_guess</a>, <a href={res('train/triage.md')}>train/triage</a>.</p>
+    <p class="caption">Sources: <a href={res('heldout/triage.md')}>heldout/triage</a>, <a href={res('heldout/ablations.md')}>heldout/ablations</a>, <a href={res('dev/triage.md')}>triage</a>, <a href={res('dev/monitors.md')}>monitors</a>, <a href={res('dev/raw_log_llm.md')}>raw_log_llm</a>, <a href={res('dev/dbt_tests.md')}>dbt_tests</a>, <a href={res('dev/dbt_tests_guess.md')}>dbt_tests_guess</a>, <a href={res('train/triage.md')}>train/triage</a>.</p>
   </section>
 
   <section id="refuses">
     <h2><span class="num">08</span>What it refuses to claim</h2>
     <p>
-      <strong>A held-out score.</strong> Dev is where the method was developed, so 89.6% is an optimistic
-      number. The held-out jira split will be run once, when the method is final. That number goes here, good
-      or bad.
+      <strong>The dev number as the real one.</strong> Dev is where the method was developed, so 89.6% was
+      always optimistic. The sealed test says 72.9% with 3 wrong, and that is the number I quote. I did not
+      tune anything after opening it, so there is no better held-out number to report.
     </p>
     <p>
-      <strong>That abstaining works.</strong> "Not confirmed" never fired on dev or train. The behaviour exists
-      in code but the benchmark has not tested it yet.
+      <strong>That abstaining works.</strong> "Not confirmed" never fired on dev, train or the sealed test. The
+      behaviour exists in code but the benchmark has not tested it yet.
     </p>
     <p>
-      <strong>That the model helps.</strong> It does not, yet. The base local model made one confident wrong
-      call the rules did not make; the tuned one only tied them. Every headline number is from deterministic
-      code. Source: <a href="https://github.com/omkar-k0/faultline/blob/main/eval/results/dev/llm_slots.md" rel="noopener">eval/results/dev/llm_slots.md</a>.
+      <strong>That the model helps.</strong> Not shown. On dev the base local model made one wrong call the
+      rules did not make, and the tuned one only tied them. On the sealed test the tuned one was right once more
+      than the rules (36 against 35 of 48). One incident is not evidence. Every headline number is from
+      deterministic code. Source: <a href="https://github.com/omkar-k0/faultline/blob/main/eval/results/dev/llm_slots.md" rel="noopener">eval/results/dev/llm_slots.md</a>.
     </p>
   </section>
 
@@ -281,11 +327,11 @@ False alarms on clean runs: 0.0% (0/30).</code></pre>
   <section id="open">
     <h2><span class="num">10</span>Still open</h2>
     <ul>
-      <li>Milestone 6, in progress: the tuned local model and a hosted reference line.</li>
-      <li>One run on the sealed held-out split.</li>
+      <li>Distribution shifts: noticed in only 1 of 6 sealed incidents. The monitor needs to be more sensitive without adding false alarms.</li>
+      <li>Late or missing data: named the wrong cause in 3 of 6 sealed incidents.</li>
       <li>Incidents where "not confirmed" is the right answer, so abstaining gets tested.</li>
       <li>court_cases is a synthetic project I wrote. Real public court data comes after a licence check.</li>
-      <li>Drafting fixes as pull requests (milestone 7) and a read-only MCP server (milestone 8).</li>
+      <li>Milestone 8: one live draft pull request on a demo repo, then release v1.0.0.</li>
     </ul>
   </section>
 </CaseStudy>

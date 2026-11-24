@@ -47,15 +47,15 @@ import HBars from './HBars.astro';
     </div>
 
     <div class="rc-slide oss" role="group" aria-roledescription="slide" aria-label="3 of 6">
-      <p class="label rc-p">faultline · 48 test breakdowns</p>
+      <p class="label rc-p">faultline · 48 breakdowns it had never seen</p>
       <p class="rc-h">Who named the exact cause, and who blamed the wrong thing?</p>
       <HBars rows={[
-        { label: 'faultline: right', value: 43, max: 48, text: '43 of 48 · 0 wrong' },
-        { label: 'AI reading logs: right', value: 1, max: 48, text: '1 of 48', tone: 'mute' },
-        { label: 'AI reading logs: wrong', value: 7, max: 48, text: '7 of 48', tone: 'warn' },
-        { label: 'Simple guess: wrong', value: 11, max: 48, text: '11 of 48 (0 right)', tone: 'warn' },
+        { label: 'faultline: right', value: 35, max: 48, text: '35 of 48' },
+        { label: 'faultline: wrong', value: 3, max: 48, text: '3 of 48', tone: 'warn' },
+        { label: 'AI reading logs: wrong', value: 5, max: 48, text: '5 of 48 (0 right)', tone: 'warn' },
+        { label: 'Simple guess: wrong', value: 5, max: 48, text: '5 of 48 (0 right)', tone: 'warn' },
       ]} />
-      <p class="rc-src">Dev split, where the method was built; held-out test still to run. Source: eval/results/dev</p>
+      <p class="rc-src">Sealed test: 48 breakdowns it had never seen, scored once on 23 Nov 2026. Source: eval/results/heldout</p>
     </div>
 
     <div class="rc-slide" role="group" aria-roledescription="slide" aria-label="4 of 6">
