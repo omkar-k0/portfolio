@@ -1,0 +1,164 @@
+---
+import CaseStudy from '../../layouts/CaseStudy.astro';
+import type { Metric } from '../../data/projects';
+
+const repo = 'https://github.com/omkar-k0/profile-hud';
+const blob = `${repo}/blob/main`;
+
+const metrics: Metric[] = [
+  { value: '168', label: 'automated tests, all passing', evidence: 'measured', source: 'python -m pytest at commit cb297ca, 26 Nov 2026' },
+  { value: '11', label: 'card types from one YAML file, each section optional', evidence: 'measured', source: 'README, Configuration reference' },
+  { value: '0', label: 'scripts or outside URLs in the SVGs: nothing is loaded from another server when a profile is viewed', evidence: 'measured', source: 'README, Rules the tool follows; checked by the tests' },
+];
+
+const facts = [
+  { label: 'Type', value: 'GitHub Action + Python command-line tool' },
+  { label: 'When', value: 'November 2026 · v1.0.0 on 18 Nov 2026' },
+  { label: 'Role', value: 'Solo project: design, code, tests and release' },
+  { label: 'Licence', value: 'MIT · fonts under the SIL Open Font License' },
+  { label: 'Status', value: 'Released as v1 · no usage measured' },
+];
+
+const toc = [
+  { id: 'plain', label: 'In plain language' },
+  { id: 'question', label: 'The question' },
+  { id: 'obvious', label: 'Why the obvious fails' },
+  { id: 'how', label: 'How it works' },
+  { id: 'decisions', label: 'Decisions' },
+  { id: 'results', label: 'What came out' },
+  { id: 'broke', label: 'What broke' },
+];
+---
+<CaseStudy
+  title="profile-hud"
+  question="Can a GitHub profile show real project data instead of badges?"
+  description="A GitHub Action that turns one YAML file into animated SVG cards for a GitHub profile README: hero, project cards, numbers, stack and more. Plain SVG committed to your own repository, with no third-party service at view time."
+  crumb="Tool · 11"
+  links={[
+    { label: 'Source on GitHub', href: repo, primary: true },
+    { label: 'Quick start', href: `${repo}#quick-start` },
+    { label: 'Example YAML', href: `${blob}/examples/omkar.yml` },
+  ]}
+  metrics={metrics}
+  facts={facts}
+  toc={toc}
+  tldr={{
+    why: 'A GitHub profile is often the first thing a technical reviewer opens. Cards that show real results, with their source, say more than a row of badges.',
+    problem: 'Profile READMEs are usually badges and stats from third-party services that can rate-limit, go down, or change what your profile shows.',
+    result: 'A released GitHub Action and command-line tool: 11 card types from one YAML file, written as plain SVG into your own repository, with 168 passing tests.',
+    role: 'Solo project. I designed, built, tested and released it.',
+  }}
+  reproduce={{
+    repo,
+    commands: `git clone ${repo} && cd profile-hud
+pip install pyyaml pytest
+python -m pytest                       # 168 tests
+python scripts/render_examples.py      # re-renders examples/out/ (no files change)
+python -m profile_hud --config examples/minimal.yml --out /tmp/cards --check   # validate only`,
+    files: [
+      { path: 'examples/omkar.yml', what: 'The YAML behind the cards in the screenshot' },
+      { path: 'examples/out/', what: 'The rendered SVG cards and snippet.md, rendered by CI' },
+      { path: 'action.yml', what: 'The GitHub Action: setup, render, optional commit of the output folder only' },
+      { path: 'tests/', what: 'One test file per card type, plus the command line' },
+    ],
+  }}
+  stack={['Python', 'SVG', 'YAML', 'GitHub Actions', 'pytest', 'WOFF2 font subsets']}
+>
+  <section id="plain">
+    <h2><span class="num">01</span>In plain language</h2>
+    <p>
+      Many developers decorate their GitHub profile with badges and live stats pulled from outside services. This tool
+      makes cards from your own data instead: your name and role, your projects with one real result each, a few
+      numbers, and the tools you use.
+    </p>
+    <p>
+      You write one YAML file. A GitHub Action turns it into animated SVG images, saves them in your own repository,
+      and gives you the snippet to paste into your profile.
+    </p>
+  </section>
+
+  <section id="question">
+    <h2><span class="num">02</span>The question</h2>
+    <p class="callout">Can a profile show real project results, in a way no outside service can break or change?</p>
+  </section>
+
+  <section id="obvious">
+    <h2><span class="num">03</span>Why the obvious approach fails</h2>
+    <p>
+      <strong>Stats cards served by a third party</strong> are loaded each time someone views the profile. The service
+      can rate-limit you, go down, or change what the card shows.
+    </p>
+    <p>
+      <strong>Badges</strong> say which tools you used, not what you built with them or whether it worked.
+    </p>
+    <p>
+      <strong>Hand-made images</strong> go stale. Nobody redraws a card when a number changes, so the profile drifts
+      from the truth.
+    </p>
+  </section>
+
+  <section id="how">
+    <h2><span class="num">04</span>How it works</h2>
+    <ol>
+      <li><strong>Validate</strong> the YAML. Every section is optional, any unknown key is an error, and errors show up as annotations on the file, for example <code>projects[2].title: required</code>.</li>
+      <li><strong>Render</strong> each section to its own SVG: hero, chart, terminal, section headers, project cards, numbers, certifications, stack, buttons, divider and footer.</li>
+      <li><strong>Write</strong> the cards and a ready-made <code>snippet.md</code> to one folder. The Action commits only that folder, and makes no commit if nothing changed.</li>
+    </ol>
+    <figure class="shot">
+      <img src="/shots/profile-hud-cards.webp" width="888" height="726" loading="lazy"
+        alt="Three kinds of profile-hud card on a dark background: a hero card with name, role, status pill and a small network graph around a node labelled GATE; two project cards for Werkbank and the Guidance Reconciliation Engine, each with one result line and tech chips; and a numbers card with four results and their sources." />
+      <figcaption class="caption">Hero, two project cards and the numbers card, rendered from <a href={`${blob}/examples/omkar.yml`} rel="noopener">examples/omkar.yml</a>. Source: the SVG files in <a href={`${repo}/tree/main/examples/out/omkar`} rel="noopener">examples/out/omkar/</a>, shown in Chrome with reduced motion, so the animations are still.</figcaption>
+    </figure>
+  </section>
+
+  <section id="decisions">
+    <h2><span class="num">05</span>Decisions, and what they cost</h2>
+    <div class="decisions">
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Plain SVG files in your own repository</strong>
+          <p>Nothing is served at view time, and every change is a normal commit you can review.</p></div>
+        <div><span class="label">Instead of</span><strong>A hosted card service</strong>
+          <p>Always up to date, but one more outside dependency. Cost: you re-render when the YAML changes.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>No scripts, no outside URLs, fonts inlined</strong>
+          <p>GitHub shows SVGs through a normal image tag and strips scripts, so the cards use only SVG animation and small inlined font subsets.</p></div>
+        <div><span class="label">Instead of</span><strong>Web fonts and script-driven animation</strong>
+          <p>Richer effects, but they would not render on GitHub at all.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Slow loops that stop for reduced motion</strong>
+          <p>One moving thing per card, and nothing moves when the reader's system asks for reduced motion.</p></div>
+        <div><span class="label">Instead of</span><strong>Busy animated dashboards</strong>
+          <p>Eye-catching, but distracting and inaccessible.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="results">
+    <h2><span class="num">06</span>What came out</h2>
+    <p>
+      Version 1.0.0, released on 18 November 2026 under the MIT licence: a GitHub Action
+      (<code>omkar-k0/profile-hud@v1</code>) and a command-line tool, with 11 card types and 168 passing tests. The
+      example cards in the repository are re-rendered by CI.
+    </p>
+    <p>
+      How many profiles use it, or whether cards like these change what reviewers think, has not been measured.
+    </p>
+  </section>
+
+  <section id="broke">
+    <h2><span class="num">07</span>What broke, and what is unproven</h2>
+    <p>
+      There is no record of what broke. The work was released as a single commit, so the history shows no failures,
+      and I do not remember a specific one well enough to write it up. Rather than invent a story, this section lists only
+      what is unproven.
+    </p>
+    <h3>Unproven</h3>
+    <ul>
+      <li>No usage or reviewer response has been measured.</li>
+      <li>The cards rely on how GitHub renders SVG through its image proxy today; if that changes, the animations may stop.</li>
+      <li>Long text is wrapped or cut with "...", so a long project description can lose its end.</li>
+    </ul>
+  </section>
+</CaseStudy>

@@ -196,7 +196,7 @@ export const flagships: Flagship[] = [
     kind: 'Research',
     status: 'Research · code being published',
     question: 'When should a small model hand a sentence to an LLM?',
-    outcome: 'Reaches **0.878** accuracy by sending only the unsure 12% to an LLM. The gain is 5 sentences, reported as such.',
+    outcome: 'Reaches **0.878** accuracy by sending only the unsure 11.6% to an LLM. The gain is 5 sentences, reported as such.',
     tags: ['FinBERT', 'Confidence gating', 'SEC filings'],
     stages: [
       { label: 'Filings', detail: 'Risk Factors and MD&A, 6 firms' },
@@ -204,7 +204,7 @@ export const flagships: Flagship[] = [
       { label: 'Gate', detail: 'Confidence below 0.75' },
       { label: 'LLM', detail: 'Claude Sonnet fallback', escalation: true },
     ],
-    facts: ['12.2% escalated', 'LLM right on 83.3% of those', 'Gain is 5 sentences; CIs overlap'],
+    facts: ['11.6% escalated (790 of 6,791 sentences)', 'Gain is 5 of 147 test sentences'],
     links: [],
   },
 ];
@@ -255,7 +255,7 @@ export const extras: ExtraCard[] = [
       { label: 'Number and year?', detail: 'Does the promise say how much and by when', escalation: true },
       { label: 'Count', detail: 'Checkable or vague, per company' },
     ],
-    slots: { how: { href: 'https://github.com/omkar-k0/sustainability-commitment-classifier#readme', note: 'README' }, try: { note: 'no live demo yet' }, code: { href: 'https://github.com/omkar-k0/sustainability-commitment-classifier' } },
+    slots: { how: { href: '/work/sustainability/' }, try: { note: 'no live demo yet' }, code: { href: 'https://github.com/omkar-k0/sustainability-commitment-classifier' } },
   },
   {
     slug: 'dax', name: 'DAX 40 capital structure', kind: 'Research', batch: 2,
@@ -265,27 +265,27 @@ export const extras: ExtraCard[] = [
     chart: { type: 'none' },
     keyLabel: 'the test that gives the answer',
     stages: [
-      { label: 'Collect', detail: 'Annual reports, 32 firms, 2022 to 2025' },
+      { label: 'Collect', detail: 'Yahoo Finance data, 32 firms, 2022 to 2025' },
       { label: 'Measure', detail: 'Share of debt, profitability, size' },
       { label: 'Compare', detail: 'Regression across firms and years', escalation: true },
       { label: 'Check', detail: 'Same test with other debt measures' },
     ],
-    slots: { how: { note: 'FOM paper, not public' }, try: { note: 'research, nothing to run' }, code: { note: 'being published' } },
+    slots: { how: { href: '/work/dax/' }, try: { note: 'research, nothing to run' }, code: { note: 'not published yet' } },
   },
   {
     slug: 'esg', name: 'ESG and bond spreads', kind: 'Research', batch: 3,
-    problem: 'When a company gets a better green rating, does it get to borrow money more cheaply? I tested this on the bonds of large German companies.',
-    count: 'No', countLabel: 'measurable effect in 56 observations',
-    detail: 'The honest answer was no: none of the tests came close to a real effect. Reporting a result that found nothing is part of the work.',
+    problem: 'When a company gets a better green rating, does it get to borrow money more cheaply? A team of four tested this on the bonds of ten large German companies.',
+    count: '0 of 3', countLabel: 'models where a change in green rating moved borrowing costs (56 observations)',
+    detail: 'The rating level itself did matter, but in opposite directions: 4.1 basis points cheaper per point when each firm is compared with itself, 1.5 dearer across firms with credit rating held equal. So which way it goes is not settled.',
     chart: { type: 'none' },
     keyLabel: 'the test that gives the answer',
     stages: [
       { label: 'Collect', detail: 'Green ratings and bond prices, 10 firms' },
       { label: 'Line up', detail: 'Rating changes next to borrowing costs' },
       { label: 'Test', detail: 'Regression, each firm over time', escalation: true },
-      { label: 'Report', detail: 'No effect found, said plainly' },
+      { label: 'Report', detail: 'What held and what did not, said plainly' },
     ],
-    slots: { how: { note: 'write-up in progress' }, try: { note: 'research, nothing to run' }, code: { href: 'https://github.com/krakmo1/esg-bond-spreads' } },
+    slots: { how: { href: '/work/esg/' }, try: { note: 'research, nothing to run' }, code: { href: 'https://github.com/krakmo1/esg-bond-spreads' } },
   },
   {
     slug: 'gradelens', name: 'GradeLens', kind: 'Tool', batch: 3,
@@ -300,7 +300,7 @@ export const extras: ExtraCard[] = [
       { label: 'Try each grade', detail: 'Which exam grade reaches the target', escalation: true },
       { label: 'Show', detail: 'The grade each open exam needs' },
     ],
-    slots: { how: { href: 'https://github.com/omkar-k0/gradelens#how-it-works', note: 'README' }, try: { href: 'https://github.com/omkar-k0/gradelens#install', note: 'install from GitHub' }, code: { href: 'https://github.com/omkar-k0/gradelens' } },
+    slots: { how: { href: '/work/gradelens/' }, try: { href: 'https://github.com/omkar-k0/gradelens#install', note: 'install from GitHub' }, code: { href: 'https://github.com/omkar-k0/gradelens' } },
   },
   {
     slug: 'demfragen', name: 'Dem Fragen', kind: 'Product', batch: 3,
@@ -315,18 +315,18 @@ export const extras: ExtraCard[] = [
       { label: 'Find the law', detail: 'Sources from India Code, cited in the answer' },
       { label: 'Lawyer if needed', detail: 'Says when to see an advocate', escalation: true },
     ],
-    slots: { how: { href: 'https://github.com/omkar-k0/cuddly-octo-palm-tree#readme', note: 'README' }, try: { note: 'no public demo yet' }, code: { href: 'https://github.com/omkar-k0/cuddly-octo-palm-tree' } },
+    slots: { how: { href: '/work/demfragen/' }, try: { href: 'https://cuddly-octo-palm-tree-ashen.vercel.app', note: 'live demo' }, code: { href: 'https://github.com/omkar-k0/cuddly-octo-palm-tree' } },
   },
 ];
 
 export const ledger = [
   { slug: 'fuelcycle', name: 'fuelcycle', kind: 'Open source', note: 'Checks every French fuel price change in a year and says why it kept or rejected it', href: '/work/fuelcycle/' },
-  { slug: 'sustainability', name: 'Sustainability commitment classifier', kind: 'Tool', note: 'Only 7.7% of 1,562 climate promises come with a number and a target year', href: 'https://github.com/omkar-k0/sustainability-commitment-classifier' },
-  { slug: 'dax', name: 'DAX 40 capital structure', kind: 'Research', note: 'More profitable big German firms borrow less · grade 1.3', href: '' },
-  { slug: 'esg', name: 'ESG and bond spreads', kind: 'Research', note: 'Better green ratings did not make company borrowing cheaper', href: '' },
-  { slug: 'gradelens', name: 'GradeLens', kind: 'Tool', note: 'Shows FOM students what each exam needs for a target grade', href: 'https://github.com/omkar-k0/gradelens' },
-  { slug: 'demfragen', name: 'Dem Fragen', kind: 'Product', note: 'Plain answers to legal questions in India, with sources · not yet tested on real cases', href: 'https://github.com/omkar-k0/cuddly-octo-palm-tree' },
-  { slug: 'profile-hud', name: 'profile-hud', kind: 'Tool', note: 'Profile cards built from real project data · 156+ tests', href: 'https://github.com/omkar-k0/profile-hud' },
+  { slug: 'sustainability', name: 'Sustainability commitment classifier', kind: 'Tool', note: 'Only 7.7% of 1,562 climate promises come with a number and a target year', href: '/work/sustainability/' },
+  { slug: 'dax', name: 'DAX 40 capital structure', kind: 'Research', note: 'More profitable big German firms borrow less · grade 1.3', href: '/work/dax/' },
+  { slug: 'esg', name: 'ESG and bond spreads', kind: 'Research', note: 'Green rating changes did not move borrowing costs; the rating level did, but its direction depends on the model', href: '/work/esg/' },
+  { slug: 'gradelens', name: 'GradeLens', kind: 'Tool', note: 'Shows FOM students what each exam needs for a target grade', href: '/work/gradelens/' },
+  { slug: 'demfragen', name: 'Dem Fragen', kind: 'Product', note: 'Plain answers to legal questions in India, with sources · not yet tested on real cases', href: '/work/demfragen/' },
+  { slug: 'profile-hud', name: 'profile-hud', kind: 'Tool', note: 'Profile cards built from real project data · 168 tests', href: '/work/profile-hud/' },
 ];
 
 // Full work index (/work/). Numbered straight through, flagships first.
@@ -370,44 +370,44 @@ export const work: WorkItem[] = [
   {
     name: 'FinBERT fusion', kind: 'Research',
     answers: 'When should a small model hand a sentence to an LLM?',
-    metric: { value: '0.878', label: 'accuracy (FinBERT alone 0.844)', evidence: 'pending', source: 'test n = 147; result file not public yet' },
-    status: 'Pending · code and result file being published', href: '', external: false,
+    metric: { value: '0.878', label: 'accuracy (FinBERT alone 0.844)', evidence: 'pending', source: 'term paper Table 3 (not public), test n = 147; predictions not published' },
+    status: 'Paper · case study', href: caseStudy('finbert-fusion'), external: false,
   },
   {
     name: 'Sustainability commitment classifier', kind: 'Tool',
     answers: 'Which climate commitments in a sustainability report come with a number?',
     metric: { value: '7.7%', label: 'of 1,562 climate promises come with a number and a target year', evidence: 'measured', source: 'repo README, corrected 21 Nov 2026 (was 12.3%: the year itself counted as a figure)' },
-    status: 'Done · rule-based', href: 'https://github.com/omkar-k0/sustainability-commitment-classifier', external: true,
+    status: 'Done · rule-based · case study', href: caseStudy('sustainability'), external: false,
   },
   {
     name: 'DAX 40 capital structure', kind: 'Research',
     answers: 'Why do some big German companies borrow more than others?',
-    metric: { value: '127', label: 'company-years from 32 firms · graded 1.3', evidence: 'measured', source: 'FOM paper, verified 16 Oct 2026' },
-    status: 'Paper · code being published', href: '', external: false,
+    metric: { value: '127', label: 'company-years from 32 firms · graded 1.3', evidence: 'measured', source: 'FOM paper and transcript (not public), verified 16 Oct 2026; data from Yahoo Finance' },
+    status: 'Paper · team of four · case study', href: caseStudy('dax'), external: false,
   },
   {
     name: 'ESG and bond spreads', kind: 'Research',
     answers: 'Does a better green rating make company borrowing cheaper?',
-    metric: { value: 'No', label: 'measurable effect in 56 observations', evidence: 'measured', source: 'panel regression, 56 obs' },
-    status: 'Done · honest null result', href: '', external: false,
+    metric: { value: '0 of 3', label: 'models where a change in green rating moved borrowing costs; the rating level did, in opposite directions', evidence: 'measured', source: 'public/sources/esg-regression.json, rerun 26 Nov 2026, n = 56' },
+    status: 'Done · team of four · case study', href: caseStudy('esg'), external: false,
   },
   {
     name: 'Dem Fragen', kind: 'Product',
     answers: 'What does Indian law say about my problem, and when do I need a lawyer?',
     metric: { value: '—', label: 'not yet tested on real legal questions', evidence: 'pending', source: 'mock baseline only' },
-    status: 'Live · in progress', href: 'https://github.com/omkar-k0/cuddly-octo-palm-tree', external: true,
+    status: 'Live demo · not tested on real cases', href: caseStudy('demfragen'), external: false,
   },
   {
     name: 'GradeLens', kind: 'Tool',
     answers: 'What does each remaining FOM exam need for my target grade?',
     metric: { value: 'v1.0', label: 'English and German · 25 unit tests + browser tests', evidence: 'measured', source: 'repo, npm test, 21 Nov 2026' },
-    status: 'Chrome extension', href: 'https://github.com/omkar-k0/gradelens', external: true,
+    status: 'Chrome extension · case study', href: caseStudy('gradelens'), external: false,
   },
   {
     name: 'profile-hud', kind: 'Tool',
     answers: 'Can a GitHub profile show real project data instead of badges?',
-    metric: { value: '156+', label: 'automated tests, all passing', evidence: 'measured', source: 'repo, v1.0.0' },
-    status: 'GitHub Action · MIT', href: 'https://github.com/omkar-k0/profile-hud', external: true,
+    metric: { value: '168', label: 'automated tests, all passing', evidence: 'measured', source: 'python -m pytest at commit cb297ca, 26 Nov 2026' },
+    status: 'GitHub Action · MIT · case study', href: caseStudy('profile-hud'), external: false,
   },
   {
     name: 'This website', kind: 'Open source',
@@ -416,6 +416,21 @@ export const work: WorkItem[] = [
     status: 'Live · case study', href: caseStudy('portfolio'), external: false,
   },
 ];
+
+// Every Case study, in work-index order.
+export const caseStudies = work.filter((w) => !w.external && w.href.startsWith('/work/'));
+
+// Previous / Next for the Case study at `path`, wrapping round at the ends.
+export function caseStudyChain(path: string) {
+  const norm = (p: string) => (p.endsWith('/') ? p : `${p}/`);
+  const i = caseStudies.findIndex((c) => c.href === norm(path));
+  if (i < 0) return {};
+  const at = (j: number) => {
+    const c = caseStudies[(j + caseStudies.length) % caseStudies.length];
+    return { href: c.href, label: c.name };
+  };
+  return { prev: at(i - 1), next: at(i + 1) };
+}
 
 // The Project kind of any project on the site, by slug.
 export const kindOf = (slug: string): string | undefined =>

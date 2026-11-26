@@ -1,0 +1,188 @@
+---
+import CaseStudy from '../../layouts/CaseStudy.astro';
+import type { Metric } from '../../data/projects';
+
+const repo = 'https://github.com/omkar-k0/gradelens';
+const sources = '/sources';
+
+const metrics: Metric[] = [
+  { value: '25', label: 'unit, stress and language tests, run in CI on every push, plus browser tests that load the real extension', evidence: 'measured', source: 'npm test at commit 3743108, 26 Nov 2026' },
+  { value: '2 of 20', label: 'targets where the old linear estimate asked for a better grade than needed', evidence: 'synthetic', source: 'public/sources/gradelens-linear-vs-exact.json, on the test study book' },
+  { value: 'v1.0', label: 'released in English and German, with dark mode', evidence: 'measured', source: 'CHANGELOG.md, 21 Nov 2026' },
+];
+
+const facts = [
+  { label: 'Type', value: 'Chrome extension' },
+  { label: 'When', value: 'November 2026 · v1.0.0 on 21 Nov 2026' },
+  { label: 'Role', value: 'Designed, tested and reviewed by me; built with an AI model as pair programmer' },
+  { label: 'Languages', value: 'English and German, following the browser' },
+  { label: 'Status', value: 'Released on GitHub · Chrome Web Store listing pending · not measured with real students' },
+];
+
+const toc = [
+  { id: 'plain', label: 'In plain language' },
+  { id: 'question', label: 'The question' },
+  { id: 'obvious', label: 'Why the obvious fails' },
+  { id: 'how', label: 'How it works' },
+  { id: 'decisions', label: 'Decisions' },
+  { id: 'results', label: 'What came out' },
+  { id: 'broke', label: 'What broke' },
+];
+---
+<CaseStudy
+  title="GradeLens"
+  question="What does each remaining FOM exam need for my target grade?"
+  description="A Chrome extension for FOM students: grade trajectory, the range the final grade can still land in, and the exact grade each open exam needs for a target. Runs entirely in the browser."
+  crumb="Tool · 10"
+  links={[
+    { label: 'Install from GitHub', href: `${repo}#install`, primary: true },
+    { label: 'Source on GitHub', href: repo },
+    { label: 'Changelog', href: `${repo}/blob/main/CHANGELOG.md` },
+  ]}
+  metrics={metrics}
+  facts={facts}
+  toc={toc}
+  tldr={{
+    why: 'Students plan their effort around the grade they need. A tool that asks for more than needed costs them sleep; one that asks for less costs them the grade.',
+    problem: 'The FOM portal shows the grades you have, not what the exams you still have to sit need for the final grade you want.',
+    result: 'A released Chrome extension in English and German with 25 automated tests. It finds the exact grade each open exam needs, after an earlier linear estimate turned out to be too strict.',
+    role: 'I designed, tested and reviewed it. An AI model was my pair programmer, as the README says.',
+  }}
+  reproduce={{
+    repo,
+    commands: `git clone ${repo} && cd gradelens
+npm test            # 25 unit, stress and language tests (what CI runs)
+npm run test:e2e    # browser tests; set CHROME_PATH to use a local Chrome
+npm run build       # the Chrome Web Store zip in dist/
+
+# The "2 of 20" on this page, from the portfolio repository:
+node scripts/gradelens-linear-vs-exact.cjs path/to/gradelens`,
+    files: [
+      { path: 'test/model.test.js', what: 'Averages, final range, what-if, and the exact-step test against the old estimate' },
+      { path: 'test/fixture.studybook.json', what: 'The synthetic study book every test and screenshot uses' },
+      { path: 'CHANGELOG.md', what: 'What changed in 1.0.0, including the exact target maths' },
+    ],
+    note: 'No real student data is in the repository. Load it unpacked in chrome://extensions to try it on your own FOM study book.',
+  }}
+  stack={['JavaScript', 'Chrome Extensions (Manifest V3)', 'Shadow DOM', 'SVG', 'node:test', 'Playwright', 'GitHub Actions']}
+>
+  <section id="plain">
+    <h2><span class="num">01</span>In plain language</h2>
+    <p>
+      At FOM, the student portal lists the grades you already have. It does not tell you what you still need.
+      GradeLens is a browser extension that adds that answer to the portal page.
+    </p>
+    <p>
+      Pick a target final grade, say 1.5. GradeLens shows the grade each open exam needs to get there, the best and
+      worst final grade you can still reach, and how much of your grade is already locked in.
+    </p>
+    <p>Everything is worked out in your browser. There is no server and no account, and nothing is sent anywhere.</p>
+  </section>
+
+  <section id="question">
+    <h2><span class="num">02</span>The question</h2>
+    <p class="callout">Given the grades I have, what is the worst grade I can get in each open exam and still reach my target?</p>
+  </section>
+
+  <section id="obvious">
+    <h2><span class="num">03</span>Why the obvious approach fails</h2>
+    <p>
+      <strong>A spreadsheet</strong> means typing in every module, its credit points and the weight of each
+      exam, and keeping it up to date. Most students never do, or get one weight wrong.
+    </p>
+    <p>
+      <strong>Solving one linear equation</strong> for "the average grade I need" looks right but ignores how
+      the portal rounds. FOM truncates every module grade after the first decimal, and that changes the answer.
+      This is the one GradeLens got wrong first (see <a href="#broke">What broke</a>).
+    </p>
+    <p>
+      <strong>Scraping the page</strong> breaks whenever the portal's layout changes, and invites reading things
+      it should not touch.
+    </p>
+  </section>
+
+  <section id="how">
+    <h2><span class="num">04</span>How it works</h2>
+    <p>
+      The portal already loads your study book as JSON. GradeLens copies that response as the page receives it.
+      It never reads tokens or cookies and makes no requests of its own.
+    </p>
+    <p>
+      All portal data is treated as untrusted. It is checked in one place, and every value is escaped when it is
+      shown. From there, plain functions work out the average weighted by credit points, the final range and the
+      grade each open exam needs.
+    </p>
+    <figure class="shot">
+      <img src="/shots/gradelens-advanced.webp" width="1200" height="750" loading="lazy"
+        alt="GradeLens advanced view: current average 1,8, the plan lands at 1,5, still possible 1,2 to 3,2. A note says the module not yet set needs 2,3 or better for a target of 1,5. Below, a planner for Module C and the thesis and a grade trajectory chart." />
+      <figcaption class="caption">The Advanced view, on synthetic test data. Source: <a href={`${repo}/blob/main/docs/advanced.png`} rel="noopener">docs/advanced.png</a> in the GradeLens repository.</figcaption>
+    </figure>
+    <p>There are three views. Basic is a side panel, Inline adds a grade picker to each module card on the portal, and Advanced is a full planner.</p>
+  </section>
+
+  <section id="decisions">
+    <h2><span class="num">05</span>Decisions, and what they cost</h2>
+    <div class="decisions">
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Read the JSON the portal already loads</strong>
+          <p>No extra requests, no login handling, and it keeps working when the page layout changes.</p></div>
+        <div><span class="label">Instead of</span><strong>Scrape the rendered page</strong>
+          <p>Simpler to start, but fragile. Cost of the choice: it depends on an internal API that FOM can change at any time.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Try every official grade step</strong>
+          <p>Truncate each projected module grade as the portal does, and report the worst step that still reaches the target.</p></div>
+        <div><span class="label">Instead of</span><strong>One linear solve on raw grades</strong>
+          <p>One line of maths, but it ignores truncation and can ask for a better grade than needed.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Everything in the browser</strong>
+          <p>Grades never leave the device, so the only permissions are storage and the active tab.</p></div>
+        <div><span class="label">Instead of</span><strong>A small backend</strong>
+          <p>It would allow sync across devices, but would hold student grades on a server.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="results">
+    <h2><span class="num">06</span>What came out</h2>
+    <p>
+      Version 1.0.0 was released on 21 November 2026, in English and German, with dark mode. The 25 unit, stress
+      and language tests run in CI on every push. The browser tests load the built zip as a real extension against
+      a stand-in FOM page.
+    </p>
+    <p>
+      It has <strong>not</strong> been measured with real students. Nobody has yet checked whether its answers match
+      what students later get, or whether it changes how they plan.
+    </p>
+  </section>
+
+  <section id="broke">
+    <h2><span class="num">07</span>What broke, and what is unproven</h2>
+    <h3>The first estimate asked for a better grade than needed</h3>
+    <p>
+      Up to version 0.4, "what you need" came from one linear equation on raw grades. The portal truncates every
+      module grade, and truncation only ever helps the student, so the old answer could be stricter than needed.
+    </p>
+    <table>
+      <thead><tr><th>Target final grade</th><th>Old estimate</th><th>Exact (v1.0)</th></tr></thead>
+      <tbody>
+        <tr><td>2.3</td><td class="n">2.3 in every open exam</td><td class="n">2.7 is enough</td></tr>
+        <tr><td>2.5</td><td class="n">2.7 in every open exam</td><td class="n">3.0 is enough</td></tr>
+      </tbody>
+    </table>
+    <p class="caption">2 of the 20 reachable targets from 1.0 to 3.5, on the synthetic test study book. Source: <a href={`${sources}/gradelens-linear-vs-exact.json`}>gradelens-linear-vs-exact.json</a>. A test now checks that the exact step reaches the target, that the next worse step does not, and that it is never stricter than the old estimate.</p>
+    <h3>An injection hole in the first views</h3>
+    <p>
+      Hardening for version 0.4 found that portal values reached the page unescaped, so a crafted value could add
+      attributes to the panel. All portal data is now checked in one place and escaped when shown. Page messages are accepted only for the study
+      book URL, with a size cap.
+    </p>
+    <h3>Unproven</h3>
+    <ul>
+      <li>The final grade is taken as the credit-weighted mean, truncated. This is not yet confirmed against the examination rules (Prüfungsordnung).</li>
+      <li>The study book reaches the extension through <code>window.postMessage</code>, so another script on the same page could read it too. That script could already read the portal's own response.</li>
+      <li>No real students have used it yet.</li>
+    </ul>
+  </section>
+</CaseStudy>

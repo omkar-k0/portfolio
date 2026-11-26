@@ -1,0 +1,101 @@
+{
+  "source": "https://github.com/krakmo1/esg-bond-spreads/blob/4de2d29668064c862d70149be08cdc851ee644ae/scripts/regression.py",
+  "data": "data/panel_final.csv at commit 4de2d29668064c862d70149be08cdc851ee644ae",
+  "run": "2026-11-26",
+  "python": "3.13.9",
+  "packages": {
+    "pandas": "3.1.1",
+    "numpy": "2.5.5",
+    "statsmodels": "0.15.0",
+    "linearmodels": "7.1"
+  },
+  "outcome": "zspread (bond Z-spread, bps)",
+  "terms": {
+    "esg_score": "ESG level",
+    "delta_esg": "ESG momentum (year-on-year change in ESG score)",
+    "rating_num": "credit rating, numeric",
+    "regime_tight": "ECB tightening regime (dummy)",
+    "dxt": "ESG momentum x tightening regime"
+  },
+  "models": [
+    {
+      "model": "M1",
+      "note": "Pooled OLS, ESG only, SE clustered by firm",
+      "n": 56,
+      "r2": 0.0078,
+      "terms": {
+        "const": {
+          "coef": 61.1086,
+          "se": 51.1854,
+          "p": 0.2325
+        },
+        "delta_esg": {
+          "coef": -1.0482,
+          "se": 1.6644,
+          "p": 0.5288
+        },
+        "esg_score": {
+          "coef": -0.0616,
+          "se": 0.6047,
+          "p": 0.9189
+        }
+      }
+    },
+    {
+      "model": "M2",
+      "note": "Firm fixed effects, SE clustered by firm",
+      "n": 56,
+      "r2": 0.1857,
+      "terms": {
+        "delta_esg": {
+          "coef": -0.2717,
+          "se": 1.4786,
+          "p": 0.8551
+        },
+        "esg_score": {
+          "coef": -4.1212,
+          "se": 1.6982,
+          "p": 0.0194
+        }
+      }
+    },
+    {
+      "model": "M3",
+      "note": "Pooled OLS with rating and ECB regime interaction, SE clustered by firm",
+      "n": 56,
+      "r2": 0.5521,
+      "terms": {
+        "const": {
+          "coef": -232.9872,
+          "se": 69.5514,
+          "p": 0.0008
+        },
+        "delta_esg": {
+          "coef": 0.0319,
+          "se": 0.9027,
+          "p": 0.9718
+        },
+        "esg_score": {
+          "coef": 1.457,
+          "se": 0.501,
+          "p": 0.0036
+        },
+        "rating_num": {
+          "coef": 20.1614,
+          "se": 4.4921,
+          "p": 0.0
+        },
+        "regime_tight": {
+          "coef": 34.6449,
+          "se": 7.3906,
+          "p": 0.0
+        },
+        "dxt": {
+          "coef": -1.6956,
+          "se": 2.4594,
+          "p": 0.4905
+        }
+      }
+    }
+  ]
+}

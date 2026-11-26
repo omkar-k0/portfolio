@@ -1,0 +1,189 @@
+---
+import CaseStudy from '../../layouts/CaseStudy.astro';
+import type { Metric } from '../../data/projects';
+
+const repo = 'https://github.com/omkar-k0/sustainability-commitment-classifier';
+const blob = `${repo}/blob/main`;
+
+const metrics: Metric[] = [
+  { value: '120 of 1,562', label: 'climate commitments the rule marks as naming a figure and a target year (7.7%)', evidence: 'measured', source: 'cache/results.json at commit fae7dd2, rerun 26 Nov 2026' },
+  { value: '72', label: 'sentences that moved from "quantified" to "vague" when a bug was fixed (was 192, 12.3%)', evidence: 'measured', source: 'README, Correction 21 Nov 2026' },
+  { value: '—', label: 'accuracy: the 100-sentence hand-label sample is drawn but not labelled yet', evidence: 'pending', source: 'eval/label_sample.csv, label column empty' },
+];
+
+const facts = [
+  { label: 'Type', value: 'Rule-based text classifier + offline report' },
+  { label: 'When', value: 'September 2026, booth demo at STATION Berlin · corrected 21 Nov 2026' },
+  { label: 'Role', value: 'Built by me; every commit in the repository is mine' },
+  { label: 'Scale', value: '5 companies · 1,562 commitment sentences · English reports only' },
+  { label: 'Status', value: 'Done · accuracy not measured' },
+];
+
+const toc = [
+  { id: 'plain', label: 'In plain language' },
+  { id: 'question', label: 'The question' },
+  { id: 'obvious', label: 'Why the obvious fails' },
+  { id: 'how', label: 'How it works' },
+  { id: 'decisions', label: 'Decisions' },
+  { id: 'results', label: 'What came out' },
+  { id: 'broke', label: 'What broke' },
+];
+---
+<CaseStudy
+  title="Sustainability commitment classifier"
+  question="Which climate commitments in a sustainability report come with a number?"
+  description="Reads the sustainability reports of five large German companies and sorts every climate commitment into checkable (a figure and a target year) or vague. Plain rules, an offline report, and a correction that cut the headline from 12.3% to 7.7%."
+  crumb="Tool · 06"
+  links={[
+    { label: 'Source on GitHub', href: repo, primary: true },
+    { label: 'The report (HTML)', href: `${blob}/report.html` },
+    { label: 'Results file', href: `${blob}/cache/results.json` },
+  ]}
+  metrics={metrics}
+  facts={facts}
+  toc={toc}
+  tldr={{
+    why: 'Investors, analysts and regulators read thousands of climate promises. Knowing which ones can be checked later tells you where to look first.',
+    problem: 'Sustainability reports are long and full of commitments. Most say what a company "aims" to do without saying how much or by when.',
+    result: '120 of 1,562 commitments from five companies name a figure and a target year (7.7%). A first version said 12.3% because it counted the year as the figure; I found and fixed that. How often the rule is right has not been measured.',
+    role: 'I built it, found the bug and corrected the numbers.',
+  }}
+  reproduce={{
+    repo,
+    commands: `git clone ${repo} && cd sustainability-commitment-classifier
+pip install -r requirements-dev.txt
+python3 scripts/pipeline.py   # cached report text -> per-company counts, cache/results.json
+python3 scripts/render.py     # cache/results.json -> report.html
+pytest                        # 4 tests, including the headline totals (what CI runs)`,
+    files: [
+      { path: 'cache/results.json', what: 'Per-company counts and the example sentences shown in the report' },
+      { path: 'data/*.txt', what: 'Text extracted from each report, so no PDFs are needed' },
+      { path: 'tests/test_classify.py', what: 'Regression tests for the year bug and the headline totals' },
+      { path: 'eval/label_sample.csv', what: 'The 100 sentences waiting for hand labels' },
+    ],
+    note: 'The source PDFs are not in the repository. scripts/extract.py only needs them if a data/*.txt file is missing.',
+  }}
+  stack={['Python', 'Regular expressions', 'pdfplumber', 'pytest', 'GitHub Actions', 'Static HTML']}
+>
+  <section id="plain">
+    <h2><span class="num">01</span>In plain language</h2>
+    <p>
+      Big companies publish long sustainability reports full of climate promises. Some are concrete: "cut emissions
+      by 42% by 2030". Many are not: "we will reduce emissions significantly".
+    </p>
+    <p>
+      This tool reads the reports of five large German companies, finds every climate promise, and checks one
+      thing: does it name a figure and a target year? If it does, someone can check it later. If not, it is vague.
+    </p>
+    <p>It does not judge whether a promise is true or good. It only says whether it can be checked.</p>
+  </section>
+
+  <section id="question">
+    <h2><span class="num">02</span>The question</h2>
+    <p class="callout">What share of a company's climate commitments could anyone check later?</p>
+  </section>
+
+  <section id="obvious">
+    <h2><span class="num">03</span>Why the obvious approach fails</h2>
+    <p>
+      <strong>Reading the reports by hand</strong> does not scale. The five reports hold 1,562 commitment
+      sentences, and the same check would have to be redone every year.
+    </p>
+    <p>
+      <strong>"Does the sentence contain a number?"</strong> sounds like enough, but every target sentence contains
+      one: the year. "We will reduce emissions significantly by 2030" has a number and promises nothing measurable.
+      This tool fell into exactly that trap at first (see <a href="#broke">What broke</a>).
+    </p>
+    <p>
+      <strong>Asking a language model to rate each promise</strong> gives fluent answers that change between runs
+      and cannot be explained to the person reading the report.
+    </p>
+  </section>
+
+  <section id="how">
+    <h2><span class="num">04</span>How it works</h2>
+    <ol>
+      <li><strong>Split</strong> each report into sentences, keeping those between 40 and 400 characters.</li>
+      <li><strong>Keep commitments:</strong> sentences with a forward-looking word (will, aim, target, by 20xx…) and an environmental topic (emissions, energy, water, waste…).</li>
+      <li><strong>Classify:</strong> quantified if the sentence has a figure (a percentage, a unit such as tCO2e or MWh, or a plain number) and a target year from 2025 to 2050. Years and scope labels are removed before looking for the figure.</li>
+      <li><strong>Count</strong> per company, and write a single offline HTML report with real example sentences.</li>
+    </ol>
+    <figure class="shot">
+      <a href={`${blob}/report.html`} rel="noopener">
+        <img src="/shots/sustainability-report.webp" width="1040" height="940" loading="lazy"
+          alt="The offline report: Bosch 12.6% quantified (16 of 127 commitments) and Siemens 11.4% (34 of 298), each with a bar and three example sentences from the company's report labelled Quantified or Vague." />
+      </a>
+      <figcaption class="caption">The top of the offline report. Source: <a href={`${blob}/report.html`} rel="noopener">report.html</a> in the repository, rendered in Chrome. Its subtitle still says "Five DAX-listed companies"; Bosch is not in the DAX (see What broke).</figcaption>
+    </figure>
+  </section>
+
+  <section id="decisions">
+    <h2><span class="num">05</span>Decisions, and what they cost</h2>
+    <div class="decisions">
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Plain rules</strong>
+          <p>Anyone can read why a sentence was marked quantified, and the same input always gives the same answer.</p></div>
+        <div><span class="label">Instead of</span><strong>A trained model or an LLM</strong>
+          <p>It might catch more context, but needs labelled data the project did not have. Cost: the rule has no idea what the number means.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Measure "checkable", not "true"</strong>
+          <p>A figure and a year are things a sentence either has or lacks.</p></div>
+        <div><span class="label">Instead of</span><strong>A greenwashing score</strong>
+          <p>That needs facts about the company the reports do not contain. Claiming it would overstate what the tool knows.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>One offline HTML file</strong>
+          <p>It ran on a booth screen with no network: no CDN, no scripts fetched, no server.</p></div>
+        <div><span class="label">Instead of</span><strong>A web app</strong>
+          <p>Nicer to click through, but one more thing to fail at the booth.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="results">
+    <h2><span class="num">06</span>What came out</h2>
+    <table>
+      <thead><tr><th>Company</th><th>Commitments</th><th>Quantified</th><th>Share</th></tr></thead>
+      <tbody>
+        <tr><td>Bosch</td><td class="n">127</td><td class="n">16</td><td class="n">12.6%</td></tr>
+        <tr><td>Siemens</td><td class="n">298</td><td class="n">34</td><td class="n">11.4%</td></tr>
+        <tr><td>SAP</td><td class="n">166</td><td class="n">18</td><td class="n">10.8%</td></tr>
+        <tr><td>BASF</td><td class="n">487</td><td class="n">30</td><td class="n">6.2%</td></tr>
+        <tr><td>Henkel</td><td class="n">484</td><td class="n">22</td><td class="n">4.5%</td></tr>
+        <tr><td><strong>All five</strong></td><td class="n"><strong>1,562</strong></td><td class="n"><strong>120</strong></td><td class="n"><strong>7.7%</strong></td></tr>
+      </tbody>
+    </table>
+    <p class="caption">Source: <a href={`${blob}/cache/results.json`} rel="noopener">cache/results.json</a>. Rerun on 26 Nov 2026 at commit fae7dd2 with <code>python3 scripts/pipeline.py</code>: same counts, and <code>pytest</code> passes 4 of 4.</p>
+    <p>
+      So roughly 92 in 100 climate commitments in these reports cannot be checked later. Five companies is a demo
+      sample, not a study, and these are counts of what the rule marks, not a measured accuracy.
+    </p>
+  </section>
+
+  <section id="broke">
+    <h2><span class="num">07</span>What broke, and what is unproven</h2>
+    <h3>The year counted as the figure</h3>
+    <p>
+      Until 21 November 2026 the "has a number" check also matched the target year itself. "We will reduce emissions
+      significantly by 2030" counted as quantified. In practice, quantified meant only "names a year".
+    </p>
+    <p>
+      Years and scope labels ("Scope 1 and 2") are now removed before the number check. The headline fell from
+      <strong>192 of 1,562 (12.3%) to 120 (7.7%)</strong>. All 72 sentences that moved were of the "by 2030, no
+      figure" kind. Regression tests now pin both cases and the totals.
+    </p>
+    <h3>Bosch is not a DAX company</h3>
+    <p>
+      The first write-up called all five companies DAX members. Bosch is privately held. The README was fixed on 17 November 2026;
+      the report's own subtitle still has the old wording.
+    </p>
+    <h3>Unproven</h3>
+    <ul>
+      <li><strong>Accuracy.</strong> 100 sentences are drawn for hand labelling, stratified by company and prediction, but not labelled. Until they are, there is no accuracy number.</li>
+      <li><strong>Known misses.</strong> The report's own examples show the rule's limits. A Siemens sentence about a 2025 target already beaten is marked quantified, though it promises nothing new.</li>
+      <li>PDF extraction interleaves columns and sidebars, so some sentences read jumbled.</li>
+      <li>English reports only.</li>
+    </ul>
+  </section>
+</CaseStudy>

@@ -1,7 +1,7 @@
 ---
 import Base from './Base.astro';
 import EvidenceTag from '../components/EvidenceTag.astro';
-import type { Metric } from '../data/projects';
+import { caseStudyChain, type Metric } from '../data/projects';
 import { CV, mailto } from '../config';
 
 interface Props {
@@ -14,14 +14,15 @@ interface Props {
   facts: { label: string; value: string }[];
   toc: { id: string; label: string }[];
   stack: string[];
-  prev?: { href: string; label: string };
-  next?: { href: string; label: string };
   // Three lines that answer what, how well, and my role before any prose.
   tldr: { why?: string; problem: string; result: string; role: string };
   // Exact commands to rerun the numbers on this page. Rendered as the last section.
-  reproduce?: { repo: string; commands: string; files: { path: string; what: string }[]; note?: string };
+  // public: false when the numbers cannot be rerun from public files yet (the page says so instead).
+  reproduce?: { repo: string; commands: string; files: { path: string; what: string }[]; note?: string; public?: boolean };
 }
-const { title, question, description, crumb, links, metrics, facts, toc, stack, prev, next, tldr, reproduce } = Astro.props;
+const { title, question, description, crumb, links, metrics, facts, toc, stack, tldr, reproduce } = Astro.props;
+// Previous / Next follow the work index, over the projects that have a Case study.
+const { prev, next } = caseStudyChain(Astro.url.pathname);
 const fullToc = reproduce ? [...toc, { id: 'reproduce', label: 'Reproduce it' }] : toc;
 // The crumb starts with the Project kind ("Open source · 02"); it sets the page's colour.
 const kind = crumb.split(' · ')[0];
@@ -80,7 +81,9 @@ const kind = crumb.split(' · ')[0];
         {reproduce && (
           <section id="reproduce">
             <h2><span class="num">{String(fullToc.length).padStart(2, '0')}</span>Reproduce it</h2>
-            <p>Every number on this page comes from these commands, run in <a href={reproduce.repo} rel="noopener">the repository</a>.</p>
+            {reproduce.public === false
+              ? <p><strong>The numbers on this page cannot be rerun from public files yet.</strong> Below is what is missing and what exists.</p>
+              : <p>Every number on this page comes from these commands, run in <a href={reproduce.repo} rel="noopener">the repository</a>.</p>}
             <pre class="repro"><code>{reproduce.commands}</code></pre>
             <table>
               <thead><tr><th>File</th><th>What it holds</th></tr></thead>

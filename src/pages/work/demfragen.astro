@@ -1,0 +1,192 @@
+---
+import CaseStudy from '../../layouts/CaseStudy.astro';
+import type { Metric } from '../../data/projects';
+
+const repo = 'https://github.com/omkar-k0/cuddly-octo-palm-tree';
+const blob = `${repo}/blob/main`;
+const demo = 'https://cuddly-octo-palm-tree-ashen.vercel.app';
+
+const metrics: Metric[] = [
+  { value: '—', label: 'accuracy on real legal questions: no live run, and no lawyer has checked the labels yet', evidence: 'pending', source: 'README, Eval; QUESTIONS.md #1–#2' },
+  { value: '21 of 30', label: 'right in a mock run, where keyword rules and templates stand in for the AI models', evidence: 'synthetic', source: 'npm run eval -- --mode mock at commit 0953e17, rerun 26 Nov 2026' },
+  { value: '110', label: 'sections of Indian law in the library, across 4 areas, each cited by its source file', evidence: 'measured', source: 'sources/ at commit 0953e17' },
+  { value: '203', label: 'automated tests, all passing', evidence: 'measured', source: 'npx vitest run at commit 0953e17, 26 Nov 2026' },
+];
+
+const facts = [
+  { label: 'Type', value: 'Web app: legal first information for India' },
+  { label: 'When', value: 'November 2026' },
+  { label: 'Role', value: 'Product owner: scope, decisions and review. An AI model (Claude) wrote most of the code, as the commit history shows' },
+  { label: 'Scale', value: '4 areas of law · 110 sections from India Code · 30 test questions' },
+  { label: 'Status', value: 'Live demo · not tested on real cases · no lawyer review yet' },
+];
+
+const toc = [
+  { id: 'plain', label: 'In plain language' },
+  { id: 'question', label: 'The question' },
+  { id: 'obvious', label: 'Why the obvious fails' },
+  { id: 'how', label: 'How it works' },
+  { id: 'decisions', label: 'Decisions' },
+  { id: 'results', label: 'What came out' },
+  { id: 'broke', label: 'What broke' },
+];
+---
+<CaseStudy
+  title="Dem Fragen"
+  question="What does Indian law say about my problem, and when do I need a lawyer?"
+  description="A web app that answers a legal question in plain words, cites the exact section of Indian law it relies on, and says when to see an advocate. Evaluated so far only on a labelled mock run."
+  crumb="Product · 09"
+  links={[
+    { label: 'Open the live demo', href: demo, primary: true },
+    { label: 'Source on GitHub', href: repo },
+    { label: 'Eval method', href: `${blob}/eval/README.md` },
+  ]}
+  metrics={metrics}
+  facts={facts}
+  toc={toc}
+  tldr={{
+    why: 'Most people in India cannot easily ask a lawyer a first question. A cited first answer, with a clear "see an advocate now" signal, is useful and safe only if every claim points to real law.',
+    problem: 'Someone with a problem at work, with a landlord or with a company does not know what the law says, which law applies to their date and state, or when they need a lawyer.',
+    result: 'A live app that cites only sections it actually retrieved and escalates criminal, urgent or unsure cases. It has not been tested on real cases: the only evaluation is a mock run on 30 questions, and the same AI model wrote the system and the test.',
+    role: 'Product owner. I set the scope and made the decisions; an AI model wrote most of the code.',
+  }}
+  reproduce={{
+    repo,
+    commands: `git clone ${repo} && cd cuddly-octo-palm-tree
+npm ci
+npx vitest run                   # 203 tests
+npm run eval -- --mode mock      # the labelled mock baseline (no API key needed)
+npm run dev                      # http://localhost:3000, mock mode without ANTHROPIC_API_KEY`,
+    files: [
+      { path: 'eval/questions.jsonl', what: 'The 30 labelled questions, written by Claude, not yet reviewed by a lawyer' },
+      { path: 'eval/run-eval.ts', what: 'Routing, citation, escalation and per-confidence-band accuracy' },
+      { path: 'PLAN.md', what: 'The answer pipeline, the gate and the data rules' },
+      { path: 'QUESTIONS.md', what: 'Every decision made so far, and what is still open' },
+    ],
+    note: 'A live run needs ANTHROPIC_API_KEY. Results are written to eval/results/, which is not committed.',
+  }}
+  stack={['Next.js', 'TypeScript', 'Claude (Haiku, Opus)', 'BM25 retrieval', 'Postgres / PGlite', 'Vitest', 'Vercel']}
+>
+  <section id="plain">
+    <h2><span class="num">01</span>In plain language</h2>
+    <p>
+      You describe a problem in your own words: "HR says I get no gratuity after 5 years 8 months". Dem Fragen
+      works out which area of law it is, finds the sections that apply to when and where it happened, and explains
+      where you stand.
+    </p>
+    <p>
+      Every point in the answer links to the exact section it comes from. If the case is criminal, a deadline is
+      close, or the app is unsure, it says plainly: see an advocate.
+    </p>
+    <p>It is legal information, not legal advice, and every answer says so.</p>
+  </section>
+
+  <section id="question">
+    <h2><span class="num">02</span>The question</h2>
+    <p class="callout">Can a first answer about Indian law be useful without ever citing law it did not actually read?</p>
+  </section>
+
+  <section id="obvious">
+    <h2><span class="num">03</span>Why the obvious approach fails</h2>
+    <p>
+      <strong>Asking a chatbot</strong> gives a fluent answer that may cite an Act or section that does not exist,
+      or one that was repealed. The reader cannot tell which.
+    </p>
+    <p>
+      <strong>Searching the law yourself</strong> fails on wording. People write "laid off with no notice"; the
+      statute says "retrenchment".
+    </p>
+    <p>
+      <strong>One answer for everyone</strong> ignores time and place. India replaced its old labour Acts with new
+      Codes on 21 November 2025, and rent law differs by state. The same question can have two right answers.
+    </p>
+  </section>
+
+  <section id="how">
+    <h2><span class="num">04</span>How it works</h2>
+    <ol>
+      <li><strong>Scrub</strong> names, phone numbers and ID numbers before any model sees the question.</li>
+      <li><strong>Classify</strong> (a small, fast model): area of law, criminal or not, deadline, date and state, plus legal search terms.</li>
+      <li><strong>Retrieve</strong> the best-matching sections, keeping only law in force for that date and place.</li>
+      <li><strong>Answer</strong> (a larger model, JSON only), citing retrieved passages by id. The model never names an Act; the server fills the Act and section from the source file.</li>
+      <li><strong>Gate</strong> on the server: drop any citation that was not retrieved; with no valid citation, mark the answer unverifiable; escalate below 0.6 confidence, for criminal cases, or with a deadline under 7 days.</li>
+    </ol>
+    <figure class="shot">
+      <img src="/shots/demfragen-answer.webp" width="1280" height="740" loading="lazy"
+        alt="A Dem Fragen answer in mock mode for a gratuity question from Pune, August 2025: law applied for events in August 2025 in Maharashtra, a summary citing Section 4 of the Payment of Gratuity Act and Section 2(s) of the Industrial Disputes Act, three next steps, and a sources panel marking both sections pending verification." />
+      <figcaption class="caption">An answer in mock mode, labelled "Mock answer": keyword rules and a template stand in for the models, while retrieval, the date and state rules and the gate are real. Captured from a local build of the repository at commit 0953e17. Both sources show "Pending verification" because no lawyer has reviewed them yet.</figcaption>
+    </figure>
+  </section>
+
+  <section id="decisions">
+    <h2><span class="num">05</span>Decisions, and what they cost</h2>
+    <div class="decisions">
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>The model cites ids, the server names the law</strong>
+          <p>A citation can only point to a section the system actually retrieved.</p></div>
+        <div><span class="label">Instead of</span><strong>Let the model write citations</strong>
+          <p>Shorter code, but an invented section looks exactly like a real one.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Choose the law by date and place</strong>
+          <p>Each source carries when it was in force and where. Gratuity for March 2025 retrieves the old Act; for January 2026, the new Code.</p></div>
+        <div><span class="label">Instead of</span><strong>Only the current law</strong>
+          <p>Simpler, but wrong for anyone whose problem started before 21 November 2025.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Ship with sources marked "pending verification"</strong>
+          <p>Lawyers verify each source later from a dashboard; a rejected source is never retrieved again.</p></div>
+        <div><span class="label">Instead of</span><strong>Wait for a lawyer before going live</strong>
+          <p>Safer on paper, but nothing to show a lawyer. Cost: every answer carries an unverified label.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>A labelled mock mode</strong>
+          <p>The whole pipeline runs and is tested without an API key, and the UI says "Mock".</p></div>
+        <div><span class="label">Instead of</span><strong>Block on the API key</strong>
+          <p>Nothing could be built or tested until it arrived.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="results">
+    <h2><span class="num">06</span>What came out</h2>
+    <p>
+      A live app covering four areas (corporate, employment, real estate, technology and IP) with 110 sections from
+      India Code, a lawyer verification dashboard and 203 automated tests.
+    </p>
+    <h3>The only evaluation so far: a mock run</h3>
+    <table>
+      <thead><tr><th>Mock run, 30 questions</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>Routed to the right area</td><td class="n">29 of 30</td></tr>
+        <tr><td>Answers with at least one valid citation</td><td class="n">26 of 26</td></tr>
+        <tr><td>Expected source retrieved</td><td class="n">18 of 20</td></tr>
+        <tr><td>Expected source cited</td><td class="n">14 of 20</td></tr>
+        <tr><td>Escalation matches the label</td><td class="n">27 of 30</td></tr>
+        <tr><td>All of the above right</td><td class="n">21 of 30</td></tr>
+      </tbody>
+    </table>
+    <p class="caption">Source: <code>npm run eval -- --mode mock</code> at commit 0953e17, rerun 26 Nov 2026; same as the README table of 15 Nov. In mock mode, keyword rules and templates replace both models, so this tests retrieval, the rules and the gate, not answer quality.</p>
+  </section>
+
+  <section id="broke">
+    <h2><span class="num">07</span>What broke, and what is unproven</h2>
+    <h3>Confidence is not calibrated</h3>
+    <p>
+      In the mock run, answers in the 0.6–0.8 confidence band were right on 1 of 5, while the high band (0.8–1.0) was right on 16 of 21. A
+      well-calibrated system gets more accurate as confidence rises; this one does not yet. The live models may differ.
+    </p>
+    <h3>The old labour Acts are paraphrases</h3>
+    <p>
+      India Code no longer hosts the repealed Acts (Payment of Gratuity, Industrial Disputes and others). The files
+      for them are written by hand, not official text, until an official source is found.
+    </p>
+    <h3>Unproven</h3>
+    <ul>
+      <li><strong>Untested on real cases.</strong> No live run yet: it needs an API key.</li>
+      <li><strong>A model wrote both the system and its test.</strong> The 30 questions and their labels came from the same AI model as the code, which flatters the scores. A lawyer has not reviewed them.</li>
+      <li>The explanation text itself is not graded, only area, escalation and citations.</li>
+      <li>Name redaction is heuristic: a bare name with no cue can get through.</li>
+    </ul>
+  </section>
+</CaseStudy>

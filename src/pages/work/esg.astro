@@ -1,0 +1,186 @@
+---
+import CaseStudy from '../../layouts/CaseStudy.astro';
+import type { Metric } from '../../data/projects';
+
+const repo = 'https://github.com/krakmo1/esg-bond-spreads';
+const src = '/sources/esg-regression.json';
+
+const metrics: Metric[] = [
+  { value: '0 of 3', label: 'models where a change in green rating (ESG momentum) moved borrowing costs', evidence: 'measured', source: 'public/sources/esg-regression.json: p = 0.53, 0.86, 0.97' },
+  { value: '−4.1 / +1.5', label: 'bps per ESG point: the level effect flips sign between models (firm fixed effects vs rating and ECB controls)', evidence: 'measured', source: 'public/sources/esg-regression.json: M2 p = 0.019, M3 p = 0.004' },
+  { value: '+20', label: 'bps per notch of credit rating, and +35 bps after the ECB began tightening in 2022', evidence: 'measured', source: 'public/sources/esg-regression.json: M3, both p < 0.001' },
+  { value: '56', label: 'firm-years from 10 large German companies, 2019 to 2024', evidence: 'measured', source: 'data/panel_final.csv, rows with all variables' },
+];
+
+const facts = [
+  { label: 'Type', value: 'Panel regression study, FOM course Quantitative Data Analysis' },
+  { label: 'When', value: 'June 2026' },
+  { label: 'Team', value: 'Four people, work split equally' },
+  { label: 'My part', value: 'Data analysis and data cleaning: the rating parser, the panel merge and the regression scripts in the repository' },
+  { label: 'Data', value: 'Refinitiv / LSEG ESG scores, 5-year issuer-curve Z-spreads and issuer ratings; ECB key rates' },
+];
+
+const toc = [
+  { id: 'plain', label: 'In plain language' },
+  { id: 'question', label: 'The question' },
+  { id: 'obvious', label: 'Why the obvious fails' },
+  { id: 'how', label: 'How it works' },
+  { id: 'decisions', label: 'Decisions' },
+  { id: 'results', label: 'What came out' },
+  { id: 'broke', label: 'What broke' },
+];
+---
+<CaseStudy
+  title="ESG and bond spreads"
+  question="Does a better green rating make company borrowing cheaper?"
+  description="A panel study of 10 large German companies, 2019 to 2024: do ESG ratings, or changes in them, move the credit spreads on their bonds? Rating changes did not. The rating level did, but its sign depends on the model."
+  crumb="Research · 08"
+  links={[
+    { label: 'Source on GitHub', href: repo, primary: true },
+    { label: 'Results file', href: src },
+    { label: 'Regression script', href: `${repo}/blob/main/scripts/regression.py` },
+  ]}
+  metrics={metrics}
+  facts={facts}
+  toc={toc}
+  tldr={{
+    why: 'Banks, asset managers and treasurers price green ratings into lending. Whether the bond market actually rewards them decides whether that is risk management or marketing.',
+    problem: 'Does a company whose ESG rating improves get to borrow more cheaply? Most studies pool many countries and look only at rating levels, not changes.',
+    result: 'A change in ESG rating moved spreads in none of three models. The ESG level was significant, but negative within each firm and positive across firms once credit rating is held equal, so its direction is not settled. Credit rating and the ECB regime explain most of the spread.',
+    role: 'Team of four, work split equally. My part was the data analysis and data cleaning.',
+  }}
+  reproduce={{
+    repo,
+    commands: `git clone ${repo} && cd esg-bond-spreads
+pip install pandas numpy statsmodels linearmodels
+python scripts/regression.py        # the three models on data/panel_final.csv
+
+# The results file on this page, from the portfolio repository:
+python scripts/esg-results.py path/to/esg-bond-spreads`,
+    files: [
+      { path: 'data/panel_final.csv', what: 'The merged firm-year panel: ESG score and change, Z-spread, rating, ECB regime' },
+      { path: 'scripts/build_panel.py', what: 'Merges the ESG, spread and rating files into the panel' },
+      { path: 'scripts/regression.py', what: 'M1 pooled, M2 firm fixed effects, M3 pooled with rating and regime controls' },
+    ],
+    note: 'The team slides and the term paper are not public. The numbers on this page come from a fresh run of the repository script (26 Nov 2026), saved as public/sources/esg-regression.json.',
+  }}
+  stack={['Python', 'pandas', 'statsmodels', 'linearmodels (PanelOLS)', 'Refinitiv / LSEG data']}
+>
+  <section id="plain">
+    <h2><span class="num">01</span>In plain language</h2>
+    <p>
+      Companies get green ratings (ESG scores), and investors say they care about them. If that is true, a company
+      whose rating improves should be able to borrow money more cheaply: the extra interest it pays over a safe bond,
+      its credit spread, should fall.
+    </p>
+    <p>
+      We tested this on the bonds of 10 large German companies over six years. A change in the rating made no
+      measurable difference. The rating level did, but whether a better rating meant cheaper or dearer borrowing
+      depended on how we set up the comparison. Credit rating and the European Central Bank's interest rates mattered far more.
+    </p>
+  </section>
+
+  <section id="question">
+    <h2><span class="num">02</span>The question</h2>
+    <p class="callout">Do changes in ESG ratings affect the credit spreads of German corporate bonds, and does that depend on the ECB's interest-rate regime?</p>
+  </section>
+
+  <section id="obvious">
+    <h2><span class="num">03</span>Why the obvious approach fails</h2>
+    <p>
+      <strong>Plotting ESG score against spread</strong> (the chart below) mixes very different companies. A
+      carmaker and a software firm differ in a hundred ways besides their rating, so the line says little.
+    </p>
+    <p>
+      <strong>Ignoring credit ratings and interest rates</strong> blames ESG for what the rating agencies and the
+      ECB did. Spreads rose for everyone when the ECB began raising rates in 2022.
+    </p>
+    <p>
+      <strong>Pricing every bond separately</strong> drowns the sample: each firm had hundreds of bonds outstanding.
+      One issuer-curve spread per firm and year gives one comparable number.
+    </p>
+  </section>
+
+  <section id="how">
+    <h2><span class="num">04</span>How it works</h2>
+    <ol>
+      <li><strong>Collect</strong> ESG scores, 5-year issuer-curve Z-spreads and issuer ratings per firm and year from Refinitiv / LSEG, and the ECB key rates.</li>
+      <li><strong>Clean and merge</strong> into one panel: parse the rating histories to a numeric notch, compute the year-on-year ESG change, and mark the years from 2022 as the tightening regime. 56 firm-years have every variable.</li>
+      <li><strong>Model</strong> in three steps: ESG only (pooled), then firm fixed effects (each firm compared with itself), then pooled with credit rating, the regime and an ESG change × regime term. Standard errors are clustered by firm.</li>
+    </ol>
+    <figure class="shot">
+      <img src="/shots/esg-scatter.webp" width="1050" height="630" loading="lazy"
+        alt="Scatter plot of 5-year Z-spread in basis points against ESG score from 60 to 93 for 56 firm-years. Points are widely spread between 0 and 175 bps, with a nearly flat fitted line falling from about 60 to 55 bps." />
+      <figcaption class="caption">ESG level against credit spread, all 56 firm-years, with a simple fitted line: almost flat. Source: chart_esg_scatter.png, made for the team presentation (not public), from data/panel_final.csv.</figcaption>
+    </figure>
+  </section>
+
+  <section id="decisions">
+    <h2><span class="num">05</span>Decisions, and what they cost</h2>
+    <div class="decisions">
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Test ESG change, not only level</strong>
+          <p>The question is whether improving a rating pays off, which is a change over time.</p></div>
+        <div><span class="label">Instead of</span><strong>ESG level alone, as most studies do</strong>
+          <p>Easier to compare with the literature, but it cannot answer the question asked.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>One issuer-curve spread per firm-year</strong>
+          <p>A clean, comparable measure for each firm, from the issuer's senior EUR curve.</p></div>
+        <div><span class="label">Instead of</span><strong>Every bond separately</strong>
+          <p>More rows, but each firm had 300 to 500 bonds, so a few firms would dominate. Cost: maturity and coupon detail is lost.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Model the ECB regime explicitly</strong>
+          <p>A dummy for 2022 onwards and its interaction with ESG change.</p></div>
+        <div><span class="label">Instead of</span><strong>Year dummies</strong>
+          <p>More flexible, but with six years and 56 rows it would use up most of the data.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="results">
+    <h2><span class="num">06</span>What came out</h2>
+    <table>
+      <thead><tr><th>Model (n = 56)</th><th>ESG change</th><th>ESG level</th><th>R²</th></tr></thead>
+      <tbody>
+        <tr><td>M1 pooled, ESG only</td><td class="n">−1.05 (p 0.53)</td><td class="n">−0.06 (p 0.92)</td><td class="n">0.01</td></tr>
+        <tr><td>M2 firm fixed effects</td><td class="n">−0.27 (p 0.86)</td><td class="n"><strong>−4.12 (p 0.019)</strong></td><td class="n">0.19 within</td></tr>
+        <tr><td>M3 pooled + rating + ECB regime</td><td class="n">+0.03 (p 0.97)</td><td class="n"><strong>+1.46 (p 0.004)</strong></td><td class="n">0.55</td></tr>
+      </tbody>
+    </table>
+    <p class="caption">Basis points of spread per ESG point. In M3, each notch of credit rating adds 20.2 bps and the tightening regime adds 34.6 bps (both p &lt; 0.001); the ESG change × regime term is −1.70 (p 0.49). Source: <a href={src}>esg-regression.json</a>, a fresh run of the repository's script at commit 4de2d29.</p>
+    <p>
+      A change in ESG rating did not move spreads in any model. The ESG level is significant twice, with opposite
+      signs: within a firm, a better score goes with a lower spread; across firms, with rating held equal, with a higher one.
+      On 56 rows, the honest reading is that the direction of the level effect is not settled.
+    </p>
+  </section>
+
+  <section id="broke">
+    <h2><span class="num">07</span>What broke, and what is unproven</h2>
+    <h3>The slides mixed up two models</h3>
+    <p>
+      The team's results slide reports the +1.46 from M3 under the heading "firm fixed effects", but M3 has no fixed
+      effects: it is pooled. The conclusion then reads that number as "firms that improve their ESG score see their
+      spreads drop", which is the M2 result, −4.12. The slides do not contradict the data. They attach each number to the
+      wrong model.
+    </p>
+    <p>
+      Rerunning the repository's own script on 26 November 2026 made this visible. That run, not the slides, is now the
+      source for every number here.
+    </p>
+    <h3>The model on the method slide was never run</h3>
+    <p>
+      The method slide shows firm fixed effects with credit rating and the regime together. The script runs fixed
+      effects with ESG only, and the controls only in a pooled model. With 10 firms and 56 rows, the full model may not
+      be estimable with useful precision, but it is the one the question calls for.
+    </p>
+    <h3>Unproven</h3>
+    <ul>
+      <li>10 large investment-grade firms over 6 years is a small, similar sample. A null result here may not hold for smaller or riskier issuers.</li>
+      <li>ESG scores are annual and from one provider; ratings from different providers often disagree.</li>
+      <li>The issuer-curve spread stands in for the firm's whole bond universe.</li>
+    </ul>
+  </section>
+</CaseStudy>
