@@ -255,7 +255,7 @@ export const extras: ExtraCard[] = [
       { label: 'Number and year?', detail: 'Does the promise say how much and by when', escalation: true },
       { label: 'Count', detail: 'Checkable or vague, per company' },
     ],
-    slots: { how: { href: 'https://github.com/omkar-k0/sustainability-commitment-classifier#readme', note: 'README' }, try: { note: 'no live demo yet' }, code: { href: 'https://github.com/omkar-k0/sustainability-commitment-classifier' } },
+    slots: { how: { href: '/work/sustainability/' }, try: { note: 'no live demo yet' }, code: { href: 'https://github.com/omkar-k0/sustainability-commitment-classifier' } },
   },
   {
     slug: 'dax', name: 'DAX 40 capital structure', kind: 'Research', batch: 2,
@@ -321,7 +321,7 @@ export const extras: ExtraCard[] = [
 
 export const ledger = [
   { slug: 'fuelcycle', name: 'fuelcycle', kind: 'Open source', note: 'Checks every French fuel price change in a year and says why it kept or rejected it', href: '/work/fuelcycle/' },
-  { slug: 'sustainability', name: 'Sustainability commitment classifier', kind: 'Tool', note: 'Only 7.7% of 1,562 climate promises come with a number and a target year', href: 'https://github.com/omkar-k0/sustainability-commitment-classifier' },
+  { slug: 'sustainability', name: 'Sustainability commitment classifier', kind: 'Tool', note: 'Only 7.7% of 1,562 climate promises come with a number and a target year', href: '/work/sustainability/' },
   { slug: 'dax', name: 'DAX 40 capital structure', kind: 'Research', note: 'More profitable big German firms borrow less · grade 1.3', href: '' },
   { slug: 'esg', name: 'ESG and bond spreads', kind: 'Research', note: 'Green rating changes did not move borrowing costs; the rating level did, but its direction depends on the model', href: '' },
   { slug: 'gradelens', name: 'GradeLens', kind: 'Tool', note: 'Shows FOM students what each exam needs for a target grade', href: '/work/gradelens/' },
@@ -377,7 +377,7 @@ export const work: WorkItem[] = [
     name: 'Sustainability commitment classifier', kind: 'Tool',
     answers: 'Which climate commitments in a sustainability report come with a number?',
     metric: { value: '7.7%', label: 'of 1,562 climate promises come with a number and a target year', evidence: 'measured', source: 'repo README, corrected 21 Nov 2026 (was 12.3%: the year itself counted as a figure)' },
-    status: 'Done · rule-based', href: 'https://github.com/omkar-k0/sustainability-commitment-classifier', external: true,
+    status: 'Done · rule-based · case study', href: caseStudy('sustainability'), external: false,
   },
   {
     name: 'DAX 40 capital structure', kind: 'Research',
