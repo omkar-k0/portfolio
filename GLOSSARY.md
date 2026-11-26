@@ -18,6 +18,18 @@ _Avoid_: tech recruiter, developer
 One of the three projects shown first, each with a case study and a measured headline result.
 _Avoid_: featured project, main project
 
+**Case study**:
+The page on this site that explains one project: the problem, the result with its sources, the decisions, what broke, and how to reproduce it. Every project has one.
+_Avoid_: project page, write-up, README (the README lives on GitHub)
+
+**Source**:
+The file or paper a number comes from. A source that cannot be opened by visitors is named and marked "not public", never left out.
+_Avoid_: reference, citation (when the file is meant)
+
+**Evidence level**:
+How a number was obtained: measured, backtested, synthetic, or pending (not yet measured, or its source is not checkable yet).
+_Avoid_: confidence, status
+
 **Project kind**:
 What sort of thing a project is: Product, Open source, Research or Tool. Each kind has its own colour.
 _Avoid_: type, category, tone
