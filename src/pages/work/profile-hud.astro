@@ -14,7 +14,7 @@ const metrics: Metric[] = [
 const facts = [
   { label: 'Type', value: 'GitHub Action + Python command-line tool' },
   { label: 'When', value: 'November 2026 · v1.0.0 on 18 Nov 2026' },
-  { label: 'Role', value: '[CONFIRM] Built by me (the repository has a single commit, under my name)' },
+  { label: 'Role', value: 'Solo project: design, code, tests and release' },
   { label: 'Licence', value: 'MIT · fonts under the SIL Open Font License' },
   { label: 'Status', value: 'Released as v1 · no usage measured' },
 ];
@@ -46,7 +46,7 @@ const toc = [
     why: 'A GitHub profile is often the first thing a technical reviewer opens. Cards that show real results, with their source, say more than a row of badges.',
     problem: 'Profile READMEs are usually badges and stats from third-party services that can rate-limit, go down, or change what your profile shows.',
     result: 'A released GitHub Action and command-line tool: 11 card types from one YAML file, written as plain SVG into your own repository, with 168 passing tests.',
-    role: '[CONFIRM] I built it.',
+    role: 'Solo project. I designed, built, tested and released it.',
   }}
   reproduce={{
     repo,
@@ -149,7 +149,11 @@ python -m profile_hud --config examples/minimal.yml --out /tmp/cards --check   #
 
   <section id="broke">
     <h2><span class="num">07</span>What broke, and what is unproven</h2>
-    <p>[CONFIRM] What broke while building it. The repository has a single commit, so there is no history to take this from.</p>
+    <p>
+      There is no record of what broke. The work was released as a single commit, so the history shows no failures,
+      and I do not remember a specific one well enough to write it up. Rather than invent a story, this section lists only
+      what is unproven.
+    </p>
     <h3>Unproven</h3>
     <ul>
       <li>No usage or reviewer response has been measured.</li>
