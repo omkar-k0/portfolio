@@ -326,7 +326,7 @@ export const ledger = [
   { slug: 'esg', name: 'ESG and bond spreads', kind: 'Research', note: 'Green rating changes did not move borrowing costs; the rating level did, but its direction depends on the model', href: '' },
   { slug: 'gradelens', name: 'GradeLens', kind: 'Tool', note: 'Shows FOM students what each exam needs for a target grade', href: '/work/gradelens/' },
   { slug: 'demfragen', name: 'Dem Fragen', kind: 'Product', note: 'Plain answers to legal questions in India, with sources · not yet tested on real cases', href: '/work/demfragen/' },
-  { slug: 'profile-hud', name: 'profile-hud', kind: 'Tool', note: 'Profile cards built from real project data · 168 tests', href: 'https://github.com/omkar-k0/profile-hud' },
+  { slug: 'profile-hud', name: 'profile-hud', kind: 'Tool', note: 'Profile cards built from real project data · 168 tests', href: '/work/profile-hud/' },
 ];
 
 // Full work index (/work/). Numbered straight through, flagships first.
@@ -407,7 +407,7 @@ export const work: WorkItem[] = [
     name: 'profile-hud', kind: 'Tool',
     answers: 'Can a GitHub profile show real project data instead of badges?',
     metric: { value: '168', label: 'automated tests, all passing', evidence: 'measured', source: 'python -m pytest at commit cb297ca, 26 Nov 2026' },
-    status: 'GitHub Action · MIT', href: 'https://github.com/omkar-k0/profile-hud', external: true,
+    status: 'GitHub Action · MIT · case study', href: caseStudy('profile-hud'), external: false,
   },
   {
     name: 'This website', kind: 'Open source',
