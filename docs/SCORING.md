@@ -26,7 +26,7 @@ Viewports: desktop 1440 × 900, phone 390 × 844. "First screen" means without s
 
 1. At least three projects link to a working live demo or a public release.
 2. Every flagship shows at least one measured outcome on the home page.
-3. Case studies show the real product (screenshots or embedded output), not only diagrams.
+3. Every Case study shows the real product (screenshots or embedded output), not only diagrams. (Widened on 26 Nov 2026 from "case studies": a project on the work index without a Case study fails.)
 4. A count of shipped or tested work is visible (for example live demos, repositories with tests).
 5. The strongest flagship's headline metric is measured on held-out or hand-labelled data, not pending.
 
@@ -56,11 +56,13 @@ Viewports: desktop 1440 × 900, phone 390 × 844. "First screen" means without s
 
 ## 7. Technical reviewer (case studies)
 
-1. Every flagship case study explains why the obvious approach fails.
-2. Every flagship case study records at least two decisions with the road not taken.
-3. Every flagship case study reports what broke and what is unproven.
+Widened on 26 Nov 2026 from flagship case studies to every Case study (see GLOSSARY.md): all 12 projects on the work index. A project without a Case study fails every check below.
+
+1. Every Case study explains why the obvious approach fails.
+2. Every Case study records at least two decisions with the road not taken.
+3. Every Case study reports what broke and what is unproven.
 4. Every number links to, or names, the file it came from.
-5. Every flagship case study has a "Reproduce it" section with exact commands and files.
+5. Every Case study has a "Reproduce it" section with exact commands and files.
 
 ## Scores
 
@@ -110,3 +112,20 @@ Reader: a Screener (see GLOSSARY.md), who judges the site in seconds by Colour, 
 | **Score** | **4** | **10** |
 
 Measured on 25 Nov 2026 on local production builds, light and dark, in Chrome. The professional photo is not counted: the slot stays empty until `SITE.photo` is set.
+
+## Widened criterion 7 and check 3.3 (26 Nov 2026)
+
+Scored on a local production build of `main` (f04af86), from the built pages' headings, images and the source audit of 25 Nov 2026. 12 projects on the work index; 5 have a Case study (GRE, faultline, Werkbank, fuelcycle, This website).
+
+| Check | Baseline (main, f04af86) | After (feat/case-studies) |
+|---|---|---|
+| 3.3 Every Case study shows the real product | fail: 7 projects have no Case study (the 5 that do pass: screenshots, or faultline's and this site's embedded output) | |
+| 7.1 Why the obvious approach fails | fail: 7 missing; This website has no such section | |
+| 7.2 At least two decisions with the road not taken | fail: 7 missing | |
+| 7.3 What broke and what is unproven | fail: 7 missing | |
+| 7.4 Every number names its file | fail: 5 live claims their Sources do not support (ESG, FinBERT, DAX, Dem Fragen, profile-hud) | |
+| 7.5 "Reproduce it" with exact commands and files | fail: 7 missing | |
+| **Criterion 3** | **8** | |
+| **Criterion 7** | **0** | |
+
+Expected on the branch, recorded before the work so the after-row is not tuned to it: 7.5 still fails for FinBERT fusion and DAX 40 (no published code), and 7.1 still fails for This website unless its Case study gains that section (out of scope for #7).
