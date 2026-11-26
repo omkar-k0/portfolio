@@ -37,6 +37,8 @@ npm test         # Playwright checks on the built site (uses your installed Chro
 
 `tests/visuals.spec.ts` checks scoring criterion 9 (first visual impression), the case-study reading-progress bar and the photo slot against the production build. `scripts/capture-shot.mjs` turns part of a built page into a WebP screenshot for a home card.
 
+`public/sources/esg-regression.json` (and the raw `.txt`) is the Source for the ESG and bond spreads Case study. `scripts/esg-results.py` makes it by running the ESG repository's own `scripts/regression.py`, unchanged, on its committed panel data. See the script for the commands.
+
 ## Photo
 
 Put a square photo (at least 480 px) in `public/` and set `SITE.photo` in `src/config.ts`. It then appears in the hero, on `/hiring/` and on `/about/`. Left empty, nothing is shown.
