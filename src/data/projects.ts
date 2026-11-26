@@ -300,7 +300,7 @@ export const extras: ExtraCard[] = [
       { label: 'Try each grade', detail: 'Which exam grade reaches the target', escalation: true },
       { label: 'Show', detail: 'The grade each open exam needs' },
     ],
-    slots: { how: { href: 'https://github.com/omkar-k0/gradelens#how-it-works', note: 'README' }, try: { href: 'https://github.com/omkar-k0/gradelens#install', note: 'install from GitHub' }, code: { href: 'https://github.com/omkar-k0/gradelens' } },
+    slots: { how: { href: '/work/gradelens/' }, try: { href: 'https://github.com/omkar-k0/gradelens#install', note: 'install from GitHub' }, code: { href: 'https://github.com/omkar-k0/gradelens' } },
   },
   {
     slug: 'demfragen', name: 'Dem Fragen', kind: 'Product', batch: 3,
@@ -324,7 +324,7 @@ export const ledger = [
   { slug: 'sustainability', name: 'Sustainability commitment classifier', kind: 'Tool', note: 'Only 7.7% of 1,562 climate promises come with a number and a target year', href: 'https://github.com/omkar-k0/sustainability-commitment-classifier' },
   { slug: 'dax', name: 'DAX 40 capital structure', kind: 'Research', note: 'More profitable big German firms borrow less · grade 1.3', href: '' },
   { slug: 'esg', name: 'ESG and bond spreads', kind: 'Research', note: 'Green rating changes did not move borrowing costs; the rating level did, but its direction depends on the model', href: '' },
-  { slug: 'gradelens', name: 'GradeLens', kind: 'Tool', note: 'Shows FOM students what each exam needs for a target grade', href: 'https://github.com/omkar-k0/gradelens' },
+  { slug: 'gradelens', name: 'GradeLens', kind: 'Tool', note: 'Shows FOM students what each exam needs for a target grade', href: '/work/gradelens/' },
   { slug: 'demfragen', name: 'Dem Fragen', kind: 'Product', note: 'Plain answers to legal questions in India, with sources · not yet tested on real cases', href: 'https://github.com/omkar-k0/cuddly-octo-palm-tree' },
   { slug: 'profile-hud', name: 'profile-hud', kind: 'Tool', note: 'Profile cards built from real project data · 168 tests', href: 'https://github.com/omkar-k0/profile-hud' },
 ];
@@ -401,7 +401,7 @@ export const work: WorkItem[] = [
     name: 'GradeLens', kind: 'Tool',
     answers: 'What does each remaining FOM exam need for my target grade?',
     metric: { value: 'v1.0', label: 'English and German · 25 unit tests + browser tests', evidence: 'measured', source: 'repo, npm test, 21 Nov 2026' },
-    status: 'Chrome extension', href: 'https://github.com/omkar-k0/gradelens', external: true,
+    status: 'Chrome extension · case study', href: caseStudy('gradelens'), external: false,
   },
   {
     name: 'profile-hud', kind: 'Tool',
