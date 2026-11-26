@@ -17,7 +17,8 @@ interface Props {
   // Three lines that answer what, how well, and my role before any prose.
   tldr: { why?: string; problem: string; result: string; role: string };
   // Exact commands to rerun the numbers on this page. Rendered as the last section.
-  reproduce?: { repo: string; commands: string; files: { path: string; what: string }[]; note?: string };
+  // public: false when the numbers cannot be rerun from public files yet (the page says so instead).
+  reproduce?: { repo: string; commands: string; files: { path: string; what: string }[]; note?: string; public?: boolean };
 }
 const { title, question, description, crumb, links, metrics, facts, toc, stack, tldr, reproduce } = Astro.props;
 // Previous / Next follow the work index, over the projects that have a Case study.
@@ -80,7 +81,9 @@ const kind = crumb.split(' · ')[0];
         {reproduce && (
           <section id="reproduce">
             <h2><span class="num">{String(fullToc.length).padStart(2, '0')}</span>Reproduce it</h2>
-            <p>Every number on this page comes from these commands, run in <a href={reproduce.repo} rel="noopener">the repository</a>.</p>
+            {reproduce.public === false
+              ? <p><strong>The numbers on this page cannot be rerun from public files yet.</strong> Below is what is missing and what exists.</p>
+              : <p>Every number on this page comes from these commands, run in <a href={reproduce.repo} rel="noopener">the repository</a>.</p>}
             <pre class="repro"><code>{reproduce.commands}</code></pre>
             <table>
               <thead><tr><th>File</th><th>What it holds</th></tr></thead>

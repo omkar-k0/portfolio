@@ -370,8 +370,8 @@ export const work: WorkItem[] = [
   {
     name: 'FinBERT fusion', kind: 'Research',
     answers: 'When should a small model hand a sentence to an LLM?',
-    metric: { value: '0.878', label: 'accuracy (FinBERT alone 0.844)', evidence: 'pending', source: 'test n = 147; result file not public yet' },
-    status: 'Pending · code and result file being published', href: '', external: false,
+    metric: { value: '0.878', label: 'accuracy (FinBERT alone 0.844)', evidence: 'pending', source: 'term paper Table 3 (not public), test n = 147; predictions not published' },
+    status: 'Paper · case study', href: caseStudy('finbert-fusion'), external: false,
   },
   {
     name: 'Sustainability commitment classifier', kind: 'Tool',

@@ -1,0 +1,188 @@
+---
+import CaseStudy from '../../layouts/CaseStudy.astro';
+import ThoughtProcess from '../../components/ThoughtProcess.astro';
+import type { Metric } from '../../data/projects';
+
+const metrics: Metric[] = [
+  { value: '0.878', label: 'accuracy with confidence-gated fusion on 147 held-out sentences (fine-tuned FinBERT alone: 0.844)', evidence: 'pending', source: 'Term paper Table 3 (not public); the test-set predictions are not published' },
+  { value: '5 of 147', label: 'test sentences: the whole gain over FinBERT alone', evidence: 'pending', source: 'computed from Table 3: (0.878 − 0.844) × 147' },
+  { value: '11.6%', label: 'of all 6,791 sentences sent to the LLM (790); FinBERT kept the rest', evidence: 'measured', source: 'fusion_corpus_predictions.csv, source column (not public)' },
+  { value: '+0.13 → −0.01', label: 'software MD&A tone, normal year to shock year; oil and gas only deepened (−0.04 → −0.14)', evidence: 'measured', source: 'Term paper Table 4; reproduced from the CSV with aggregate_fusion.py' },
+];
+
+const facts = [
+  { label: 'Type', value: 'Research term paper, FOM M.Sc. Big Data & Business Analytics' },
+  { label: 'When', value: 'June 2026' },
+  { label: 'Role', value: 'Sole author: corpus, labels, fine-tuning, fusion, analysis and paper' },
+  { label: 'Data', value: '12 annual reports (10-K, 20-F) of 6 firms · 6,791 sentences · 960 labelled' },
+  { label: 'Status', value: 'Paper done · code, model and test split not published' },
+];
+
+const toc = [
+  { id: 'plain', label: 'In plain language' },
+  { id: 'question', label: 'The question' },
+  { id: 'obvious', label: 'Why the obvious fails' },
+  { id: 'how', label: 'How it works' },
+  { id: 'decisions', label: 'Decisions' },
+  { id: 'results', label: 'What came out' },
+  { id: 'broke', label: 'What broke' },
+];
+---
+<CaseStudy
+  title="FinBERT fusion"
+  question="When should a small model hand a sentence to an LLM?"
+  description="Sentiment in annual reports: a fine-tuned FinBERT labels most sentences, a confidence gate sends the unsure 11.6% to an LLM, and the result compares how software and oil and gas firms wrote about a shock year."
+  crumb="Research · 05"
+  links={[]}
+  metrics={metrics}
+  facts={facts}
+  toc={toc}
+  tldr={{
+    why: 'Analysts read thousands of filing sentences each season. A cheap model that knows when to ask an expensive one keeps cost down without giving up the hard cases.',
+    problem: 'A finance-tuned model is fast but stumbles on hedged regulatory language; a large language model reads context but costs a call per sentence and varies between runs.',
+    result: 'Fusion reached 0.878 accuracy against 0.844 for FinBERT alone, a gain of 5 of 147 test sentences, while sending only 11.6% of the corpus to the LLM. Software firms turned their MD&A tone from positive to neutral in a shock year; oil and gas firms only became more negative.',
+    role: 'My own project, end to end.',
+  }}
+  reproduce={{
+    repo: '',
+    public: false,
+    commands: `# Not reproducible from public files yet.
+# Not published: the fine-tuned model, the 960 labels and the 147-sentence test split,
+# so the 0.878 / 0.844 comparison cannot be rerun by anyone else.
+# Exists but not yet published: fusion_inference.py, aggregate_fusion.py and the
+# corpus predictions. With them, the sector results rerun with:
+python aggregate_fusion.py      # reads fusion_corpus_predictions.csv`,
+    files: [
+      { path: 'Term paper (not public)', what: 'Corpus, labelling protocol, Tables 3 and 4' },
+      { path: 'fusion_corpus_predictions.csv (not public)', what: '6,791 sentences: FinBERT label and confidence, LLM label when routed, final label' },
+      { path: 'aggregate_fusion.py (not public)', what: 'Sector tables and the figure on this page' },
+    ],
+    note: 'Until the code and test split are published, this page fails the site\'s own "Reproduce it" check, and the headline accuracy stays pending.',
+  }}
+  stack={['Python', 'FinBERT', 'Hugging Face Transformers', 'PyTorch', 'Claude (pre-labels, fallback)', 'pandas', 'SEC EDGAR']}
+>
+  <section id="plain">
+    <h2><span class="num">01</span>In plain language</h2>
+    <p>
+      Companies describe their risks and results in long annual reports. This project sorts every sentence into
+      negative, neutral or positive, and compares two sectors in a normal year and a shock year: oil and gas (BP,
+      Chevron, ExxonMobil) and enterprise software (Oracle, Salesforce, SAP).
+    </p>
+    <p>
+      A small specialised model, FinBERT, does most of the work. When it is unsure about a sentence, it hands that
+      one sentence to a large language model. Only about one sentence in nine needed the expensive model.
+    </p>
+  </section>
+
+  <section id="question">
+    <h2><span class="num">02</span>The question</h2>
+    <p class="callout">
+      Does sending only the sentences FinBERT is unsure about to an LLM beat FinBERT alone, and does the fused model
+      show sectors reacting differently to a shock?
+    </p>
+  </section>
+
+  <section id="obvious">
+    <h2><span class="num">03</span>Why the obvious approach fails</h2>
+    <p>
+      <strong>A word list</strong> (the standard finance dictionaries) is transparent but blind to context: "not
+      expected to have a material adverse effect" reads as negative.
+    </p>
+    <p>
+      <strong>FinBERT off the shelf</strong> reached only 0.680 accuracy here and called most negative regulatory
+      sentences neutral (negative recall 0.508).
+    </p>
+    <p>
+      <strong>An LLM on every sentence</strong> costs a call per sentence, is not deterministic at scale, and is not
+      needed for the many sentences a small model already gets right.
+    </p>
+  </section>
+
+  <section id="how">
+    <h2><span class="num">04</span>How it works</h2>
+    <ThoughtProcess
+      steps={[
+        { title: 'Collect', points: ['Risk Factors and MD&A', '6 firms, normal and shock year', '6,791 sentences'], takeaway: 'Two sections where tone differs.' },
+        { title: 'Label', points: ['LLM pre-labels 960', 'I reviewed and corrected each', '426 neg · 413 neu · 121 pos'], takeaway: 'Labels before models.' },
+        { title: 'Fine-tune', points: ['FinBERT, 3 classes', '70 / 15 / 15, stratified', 'Test n = 147'], takeaway: 'A small model that knows finance.' },
+        { title: 'Gate', points: ['Confidence ≥ 0.75 stays', 'Below goes to the LLM', 'Threshold set on validation'], takeaway: 'Confidence decides who answers.' },
+        { title: 'Fallback', points: ['Claude Sonnet', 'One sentence at a time', '790 of 6,791 routed'], takeaway: 'The expensive model only where it matters.', model: true },
+      ]}
+      note="BP's 2019 report broke both PDF libraries (words fragmented at the character level), so its pages were rendered to images and read with OCR."
+    />
+  </section>
+
+  <section id="decisions">
+    <h2><span class="num">05</span>Decisions, and what they cost</h2>
+    <div class="decisions">
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Route by confidence</strong>
+          <p>FinBERT's top probability decides: at 0.75 or above its label stands, below it the LLM answers.</p></div>
+        <div><span class="label">Instead of</span><strong>An LLM on everything</strong>
+          <p>Possibly more accurate, but about nine times the calls. Cost of the gate: a fixed threshold rather than learned trust.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>LLM pre-labels, checked by me</strong>
+          <p>960 sentences labelled in days instead of weeks, each one reviewed and corrected.</p></div>
+        <div><span class="label">Instead of</span><strong>Hand labels from scratch, or several annotators</strong>
+          <p>Cleaner, but slower. Cost: one annotator, and pre-labels from the same model family as the fallback (see What broke).</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Normal year against shock year, per sector</strong>
+          <p>2020 for oil and gas (COVID and the oil price collapse), 2022 for software (the SaaS correction and rate rises).</p></div>
+        <div><span class="label">Instead of</span><strong>Many firms, one year</strong>
+          <p>More firms, but no view of how tone changes under stress.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="results">
+    <h2><span class="num">06</span>What came out</h2>
+    <table>
+      <thead><tr><th>Test set, n = 147</th><th>Accuracy</th><th>Macro F1</th><th>Negative recall</th></tr></thead>
+      <tbody>
+        <tr><td>FinBERT, off the shelf</td><td class="n">0.680</td><td class="n">0.674</td><td class="n">0.508</td></tr>
+        <tr><td>FinBERT, fine-tuned</td><td class="n">0.844</td><td class="n">0.822</td><td class="n">0.892</td></tr>
+        <tr><td>Fusion (FinBERT + LLM)</td><td class="n">0.878</td><td class="n">0.875</td><td class="n">0.877</td></tr>
+      </tbody>
+    </table>
+    <p class="caption">Source: Table 3 of the term paper (not public). Evidence level pending: the test-set predictions are not published, so these cannot be checked yet.</p>
+    <p>
+      Fine-tuning did most of the work. Fusion added 5 sentences out of 147 on top. On 147 sentences that difference
+      is too small to call fusion better in general.
+    </p>
+    <h3>How the sectors wrote about a shock</h3>
+    <figure class="shot">
+      <img src="/shots/finbert-sector-sentiment.webp" width="1400" height="500" loading="lazy"
+        alt="Two bar charts of mean sentiment score. Risk Factors: about −0.65 to −0.71 for both sectors in both years. MD&A: enterprise software +0.13 in the normal year and −0.01 in the shock year; oil and gas −0.04 and −0.14." />
+      <figcaption class="caption">Mean sentiment (−1 negative to +1 positive) by sector and year, from the fusion labels of all 6,791 sentences. Regenerated on 26 Nov 2026 from fusion_corpus_predictions.csv with the project's own aggregate_fusion.py (both not public); the numbers match Table 4 of the paper.</figcaption>
+    </figure>
+    <p>
+      Risk Factors stay negative in every firm and year, as a regulated, lawyer-written section would. The signal is in
+      MD&A: software management turned from positive to neutral under stress, while oil and gas, already cautious, became
+      more negative. With three firms per sector, that is an illustration, not a population estimate.
+    </p>
+  </section>
+
+  <section id="broke">
+    <h2><span class="num">07</span>What broke, and what is unproven</h2>
+    <h3>The judge and the fallback are related</h3>
+    <p>
+      The 960 labels were pre-labelled by Claude models and then corrected by me. The fusion's fallback is also a Claude
+      model. Where I accepted a pre-label, the fallback may simply agree with its own family's earlier answer, which
+      would flatter the fusion's 5-sentence gain. The paper does not test this.
+    </p>
+    <h3>Fusion lost some negatives</h3>
+    <p>
+      Fusion raised accuracy but lowered negative recall, from 0.892 to 0.877: the LLM called some negative sentences
+      something else. In regulatory text, missed negatives are the costly error.
+    </p>
+    <h3>Unproven</h3>
+    <ul>
+      <li>That fusion beats fine-tuned FinBERT beyond this test set: 5 sentences of 147.</li>
+      <li>One annotator. No second labeller, so no agreement score.</li>
+      <li>The 0.75 threshold was fixed on the validation set; the accuracy-against-cost curve was not charted.</li>
+      <li>Nothing can be rerun by others until the code, model and test split are published.</li>
+    </ul>
+  </section>
+</CaseStudy>
