@@ -119,13 +119,13 @@ Scored on a local production build of `main` (f04af86), from the built pages' he
 
 | Check | Baseline (main, f04af86) | After (feat/case-studies) |
 |---|---|---|
-| 3.3 Every Case study shows the real product | fail: 7 projects have no Case study (the 5 that do pass: screenshots, or faultline's and this site's embedded output) | |
-| 7.1 Why the obvious approach fails | fail: 7 missing; This website has no such section | |
-| 7.2 At least two decisions with the road not taken | fail: 7 missing | |
-| 7.3 What broke and what is unproven | fail: 7 missing | |
-| 7.4 Every number names its file | fail: 5 live claims their Sources do not support (ESG, FinBERT, DAX, Dem Fragen, profile-hud) | |
-| 7.5 "Reproduce it" with exact commands and files | fail: 7 missing | |
-| **Criterion 3** | **8** | |
-| **Criterion 7** | **0** | |
+| 3.3 Every Case study shows the real product | fail: 7 projects have no Case study (the 5 that do pass: screenshots, or faultline's and this site's embedded output) | pass: all 12; the 7 new ones each have a captioned screenshot or redrawn chart |
+| 7.1 Why the obvious approach fails | fail: 7 missing; This website has no such section | fail: 11 of 12; This website still has no such section |
+| 7.2 At least two decisions with the road not taken | fail: 7 missing | pass: all 12 (3 to 5 each) |
+| 7.3 What broke and what is unproven | fail: 7 missing | pass: all 12 (profile-hud states there is no record of what broke) |
+| 7.4 Every number names its file | fail: 5 live claims their Sources do not support (ESG, FinBERT, DAX, Dem Fragen, profile-hud) | pass: claims corrected; every number names its Source, non-public ones marked "not public" |
+| 7.5 "Reproduce it" with exact commands and files | fail: 7 missing | fail: 10 of 12; FinBERT fusion and DAX 40 say plainly they cannot be rerun (code not published) |
+| **Criterion 3** | **8** | **10** |
+| **Criterion 7** | **0** | **6** |
 
-Expected on the branch, recorded before the work so the after-row is not tuned to it: 7.5 still fails for FinBERT fusion and DAX 40 (no published code), and 7.1 still fails for This website unless its Case study gains that section (out of scope for #7).
+After-row scored on 26 Nov 2026 on a local production build of feat/case-studies (17e5ffa); all 47 Playwright tests pass, home page 4,238 px at 1440 wide. Expected on the branch, recorded before the work so the after-row is not tuned to it: 7.5 still fails for FinBERT fusion and DAX 40 (no published code), and 7.1 still fails for This website unless its Case study gains that section (out of scope for #7). Both expectations held: those are the two failing checks.
