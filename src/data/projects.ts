@@ -285,7 +285,7 @@ export const extras: ExtraCard[] = [
       { label: 'Test', detail: 'Regression, each firm over time', escalation: true },
       { label: 'Report', detail: 'What held and what did not, said plainly' },
     ],
-    slots: { how: { note: 'write-up in progress' }, try: { note: 'research, nothing to run' }, code: { href: 'https://github.com/krakmo1/esg-bond-spreads' } },
+    slots: { how: { href: '/work/esg/' }, try: { note: 'research, nothing to run' }, code: { href: 'https://github.com/krakmo1/esg-bond-spreads' } },
   },
   {
     slug: 'gradelens', name: 'GradeLens', kind: 'Tool', batch: 3,
@@ -323,7 +323,7 @@ export const ledger = [
   { slug: 'fuelcycle', name: 'fuelcycle', kind: 'Open source', note: 'Checks every French fuel price change in a year and says why it kept or rejected it', href: '/work/fuelcycle/' },
   { slug: 'sustainability', name: 'Sustainability commitment classifier', kind: 'Tool', note: 'Only 7.7% of 1,562 climate promises come with a number and a target year', href: '/work/sustainability/' },
   { slug: 'dax', name: 'DAX 40 capital structure', kind: 'Research', note: 'More profitable big German firms borrow less · grade 1.3', href: '' },
-  { slug: 'esg', name: 'ESG and bond spreads', kind: 'Research', note: 'Green rating changes did not move borrowing costs; the rating level did, but its direction depends on the model', href: '' },
+  { slug: 'esg', name: 'ESG and bond spreads', kind: 'Research', note: 'Green rating changes did not move borrowing costs; the rating level did, but its direction depends on the model', href: '/work/esg/' },
   { slug: 'gradelens', name: 'GradeLens', kind: 'Tool', note: 'Shows FOM students what each exam needs for a target grade', href: '/work/gradelens/' },
   { slug: 'demfragen', name: 'Dem Fragen', kind: 'Product', note: 'Plain answers to legal questions in India, with sources · not yet tested on real cases', href: '/work/demfragen/' },
   { slug: 'profile-hud', name: 'profile-hud', kind: 'Tool', note: 'Profile cards built from real project data · 168 tests', href: '/work/profile-hud/' },
@@ -389,7 +389,7 @@ export const work: WorkItem[] = [
     name: 'ESG and bond spreads', kind: 'Research',
     answers: 'Does a better green rating make company borrowing cheaper?',
     metric: { value: '0 of 3', label: 'models where a change in green rating moved borrowing costs; the rating level did, in opposite directions', evidence: 'measured', source: 'public/sources/esg-regression.json, rerun 26 Nov 2026, n = 56' },
-    status: 'Done · team of four', href: '', external: false,
+    status: 'Done · team of four · case study', href: caseStudy('esg'), external: false,
   },
   {
     name: 'Dem Fragen', kind: 'Product',
