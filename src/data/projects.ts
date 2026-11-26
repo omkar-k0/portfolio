@@ -270,7 +270,7 @@ export const extras: ExtraCard[] = [
       { label: 'Compare', detail: 'Regression across firms and years', escalation: true },
       { label: 'Check', detail: 'Same test with other debt measures' },
     ],
-    slots: { how: { note: 'FOM paper, not public' }, try: { note: 'research, nothing to run' }, code: { note: 'being published' } },
+    slots: { how: { href: '/work/dax/' }, try: { note: 'research, nothing to run' }, code: { note: 'not published yet' } },
   },
   {
     slug: 'esg', name: 'ESG and bond spreads', kind: 'Research', batch: 3,
@@ -322,7 +322,7 @@ export const extras: ExtraCard[] = [
 export const ledger = [
   { slug: 'fuelcycle', name: 'fuelcycle', kind: 'Open source', note: 'Checks every French fuel price change in a year and says why it kept or rejected it', href: '/work/fuelcycle/' },
   { slug: 'sustainability', name: 'Sustainability commitment classifier', kind: 'Tool', note: 'Only 7.7% of 1,562 climate promises come with a number and a target year', href: '/work/sustainability/' },
-  { slug: 'dax', name: 'DAX 40 capital structure', kind: 'Research', note: 'More profitable big German firms borrow less · grade 1.3', href: '' },
+  { slug: 'dax', name: 'DAX 40 capital structure', kind: 'Research', note: 'More profitable big German firms borrow less · grade 1.3', href: '/work/dax/' },
   { slug: 'esg', name: 'ESG and bond spreads', kind: 'Research', note: 'Green rating changes did not move borrowing costs; the rating level did, but its direction depends on the model', href: '/work/esg/' },
   { slug: 'gradelens', name: 'GradeLens', kind: 'Tool', note: 'Shows FOM students what each exam needs for a target grade', href: '/work/gradelens/' },
   { slug: 'demfragen', name: 'Dem Fragen', kind: 'Product', note: 'Plain answers to legal questions in India, with sources · not yet tested on real cases', href: '/work/demfragen/' },
@@ -383,7 +383,7 @@ export const work: WorkItem[] = [
     name: 'DAX 40 capital structure', kind: 'Research',
     answers: 'Why do some big German companies borrow more than others?',
     metric: { value: '127', label: 'company-years from 32 firms · graded 1.3', evidence: 'measured', source: 'FOM paper and transcript (not public), verified 16 Oct 2026; data from Yahoo Finance' },
-    status: 'Paper · code being published', href: '', external: false,
+    status: 'Paper · team of four · case study', href: caseStudy('dax'), external: false,
   },
   {
     name: 'ESG and bond spreads', kind: 'Research',

@@ -1,0 +1,178 @@
+---
+import CaseStudy from '../../layouts/CaseStudy.astro';
+import type { Metric } from '../../data/projects';
+
+const older = 'https://github.com/krakmo1/dax-capital-structure';
+
+const metrics: Metric[] = [
+  { value: '−0.48', label: 'leverage per unit of return on assets in the preferred model: 10 points more profit, about 4.8 points less debt', evidence: 'measured', source: 'Term paper Table 4, M3 (not public); p = 0.091, HC1 standard errors' },
+  { value: '4 of 4', label: 'models where more profitable firms carry less debt; strongest within firms (M4 −0.33, p < 0.01)', evidence: 'measured', source: 'Term paper Table 4 and team slides (not public)' },
+  { value: '127', label: 'firm-years from 32 non-financial DAX 40 firms, FY2022 to 2025, from Yahoo Finance', evidence: 'measured', source: 'Term paper, data preparation log (not public)' },
+  { value: '1.3', label: 'grade for the term paper', evidence: 'measured', source: 'FOM transcript (not public), confirmed by Omkar' },
+];
+
+const facts = [
+  { label: 'Type', value: 'Term paper, M.Sc. Big Data & Business Analytics, area of application Business Analytics' },
+  { label: 'When', value: 'Summer 2026' },
+  { label: 'Team', value: 'Four people' },
+  { label: 'My part', value: 'Regression modelling, the write-ups and the final edits' },
+  { label: 'Status', value: 'Graded 1.3 · code not published' },
+];
+
+const toc = [
+  { id: 'plain', label: 'In plain language' },
+  { id: 'question', label: 'The question' },
+  { id: 'obvious', label: 'Why the obvious fails' },
+  { id: 'how', label: 'How it works' },
+  { id: 'decisions', label: 'Decisions' },
+  { id: 'results', label: 'What came out' },
+  { id: 'broke', label: 'What broke' },
+];
+---
+<CaseStudy
+  title="DAX 40 capital structure"
+  question="Why do some big German companies borrow more than others?"
+  description="A term paper on the non-financial DAX 40 firms, FY2022 to 2025: more profitable firms carry less debt, in all four models and most clearly within firms over time. Asset-heavy firms carry somewhat more. Graded 1.3."
+  crumb="Research · 07"
+  links={[
+    { label: 'Earlier study on GitHub', href: older, primary: true },
+  ]}
+  metrics={metrics}
+  facts={facts}
+  toc={toc}
+  tldr={{
+    why: 'A treasury team setting a debt target needs a fair benchmark. Comparing with the raw index average is misleading when debt levels depend on profit, assets and size.',
+    problem: 'Debt levels vary widely even among the largest German companies. Which company characteristics go with more or less debt?',
+    result: 'More profitable firms borrow less: negative in all four models and strongest within firms over time. Asset-heavy firms borrow somewhat more, but only weakly. Together these explain only a small share of the differences. Graded 1.3.',
+    role: 'Team of four. My part was the regression modelling, the write-ups and the final edits.',
+  }}
+  reproduce={{
+    repo: older,
+    commands: `# Not reproducible from public files yet.
+# The code for this 127-row study is not published.
+# The paper's appendix gives the model specification:
+leverage ~ roa + tangibility                                   # M1
+leverage ~ roa + tangibility + size                            # M2
+leverage ~ roa + tangibility + size + C(fiscal_year)           # M3, preferred
+leverage ~ roa + tangibility + size + C(fiscal_year) + C(firm) # M4
+# each fitted with statsmodels OLS, cov_type="HC1"`,
+    files: [
+      { path: 'Term paper (not public)', what: 'Data, variables, Table 4 with all coefficients, limitations' },
+      { path: 'Team slides (not public)', what: 'The same coefficient table, used for the chart on this page' },
+    ],
+    note: 'The linked repository is an earlier, different study (60 firm-years, 30 firms), not the code behind these numbers. Until the code is published, this page fails the site\'s own "Reproduce it" check.',
+  }}
+  stack={['Python', 'yfinance', 'pandas', 'statsmodels', 'matplotlib']}
+>
+  <section id="plain">
+    <h2><span class="num">01</span>In plain language</h2>
+    <p>
+      Some large German companies pay for almost everything with their own money; others carry debt worth nearly
+      half their assets. We looked at the 32 non-financial companies in the DAX 40 index over four years to see what
+      goes with more or less debt.
+    </p>
+    <p>
+      The clearest pattern: companies that make more profit borrow less, and when one company's profit rises, its
+      debt tends to fall. Companies with more factories and equipment borrow a bit more. Most of the difference,
+      though, comes down to each company's own financing habits.
+    </p>
+  </section>
+
+  <section id="question">
+    <h2><span class="num">02</span>The question</h2>
+    <p class="callout">How are profitability and asset tangibility related to leverage among non-financial DAX 40 firms?</p>
+  </section>
+
+  <section id="obvious">
+    <h2><span class="num">03</span>Why the obvious approach fails</h2>
+    <p>
+      <strong>Benchmarking against the index average</strong> treats Beiersdorf and Deutsche Telekom alike. In FY2025 their
+      debt ranged from below 1% to about 48% of assets, and much of that gap is explained by profit, assets and size.
+    </p>
+    <p>
+      <strong>Including banks and insurers</strong> mixes in debt set by regulators, not by financing choices.
+    </p>
+    <p>
+      <strong>A single pooled regression</strong> mixes up differences between firms and changes within a firm,
+      and lets one bad year in the economy look like a firm effect.
+    </p>
+  </section>
+
+  <section id="how">
+    <h2><span class="num">04</span>How it works</h2>
+    <ol>
+      <li><strong>Collect</strong> annual financial statements for the DAX 40 from Yahoo Finance with the Python package yfinance. It holds about four annual reports per firm, which sets the window to FY2022–2025.</li>
+      <li><strong>Clean:</strong> of 196 firm-years, drop 34 rows of banks and insurers and 35 with missing items, leaving 127 firm-years from 32 firms. Ratios are winsorised at the 1st and 99th percentiles.</li>
+      <li><strong>Measure</strong> leverage as total debt over total assets, profitability as EBIT over total assets, tangibility as net property, plant and equipment over total assets, and size as the log of total assets.</li>
+      <li><strong>Model</strong> in four steps: pooled; with size; with year fixed effects (preferred); with firm fixed effects too, so only changes within each firm count.</li>
+    </ol>
+    <figure class="shot">
+      <img src="/shots/dax-coefficients.webp" width="1040" height="440" loading="lazy"
+        alt="Coefficient chart for four models. Profitability: −0.590, −0.481, −0.477 and −0.325, all negative; the intervals for M2 and M3 just cross zero, M4's is narrow and well below zero. Asset tangibility: 0.195, 0.185, 0.180 and 0.167, all positive, with intervals touching or crossing zero." />
+      <figcaption class="caption">The coefficient table from the team slides, redrawn from its numbers: each dot is a coefficient, each bar its 95% interval from the reported standard errors. Source: slide 14 of the team deck and Table 4 of the term paper (both not public), drawn by scripts/dax-coef-chart.mjs in this site's repository.</figcaption>
+    </figure>
+  </section>
+
+  <section id="decisions">
+    <h2><span class="num">05</span>Decisions, and what they cost</h2>
+    <div class="decisions">
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Free, scripted data from Yahoo Finance</strong>
+          <p>Anyone can collect it again with one script.</p></div>
+        <div><span class="label">Instead of</span><strong>A commercial database</strong>
+          <p>Longer history and checked data, but not something every reader can rerun. Cost: only four years, and one free provider.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Year fixed effects as the preferred model</strong>
+          <p>They absorb shocks that hit every firm in the same year, such as interest-rate moves.</p></div>
+        <div><span class="label">Instead of</span><strong>Firm fixed effects as the headline</strong>
+          <p>Stronger for profitability, but the firm dummies soak up almost everything (adjusted R² 0.94), and tangibility barely changes within four years.</p></div>
+      </div>
+      <div class="decision">
+        <div><span class="label">Chosen</span><strong>Explain, do not predict</strong>
+          <p>The paper offers a peer benchmark and makes no forecast of future debt.</p></div>
+        <div><span class="label">Instead of</span><strong>A leverage forecast</strong>
+          <p>Four years of history cannot support one honestly.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="results">
+    <h2><span class="num">06</span>What came out</h2>
+    <table>
+      <thead><tr><th>n = 127</th><th>M1</th><th>M2</th><th>M3 (preferred)</th><th>M4</th></tr></thead>
+      <tbody>
+        <tr><td>Profitability (ROA)</td><td class="n">−0.590**</td><td class="n">−0.481*</td><td class="n">−0.477*</td><td class="n">−0.325***</td></tr>
+        <tr><td>Tangibility</td><td class="n">0.195*</td><td class="n">0.185*</td><td class="n">0.180*</td><td class="n">0.167</td></tr>
+        <tr><td>Size</td><td class="n">–</td><td class="n">0.024***</td><td class="n">0.024***</td><td class="n">−0.029</td></tr>
+        <tr><td>Year / firm fixed effects</td><td class="n">no / no</td><td class="n">no / no</td><td class="n">yes / no</td><td class="n">yes / yes</td></tr>
+        <tr><td>Adjusted R²</td><td class="n">0.04</td><td class="n">0.09</td><td class="n">0.07</td><td class="n">0.94</td></tr>
+      </tbody>
+    </table>
+    <p class="caption">*, **, *** significant at 10%, 5%, 1%, with HC1 standard errors. Source: Table 4 of the term paper and slide 14 of the team deck (both not public).</p>
+    <p>
+      Profitability is the most robust result. Tangibility is positive throughout but weak, and disappears once firm
+      fixed effects are added. With an adjusted R² of 0.07 in the preferred model, these characteristics shape debt
+      levels but do not decide them.
+    </p>
+  </section>
+
+  <section id="broke">
+    <h2><span class="num">07</span>What broke, and what is unproven</h2>
+    <h3>The standard errors do not match the stated reason</h3>
+    <p>
+      The paper says firm-years are not independent, then uses HC1 standard errors. Those correct for unequal
+      variance, not for repeated observations of the same firm; standard errors clustered by firm would. With 32
+      firms, clustered errors are likely wider, so the 10% results (profitability in M2 and M3, tangibility in M1 to
+      M3) may not hold. This has not been rerun.
+    </p>
+    <h3>Unproven</h3>
+    <ul>
+      <li><strong>Survivorship.</strong> The 2025 index list is applied to every year, so firms that left the DAX are missing.</li>
+      <li><strong>Four years only.</strong> Yahoo Finance holds about four annual reports per firm.</li>
+      <li><strong>One free data source.</strong> The slides say it was spot-checked against annual reports; the paper itself does not document a check.</li>
+      <li><strong>Not causal.</strong> Debt can also affect later profit through interest costs.</li>
+      <li><strong>Not reproducible yet.</strong> The code for this study is not public.</li>
+    </ul>
+  </section>
+</CaseStudy>
