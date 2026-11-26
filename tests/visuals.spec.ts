@@ -1,7 +1,8 @@
 import { test, expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
+import { caseStudies } from '../src/data/projects';
 
-// Criterion 8 "First visual impression" (docs/SCORING.md), the case-study progress bar and the photo slot.
+// Criterion 9 "First visual impression" (docs/SCORING.md), the case-study progress bar and the photo slot.
 // Run against the production build: npm run build && npm test
 
 const PALETTE = {
@@ -11,13 +12,10 @@ const PALETTE = {
 type Theme = keyof typeof PALETTE;
 type Kind = keyof (typeof PALETTE)['light'];
 
-const CASE_STUDIES: Record<string, Kind> = {
-  'guidance-reconciliation-engine': 'Product',
-  faultline: 'Open source',
-  werkbank: 'Product',
-  fuelcycle: 'Open source',
-  portfolio: 'Open source',
-};
+// Every Case study, from the project data, so a new one is covered as soon as it exists.
+const CASE_STUDIES: Record<string, Kind> = Object.fromEntries(
+  caseStudies.map((c) => [c.href.split('/')[2], c.kind as Kind]),
+);
 const DESKTOP = { width: 1440, height: 900 };
 const PHONE = { width: 390, height: 844 };
 

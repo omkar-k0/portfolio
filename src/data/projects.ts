@@ -417,6 +417,21 @@ export const work: WorkItem[] = [
   },
 ];
 
+// Every Case study, in work-index order.
+export const caseStudies = work.filter((w) => !w.external && w.href.startsWith('/work/'));
+
+// Previous / Next for the Case study at `path`, wrapping round at the ends.
+export function caseStudyChain(path: string) {
+  const norm = (p: string) => (p.endsWith('/') ? p : `${p}/`);
+  const i = caseStudies.findIndex((c) => c.href === norm(path));
+  if (i < 0) return {};
+  const at = (j: number) => {
+    const c = caseStudies[(j + caseStudies.length) % caseStudies.length];
+    return { href: c.href, label: c.name };
+  };
+  return { prev: at(i - 1), next: at(i + 1) };
+}
+
 // The Project kind of any project on the site, by slug.
 export const kindOf = (slug: string): string | undefined =>
   flagships.find((f) => f.slug === slug)?.kind ?? extras.find((x) => x.slug === slug)?.kind;
