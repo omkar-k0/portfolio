@@ -315,7 +315,7 @@ export const extras: ExtraCard[] = [
       { label: 'Find the law', detail: 'Sources from India Code, cited in the answer' },
       { label: 'Lawyer if needed', detail: 'Says when to see an advocate', escalation: true },
     ],
-    slots: { how: { href: 'https://github.com/omkar-k0/cuddly-octo-palm-tree#readme', note: 'README' }, try: { href: 'https://cuddly-octo-palm-tree-ashen.vercel.app', note: 'live demo' }, code: { href: 'https://github.com/omkar-k0/cuddly-octo-palm-tree' } },
+    slots: { how: { href: '/work/demfragen/' }, try: { href: 'https://cuddly-octo-palm-tree-ashen.vercel.app', note: 'live demo' }, code: { href: 'https://github.com/omkar-k0/cuddly-octo-palm-tree' } },
   },
 ];
 
@@ -325,7 +325,7 @@ export const ledger = [
   { slug: 'dax', name: 'DAX 40 capital structure', kind: 'Research', note: 'More profitable big German firms borrow less · grade 1.3', href: '' },
   { slug: 'esg', name: 'ESG and bond spreads', kind: 'Research', note: 'Green rating changes did not move borrowing costs; the rating level did, but its direction depends on the model', href: '' },
   { slug: 'gradelens', name: 'GradeLens', kind: 'Tool', note: 'Shows FOM students what each exam needs for a target grade', href: '/work/gradelens/' },
-  { slug: 'demfragen', name: 'Dem Fragen', kind: 'Product', note: 'Plain answers to legal questions in India, with sources · not yet tested on real cases', href: 'https://github.com/omkar-k0/cuddly-octo-palm-tree' },
+  { slug: 'demfragen', name: 'Dem Fragen', kind: 'Product', note: 'Plain answers to legal questions in India, with sources · not yet tested on real cases', href: '/work/demfragen/' },
   { slug: 'profile-hud', name: 'profile-hud', kind: 'Tool', note: 'Profile cards built from real project data · 168 tests', href: 'https://github.com/omkar-k0/profile-hud' },
 ];
 
@@ -395,7 +395,7 @@ export const work: WorkItem[] = [
     name: 'Dem Fragen', kind: 'Product',
     answers: 'What does Indian law say about my problem, and when do I need a lawyer?',
     metric: { value: '—', label: 'not yet tested on real legal questions', evidence: 'pending', source: 'mock baseline only' },
-    status: 'Live demo · not tested on real cases', href: 'https://github.com/omkar-k0/cuddly-octo-palm-tree', external: true,
+    status: 'Live demo · not tested on real cases', href: caseStudy('demfragen'), external: false,
   },
   {
     name: 'GradeLens', kind: 'Tool',
