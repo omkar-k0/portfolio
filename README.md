@@ -35,7 +35,7 @@ npm run build    # static output in dist/
 npm test         # Playwright checks on the built site (uses your installed Chrome)
 ```
 
-`tests/visuals.spec.ts` checks scoring criterion 9 (first visual impression), the case-study reading-progress bar and the photo slot against the production build. `tests/case-studies.spec.ts` checks that every on-site project link opens a real page, that Previous / Next runs through every Case study in work-index order, and that each new Case study has the required sections and a captioned screenshot. Both suites take the list of Case studies from `src/data/projects.ts`. `scripts/capture-shot.mjs` turns part of a built page into a WebP screenshot for a home card.
+`tests/visuals.spec.ts` checks scoring criterion 9 (first visual impression), the case-study reading-progress bar and the photo slot against the production build. `tests/case-studies.spec.ts` checks that every on-site project link opens a real page, that Previous / Next runs through every Case study in work-index order, and that each new Case study has the required sections and a captioned screenshot. Two shipping gates fail the build if any page contains `[CONFIRM]` or if a "How it works" link or work-index row leaves the site. Both suites take the list of Case studies from `src/data/projects.ts`. `scripts/capture-shot.mjs` turns part of a built page into a WebP screenshot for a home card.
 
 `public/sources/esg-regression.json` (and the raw `.txt`) is the Source for the ESG and bond spreads Case study. `scripts/esg-results.py` makes it by running the ESG repository's own `scripts/regression.py`, unchanged, on its committed panel data. See the script for the commands.
 

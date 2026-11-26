@@ -66,3 +66,26 @@ for (const c of NEW) {
     });
   });
 }
+
+// Shipping gates (#19): no unconfirmed claim reaches a built page, and project links stay on the site.
+test('no built page contains a [CONFIRM] marker', async ({ request }) => {
+  const { readFileSync } = await import('node:fs');
+  const xml = readFileSync('dist/sitemap-0.xml', 'utf8');
+  const paths = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => new URL(m[1]).pathname);
+  expect(paths.length).toBeGreaterThan(10);
+  for (const p of paths) expect(await (await request.get(p)).text(), p).not.toContain('[CONFIRM]');
+});
+
+test('every How it works link and work-index row stays on the site', async ({ page }) => {
+  await page.goto('/');
+  const how = await page.$$eval('#work .slots li', (lis) =>
+    lis.filter((li) => li.textContent?.includes('How it works')).map((li) => li.querySelector('a')?.getAttribute('href') ?? '(no link)'),
+  );
+  expect(how.length).toBeGreaterThanOrEqual(9);
+  for (const h of how) expect(h, `How it works → ${h}`).toMatch(/^\/work\/[a-z0-9-]+\/$/);
+  await page.goto('/work/');
+  const links = await page.$$eval('a.row', (as) => as.map((a) => a.getAttribute('href')!));
+  expect(links.length, 'work-index rows that link somewhere').toBe(caseStudies.length);
+  for (const h of links) expect(h).toMatch(/^\/work\/[a-z0-9-]+\/$/);
+  expect(caseStudies.length).toBe(12);
+});
